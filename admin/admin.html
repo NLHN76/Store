@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+        }
+
+        .login-container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); 
+            width: 360px; 
+        }
+
+        .login-container h2 {
+            text-align: center;
+            color: #333; 
+            margin-bottom: 25px;
+            font-size: 1.75rem; 
+            font-weight: 600;
+        }
+
+        .login-container .input-group {
+            margin-bottom: 20px;
+        }
+
+        .login-container .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #555; 
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .login-container input[type="text"],
+        .login-container input[type="password"] {
+            width: calc(100% - 24px); 
+            padding: 12px;
+            margin: 0;
+            border: 1px solid #ced4da; 
+            border-radius: 6px; 
+            font-size: 1rem;
+            color: #495057; 
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .login-container input[type="text"]:focus,
+        .login-container input[type="password"]:focus {
+            border-color: #80bdff; 
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); 
+        }
+
+        .login-container input[type="submit"] {
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.05rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .login-container input[type="submit"]:hover {
+            background-color: #0056b3; 
+        }
+
+        .login-container .error-message {
+            color: #dc3545;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="login-container">
+        <h2><i class="fas fa-user-lock"></i> Đăng nhập Admin</h2>
+        <form action="admin_login.php" method="POST">
+            <div class="input-group">
+                <label for="username"><i class="fas fa-user"></i> Tên đăng nhập</label>
+                <input type="text" id="username" name="username" placeholder="Nhập tên đăng nhập" required>
+            </div>
+            <div class="input-group">
+                <label for="password"><i class="fas fa-lock"></i> Mật khẩu</label>
+                <input type="password" id="password" name="password" placeholder="Nhập mật khẩu" required>
+            </div>
+            <input type="submit" value="Đăng nhập">
+        </form>
+    </div>
+</body>
+
+</html>
