@@ -129,7 +129,7 @@ function saveAndUpdate() {
 
                       
 
-//Lấy sản phẩm
+// Lấy dữ liệu sản phẩm từ admin 
 document.addEventListener("DOMContentLoaded", function() {
     fetch('get_products.php')
     .then(response => response.json())
@@ -150,12 +150,13 @@ document.addEventListener("DOMContentLoaded", function() {
                 <h3>${product.name}</h3>
                 <p><strong>Mã sản phẩm:</strong> ${product.product_code}</p> 
                 <p><strong>Loại sản phẩm:</strong> ${product.category}</p> 
-                <p><strong>Giá:</strong> ${Number(product.price).toLocaleString('vi-VN')} VNĐ</p>
-
+                <p><strong>Giá:</strong> ${product.price} VNĐ</p>
                 <button onclick="addToCart(this)">Thêm vào giỏ hàng</button>
-                <a href="product_detail.php?code=${product.product_code}">
+                      <a href="no_feedback.php?code=${product.product_code}">
                     <button>Xem chi tiết</button>
                 </a>
+                <p><strong>Đánh giá:</strong> ⭐ ${product.avg_rating} / 5 (${product.total_reviews} lượt đánh giá)</p>
+
             `;
 
             productsContainer.appendChild(productDiv);

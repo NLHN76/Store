@@ -1,10 +1,9 @@
 <?php
-// admin_products-detail.php
+
 
 $conn = new mysqli("localhost", "root", "", "store");
 if ($conn->connect_error) die("Kết nối thất bại: " . $conn->connect_error);
 
-// ================= XỬ LÝ CRUD =================
 
 // Thêm
 if (isset($_POST['add'])) {

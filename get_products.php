@@ -9,53 +9,62 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Kiểm tra kết nối
 if ($conn->connect_error) {
-    // Ghi log lỗi thay vì chỉ die() - tốt hơn cho production
     error_log("Database Connection Failed: " . $conn->connect_error);
-    // Trả về lỗi JSON để client có thể xử lý
     header('Content-Type: application/json');
-    http_response_code(500); // Internal Server Error
+    http_response_code(500);
     echo json_encode(['error' => 'Kết nối cơ sở dữ liệu thất bại.']);
-    exit; // Dừng thực thi script
+    exit;
 }
 
- 
 $conn->set_charset("utf8");
 
-
-$sql = "SELECT product_code, name, price, image, category, is_active
-        FROM products
-        WHERE is_active = 1"; 
+// ✅ Truy vấn: lấy sản phẩm + điểm trung bình + số lượt đánh giá
+$sql = "
+    SELECT 
+        p.product_code, 
+        p.name, 
+        p.price, 
+        p.image, 
+        p.category, 
+        p.is_active,
+        IFNULL(ROUND(AVG(f.rating), 1), 0) AS avg_rating,  -- trung bình số sao
+        COUNT(f.id) AS total_reviews                      -- số lượt đánh giá
+    FROM products p
+    LEFT JOIN feedback f ON p.product_code = f.product_code
+    WHERE p.is_active = 1
+    GROUP BY p.product_code, p.name, p.price, p.image, p.category, p.is_active
+";
 
 $result = $conn->query($sql);
 
 $products = [];
-// Kiểm tra xem truy vấn có thành công không
+
+// Kiểm tra truy vấn
 if ($result === false) {
-     // Ghi log lỗi SQL
     error_log("SQL Error: " . $conn->error);
-    // Trả về lỗi JSON
     header('Content-Type: application/json');
-    http_response_code(500); // Internal Server Error
+    http_response_code(500);
     echo json_encode(['error' => 'Lỗi truy vấn dữ liệu sản phẩm.']);
-    $conn->close(); // Đóng kết nối trước khi thoát
+    $conn->close();
     exit;
 }
-
 if ($result->num_rows > 0) {
-    // Lưu dữ liệu sản phẩm vào mảng
     while ($row = $result->fetch_assoc()) {
-     
-      
+    
+        $row['price'] = number_format((float)$row['price'], 0, ',', '.');
+
+        // Đường dẫn ảnh
         if (!empty($row['image'])) {
             $row['image'] = 'admin/uploads/' . $row['image'];
         } else {
-           
-             $row['image'] = ''; 
-            
+            $row['image'] = '';
         }
 
-        // Chuyển đổi kiểu dữ liệu nếu cần (ví dụ: price và is_active)
-        $row['price'] = floatval($row['price']); 
+        
+
+        $row['avg_rating'] = floatval($row['avg_rating']);
+        $row['total_reviews'] = intval($row['total_reviews']);
+
         $products[] = $row;
     }
 }
@@ -63,7 +72,7 @@ if ($result->num_rows > 0) {
 // Đóng kết nối
 $conn->close();
 
-// Trả dữ liệu dưới dạng JSON
+// Xuất JSON
 header('Content-Type: application/json');
-echo json_encode($products);
+echo json_encode($products, JSON_UNESCAPED_UNICODE);
 ?>

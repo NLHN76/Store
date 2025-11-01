@@ -294,6 +294,8 @@ document.addEventListener("DOMContentLoaded", function() {
                       <a href="product_detail.php?code=${product.product_code}">
                     <button>Xem chi tiết</button>
                 </a>
+                <p><strong>Đánh giá:</strong> ⭐ ${product.avg_rating} / 5 (${product.total_reviews} lượt đánh giá)</p>
+
             `;
 
             productsContainer.appendChild(productDiv);
