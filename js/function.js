@@ -364,53 +364,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 
-    
-// Đặt hàng thông tin đơn hàng
-async function fetchOrders() {
-    try {
-        const response = await fetch('order.php'); // Gọi API lấy đơn hàng
-        const data = await response.json();
-
-        // Kiểm tra nếu có lỗi từ API
-        if (data.status === 'error') {
-            document.getElementById('order-list').innerHTML = `<p>${data.message}</p>`;
-            return;
-        }
-
-        let ordersHtml = '';
-        // Duyệt qua tất cả các đơn hàng và hiển thị
-        data.forEach(order => {
-            const formattedPrice = parseInt(order.total_price, 10).toLocaleString('de-DE'); // Định dạng không có phần thập phân
-            const colors = order.color || 'Không có màu'; // Lấy màu sắc từ API, nếu null thì hiển thị mặc định
-
-            ordersHtml += `
-                <div class="order-item">
-                    <p><strong>Mã Đơn Hàng:</strong> ${order.id}</p>
-                    <p><strong>Mã Khách Hàng :</strong> ${order.user_code}</p>
-                    <p><strong>Sản Phẩm:</strong> ${order.product_name}</p> 
-                    <p><strong>Loại Sản Phẩm:</strong> ${order.category}</p> 
-                    <p><strong>Màu Sắc:</strong> ${colors}</p> 
-                    <p><strong>Số Lượng:</strong> ${order.product_quantity}</p> 
-                    <p><strong>Tổng Tiền:</strong> ${formattedPrice} VNĐ</p> 
-                    <p><strong>Ngày Thanh Toán:</strong> ${order.order_date}</p>
-                    <p><strong>Trạng Thái:</strong> ${order.status}</p> 
-                </div>
-                <hr>
-            `;
-        });
-
-        // Đưa kết quả vào phần hiển thị đơn hàng
-        document.getElementById('order-list').innerHTML = ordersHtml;
-    } catch (error) {
-        console.error('Lỗi khi tải đơn hàng:', error);
-        document.getElementById('order-list').innerHTML = '<p>Không thể tải thông tin đơn hàng. Vui lòng thử lại sau.</p>';
-    }
-}
-
-// Gọi hàm khi trang được tải
-document.addEventListener('DOMContentLoaded', fetchOrders);
-
-
 
 
 
