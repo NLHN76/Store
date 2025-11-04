@@ -4,4 +4,5 @@ return array (
   1 => 'Trắng',
   2 => 'Xanh lá',
   3 => 'Nâu',
+  4 => 'Hồng',
 );

@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rating']) && !isset($
   <meta charset="UTF-8">
   <title>Chi tiết sản phẩm - <?php echo $product['name']; ?></title>
   <style>
-   body {
+     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rating']) && !isset($
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
-    .product-detail h1 {
+    .product-detail h1, .product-detail h2 {
       margin-bottom: 20px;
       font-size: 28px;
       color: #222;
@@ -141,30 +141,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rating']) && !isset($
       font-size: 15px;
     }
 
-    .price {
-      font-weight: bold;
-      color: #e63946;
+    .feedback-item {
+      border-bottom:1px solid #ddd; 
+      margin:10px 0; 
+      padding-bottom:8px;
     }
 
-    h2 {
-      margin-top: 10px;
-      font-size: 22px;
-      color: #222;
+    .feedback-item p {
+      margin: 4px 0;
     }
 
-    button {
-      background: #007bff;
-      border: none;
-      color: white;
-      padding: 10px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-      margin-top: 10px;
-    }
-
-    button:hover {
-      background: #0056b3;
+    .feedback-item small {
+      color: #666;
     }
   </style>
 </head>
