@@ -39,6 +39,64 @@ function generate_product_code($category, $pdo) {
 }
 
 
+// 🟦 Quản lý màu sắc trực tiếp trong admin_products.php
+$colors_file = __DIR__ . '/colors_config.php';
+$available_colors = file_exists($colors_file) ? include $colors_file : [];
+
+// Xử lý thêm hoặc xóa màu (có thể dùng AJAX hoặc form bình thường)
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+    $color_changed = false;
+
+    // --- Thêm màu ---
+    if ($action === 'add_color') {
+        $new_color = trim($_POST['new_color'] ?? '');
+        if ($new_color !== '') {
+            if (!in_array($new_color, $available_colors)) {
+                $available_colors[] = $new_color;
+                $color_changed = true;
+                $status_color = 'added';
+            } else {
+                $status_color = 'exists';
+            }
+        }
+    }
+
+    // --- Xóa màu ---
+    elseif ($action === 'delete_color') {
+        $color_to_delete = $_POST['delete_color'] ?? '';
+        if (($key = array_search($color_to_delete, $available_colors)) !== false) {
+            unset($available_colors[$key]);
+            $available_colors = array_values($available_colors);
+            $color_changed = true;
+            $status_color = 'deleted';
+        }
+    }
+
+    // Nếu có thay đổi thì ghi lại file
+    if ($color_changed) {
+        $content = "<?php\nreturn " . var_export($available_colors, true) . ";\n";
+        file_put_contents($colors_file, $content);
+    }
+
+    // Nếu request đến từ AJAX → trả JSON
+    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+        header('Content-Type: application/json');
+        echo json_encode([
+            'success' => $color_changed,
+            'status' => $status_color ?? 'none',
+            'colors' => $available_colors
+        ]);
+        exit;
+    }
+
+    // Nếu là form thường → reload trang để hiển thị lại
+    if (isset($status_color)) {
+        header("Location: {$_SERVER['PHP_SELF']}?color_status={$status_color}");
+        exit;
+    }
+}
+
 
 // Xử lý sửa sản phẩm 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'edit') {
@@ -102,7 +160,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 
          if (empty($edit_error)) {
-             $sql_update = "UPDATE products SET name = :name, price = :price, category = :category $image_sql_part WHERE id = :id";
+            $sql_update = "UPDATE products
+               SET name = :name, price = :price, color = :color, category = :category $image_sql_part
+               WHERE id = :id";
+               $colors = $_POST['product_colors'] ?? [];
+               $params_update['color'] = implode(',', array_map('trim', $colors));
+
+
              $stmt_update = $pdo->prepare($sql_update);
              if ($stmt_update->execute($params_update)) {
                   header("Location: {$_SERVER['PHP_SELF']}?status=edited");
@@ -184,15 +248,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
          if (empty($add_error)) {
              $product_code = generate_product_code($category, $pdo);
              try {
-                 $sql_insert = "INSERT INTO products (name, price, category, image, product_code) VALUES (:name, :price, :category, :image, :code)"; // is_active sẽ tự động là 1 (default)
-                 $stmt_insert = $pdo->prepare($sql_insert);
-                 $stmt_insert->execute([
-                     'name' => $name,
-                     'price' => $price,
-                     'category' => $category,
-                     'image' => $image_name,
-                     'code' => $product_code
-                 ]);
+
+
+$sql_insert = "INSERT INTO products (name, price, color, category, image, product_code)
+               VALUES (:name, :price, :color, :category, :image, :code)";
+
+               $stmt_insert = $pdo->prepare($sql_insert);
+               $stmt_insert->execute([
+              'name' => $name,
+              'price' => $price,
+              'color' => $color,
+              'category' => $category,
+              'image' => $image_name,
+              'code' => $product_code
+            ]);
+
 
                  header("Location: {$_SERVER['PHP_SELF']}?status=added");
                  exit;
@@ -375,6 +445,54 @@ if (!empty($edit_error) && !isset($_GET['status'])) {
             </form>
         </div>
        
+         
+
+<!-- 🔘 Nút hiển thị form -->
+<button id="toggle-color-panel" 
+        style="background-color:#17a2b8;color:white;padding:8px 15px;border:none;border-radius:5px;cursor:pointer;">
+    ⚙ Mở Quản Lý Màu Sắc
+</button>
+
+<!-- 🟢 Khối chứa cả hai form (ẩn mặc định) -->
+<div id="color-panel" 
+     style="display:none; margin-top:15px; padding:15px; background:#f8f9fa; border:1px solid #ccc; border-radius:8px;">
+
+    <!-- 🟢 Form thêm màu -->
+    <form method="POST" style="margin-bottom:20px;">
+        <input type="hidden" name="action" value="add_color">
+        <label><strong>➕ Thêm màu mới:</strong></label><br>
+        <input type="text" name="new_color" placeholder="Nhập tên màu (VD: Tím)" required
+               style="padding:6px; border:1px solid #ccc; border-radius:5px;">
+        <button type="submit" 
+                style="padding:6px 12px; background:#28a745; color:white; border:none; border-radius:5px;">
+            ✅ Lưu màu
+        </button>
+    </form>
+
+    <!-- 🔴 Danh sách xóa màu -->
+    <div>
+        <label><strong>🗑 Xóa màu:</strong></label>
+        <?php if (!empty($available_colors)): ?>
+            <ul style="list-style:none; padding-left:0; margin-top:8px;">
+                <?php foreach ($available_colors as $color): ?>
+                    <li style="margin-bottom:8px;">
+                        <span style="display:inline-block; width:100px;"><?= htmlspecialchars($color) ?></span>
+                        <form method="POST" style="display:inline;">
+                            <input type="hidden" name="action" value="delete_color">
+                            <input type="hidden" name="delete_color" value="<?= htmlspecialchars($color) ?>">
+                            <button type="submit" 
+                                    style="padding:4px 8px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">
+                                ❌ Xóa
+                            </button>
+                        </form>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php else: ?>
+            <p style="color:#777;">⚠️ Chưa có màu nào để xóa.</p>
+        <?php endif; ?>
+    </div>
+</div>
 
         <!--Nút thêm sản phẩm-->
         <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
@@ -449,6 +567,21 @@ if (!empty($edit_error) && !isset($_GET['status'])) {
                             <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
                             <input type="text" name="product_name" value="<?= htmlspecialchars($product['name']) ?>" placeholder="Tên sản phẩm" required aria-label="Tên sản phẩm">
                             <input type="text" name="product_price" value="<?= number_format($product['price'], 0, ',', '.') ?>" placeholder="Giá (VD: 20.000)" required aria-label="Giá sản phẩm">
+                             <label>Chọn màu sắc:</label>
+<div class="color-options" style="text-align:left;">
+    <?php if (!empty($available_colors)): ?>
+        <?php foreach ($available_colors as $color): ?>
+            <label>
+                <input type="checkbox" name="product_colors[]" value="<?= htmlspecialchars($color) ?>"
+                    <?= in_array($color, explode(',', $product['color'] ?? '')) ? 'checked' : '' ?>>
+                <?= htmlspecialchars($color) ?>
+            </label><br>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <p style="color:#999;">⚠️ Chưa có màu nào. Hãy thêm ở phần “Quản lý Màu Sắc”.</p>
+    <?php endif; ?>
+</div>
+
                             <select name="product_category" required aria-label="Loại sản phẩm">
                                 <?php
                                 $categories = ['Tai nghe', 'Cáp sạc', 'Ốp lưng', 'Kính cường lực'];
@@ -489,7 +622,24 @@ if (!empty($edit_error) && !isset($_GET['status'])) {
         <div class="add-product-form">
             <h2 id="modal-title">Thêm Sản Phẩm Mới</h2>
             <form method="POST" enctype="multipart/form-data" action="<?= $_SERVER['PHP_SELF'] ?>">
-               
+                
+              <label style="display:block;text-align:left;margin-top:10px;font-weight:500;">Chọn màu sắc:</label>
+<div class="color-options" style="text-align:left;">
+  <?php if (!empty($available_colors)): ?>
+    <?php foreach ($available_colors as $color): ?>
+      <label>
+        <input type="checkbox" name="product_colors[]" value="<?= htmlspecialchars($color) ?>"> 
+        <?= htmlspecialchars($color) ?>
+      </label><br>
+    <?php endforeach; ?>
+  <?php else: ?>
+    <p style="color:#999;">⚠️ Chưa có màu nào. Hãy thêm màu mới ở phần “Quản lý Màu Sắc”.</p>
+  <?php endif; ?>
+</div>
+
+
+
+                
                 <label for="add_product_name_modal" style="display: block; text-align: left; margin-top: 10px; font-weight: 500;">Tên sản phẩm:</label>
                 <input type="text" id="add_product_name_modal" name="product_name" placeholder="Tên sản phẩm" required aria-label="Tên sản phẩm mới">
 
@@ -616,4 +766,21 @@ if (!empty($edit_error) && !isset($_GET['status'])) {
 
        
     });
+</script>
+
+
+
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const btn = document.getElementById('toggle-color-panel');
+    const panel = document.getElementById('color-panel');
+
+    btn.addEventListener('click', function() {
+        panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
+        btn.textContent = panel.style.display === 'block' ? '❌ Đóng Quản Lý Màu Sắc' : '⚙ Mở Quản Lý Màu Sắc';
+    });
+});
 </script>

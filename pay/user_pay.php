@@ -144,22 +144,31 @@ function sendConfirmationEmail($name, $email, $totalPrice, $cart, $address, $pro
 function generateEmailBody($name, $totalPrice, $cart, $address, $productCodes, $user_code, $productCategories, $productDetailsList) {
     $body = "<html><body><h1>Xác Nhận Đơn Hàng</h1>";
     $body .= "<p>Khách hàng: <strong>" . htmlspecialchars($name) . "</strong></p>";
-    $body .= "<p>Mã KH: " . htmlspecialchars($user_code) . "</p>";
+    $body .= "<p>Mã KH: <strong>" . htmlspecialchars($user_code) . "</strong></p>";
     $body .= "<p>Địa chỉ: " . htmlspecialchars($address) . "</p>";
     $body .= "<p>Tổng tiền: <strong>" . number_format($totalPrice, 0, ',', '.') . " VNĐ</strong></p>";
     $body .= "<h3>Chi tiết sản phẩm:</h3><ul>";
 
     foreach ($productDetailsList as $index => $detail) {
         $productCode = htmlspecialchars($productCodes[$index] ?? 'N/A');
-        $category = htmlspecialchars($productCategories[$index] ?? 'N/A');
-        $item = $cart[$index];
-        $itemTotal = number_format($item['price'] * $item['quantity'], 0, ',', '.');
-        $body .= "<li>{$detail} - Mã: {$productCode} - Loại: {$category} - Tiền: {$itemTotal} VNĐ</li>";
+        $category    = htmlspecialchars($productCategories[$index] ?? 'N/A');
+        $item        = $cart[$index];
+        $color       = htmlspecialchars($item['color'] ?? 'Không có màu');
+        $itemTotal   = number_format($item['price'] * $item['quantity'], 0, ',', '.');
+
+        $body .= "<li style='margin-bottom:8px;'>
+                    <strong>Tên:</strong> {$detail}<br>
+                    <strong>Mã sản phẩm:</strong> {$productCode}<br>
+                    <strong>Màu sắc:</strong> {$color}<br>
+                    <strong>Loại:</strong> {$category}<br>
+                    <strong>Thành tiền:</strong> {$itemTotal} VNĐ
+                  </li>";
     }
 
-    $body .= "</ul><p>Cảm ơn bạn đã mua sắm!</p></body></html>";
+    $body .= "</ul><p>Cảm ơn bạn đã mua sắm tại <strong>Mobile Gear</strong>!</p></body></html>";
     return $body;
 }
+
 
 $conn->close();
 ?>
@@ -257,28 +266,32 @@ $conn->close();
 
 
         
-        <div class="cart-summary">
-            <h2>Xem Lại Giỏ Hàng</h2>
-            <p><strong>Tổng Số Lượng Sản Phẩm:</strong> <?php echo $itemCount; ?></p>
-            <p><strong>Tổng Tiền:</strong> <?php echo number_format($totalPrice, 0, ',', '.'); ?> VNĐ</p>
+           <div class="cart-summary">
+    <h2>Xem Lại Giỏ Hàng</h2>
+    <p><strong>Tổng Số Lượng Sản Phẩm:</strong> <?php echo $itemCount; ?></p>
+    <p><strong>Tổng Tiền:</strong> <?php echo number_format($totalPrice, 0, ',', '.'); ?> VNĐ</p>
 
-            <h3>Chi Tiết Sản Phẩm:</h3>
-            <ul>
-                <?php foreach ($cart as $index => $item): ?>
-                    <li>
-                        <?php
-                            $pCode = isset($productCodes[$index]) ? htmlspecialchars($productCodes[$index]) : 'N/A';
-                            $pCat = isset($productCategories[$index]) ? htmlspecialchars($productCategories[$index]) : 'N/A';
-                            $itemTotal = $item['price'] * $item['quantity'];
-                            echo "<strong>Mã:</strong> " . $pCode . " - ";
-                            echo htmlspecialchars($item['name']) . " (x" . htmlspecialchars($item['quantity']) . ") <br>"; 
-                            echo "<strong>Loại:</strong> " . $pCat . " - ";
-                            echo "<strong>Giá:</strong> " . number_format($itemTotal, 0, ',', '.') . " VNĐ";
-                        ?>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
+    <h3>Chi Tiết Sản Phẩm:</h3>
+    <ul>
+        <?php foreach ($cart as $index => $item): ?>
+            <li>
+                <?php
+                    $pCode = isset($productCodes[$index]) ? htmlspecialchars($productCodes[$index]) : 'N/A';
+                    $pCat  = isset($productCategories[$index]) ? htmlspecialchars($productCategories[$index]) : 'N/A';
+                    $color = isset($item['color']) ? htmlspecialchars($item['color']) : 'Không có màu';
+                    $itemTotal = $item['price'] * $item['quantity'];
+
+                    echo "<strong>Mã:</strong> {$pCode}<br>";
+                    echo "<strong>Tên:</strong> " . htmlspecialchars($item['name']) . " (x" . htmlspecialchars($item['quantity']) . ")<br>";
+                    echo "<strong>Màu:</strong> {$color}<br>";
+                    echo "<strong>Loại:</strong> {$pCat}<br>";
+                    echo "<strong>Giá:</strong> " . number_format($itemTotal, 0, ',', '.') . " VNĐ";
+                ?>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+
 
     <?php endif;  ?>
 
