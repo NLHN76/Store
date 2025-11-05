@@ -130,22 +130,26 @@ $result = $conn->query($sql);
         <div class="d-flex align-items-center gap-2">
             <img src="<?= htmlspecialchars($avatar_login) ?>" class="avatar-login" data-bs-toggle="tooltip" title="Click để chỉnh sửa thông tin">
             <span>Xin chào, <?= htmlspecialchars($shipper_name) ?></span>
-            <a href="shipper_logout.php" class="btn btn-sm btn-danger ms-3">Đăng xuất</a>
-        </div>
+            <a href="shipper_logout.php" class="btn btn-sm btn-danger ms-3">Đăng xuất</a></div>
     </div>
 
-    <table class="table table-bordered table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>ID</th><th>Khách hàng</th><th>Điện thoại</th><th>Địa chỉ</th>
-                <th>Sản phẩm</th><th>Số lượng</th><th>Tổng tiền</th><th>Ngày đặt</th>
-                <th>Trạng thái</th><th>Shipper</th><th>Hành động</th>
-            </tr>
-        </thead>
-        <tbody>
-<?php if($result->num_rows>0): ?>
-    <?php while($row=$result->fetch_assoc()): ?>
-        <?php
+   <div class="table-responsive">
+  <table class="table table-bordered align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Khách hàng</th>
+        <th>Sản phẩm</th>
+        <th>Tổng tiền</th>
+        <th>Trạng thái</th>
+        <th>Shipper</th>
+        <th>Hành động</th>
+      </tr>
+    </thead>
+    <tbody>
+      <?php if($result->num_rows > 0): ?>
+        <?php while($row = $result->fetch_assoc()): ?>
+          <?php
             $status_class = '';
             if($row['status']=='Đang xử lý') $status_class='status-dangxuly';
             elseif($row['status']=='Đang giao hàng') $status_class='status-danggiaohang';
@@ -160,62 +164,89 @@ $result = $conn->query($sql);
                     $editable_statuses = ['Đang giao hàng','Đã giao hàng'];
                 }
             }
-        ?>
-        <tr class="<?= $status_class ?>">
-            <td><?= $row['id'] ?></td>
-            <td><?= htmlspecialchars($row['customer_name']) ?></td>
-            <td><?= htmlspecialchars($row['customer_phone']) ?></td>
-            <td><?= htmlspecialchars($row['customer_address']) ?></td>
+          ?>
+          
+          <!-- Hàng chính -->
+          <tr class="accordion-toggle <?= $status_class ?>" 
+              data-bs-toggle="collapse" 
+              data-bs-target="#order<?= $row['id'] ?>" 
+              style="cursor:pointer;">
+            <td>#<?= $row['id'] ?></td>
+            <td>
+              <b><?= htmlspecialchars($row['customer_name']) ?></b><br>
+              <small class="text-muted"><?= htmlspecialchars($row['customer_phone']) ?></small>
+            </td>
             <td><?= htmlspecialchars($row['product_name']) ?></td>
-            <td><?= $row['product_quantity'] ?></td>
-            <td><?= number_format($row['total_price'],0,",",".") ?>₫</td>
-            <td><?= $row['order_date'] ?></td>
-
+            <td><?= number_format($row['total_price'], 0, ",", ".") ?>₫</td>
+            
             <!-- Trạng thái -->
             <td>
-            <?php if(!empty($editable_statuses)): ?>
+              <?php if(!empty($editable_statuses)): ?>
                 <select class="form-select form-select-sm status-select" data-id="<?= $row['id'] ?>">
-                    <?php foreach($editable_statuses as $s): ?>
-                        <option value="<?= $s ?>" <?= $row['status']==$s?'selected':'' ?>><?= $s ?></option>
-                    <?php endforeach; ?>
+                  <?php foreach($editable_statuses as $s): ?>
+                    <option value="<?= $s ?>" <?= $row['status']==$s?'selected':'' ?>><?= $s ?></option>
+                  <?php endforeach; ?>
                 </select>
-            <?php else: ?>
+              <?php else: ?>
                 <span class="text-muted"><?= htmlspecialchars($row['status']) ?></span>
-            <?php endif; ?>
+              <?php endif; ?>
             </td>
 
             <!-- Shipper -->
             <td>
-            <?php if($row['shipper_id']): ?>
+              <?php if($row['shipper_id']): ?>
                 <div class="d-flex align-items-center gap-2">
-                    <img src="<?= htmlspecialchars($row['shipper_avatar'] ?? 'https://via.placeholder.com/30') ?>" 
-                         class="avatar-order" data-bs-toggle="tooltip" data-bs-html="true"
-                         title="
-                            <b>Shipper:</b> <?= htmlspecialchars($row['shipper_name']) ?><br>
-                            <b>Email:</b> <?= htmlspecialchars($row['shipper_email']) ?><br>
-                            <b>SĐT:</b> <?= htmlspecialchars($row['shipper_phone']) ?><br>
-                            <b>Nhận đơn:</b> <?= $row['receive_date'] ? date('d/m/Y H:i', strtotime($row['receive_date'])) : '' ?>
-                         ">
-                    <span><?= htmlspecialchars($row['shipper_name']) ?></span>
+                  <img src="<?= htmlspecialchars($row['shipper_avatar'] ?? 'https://via.placeholder.com/30') ?>" 
+                       class="avatar-order" data-bs-toggle="tooltip" data-bs-html="true"
+                       title="
+                         <b>Shipper:</b> <?= htmlspecialchars($row['shipper_name']) ?><br>
+                         <b>Email:</b> <?= htmlspecialchars($row['shipper_email']) ?><br>
+                         <b>SĐT:</b> <?= htmlspecialchars($row['shipper_phone']) ?><br>
+                         <b>Nhận đơn:</b> <?= $row['receive_date'] ? date('d/m/Y H:i', strtotime($row['receive_date'])) : '' ?>
+                       ">
+                  <span><?= htmlspecialchars($row['shipper_name']) ?></span>
                 </div>
-            <?php else: ?>
-                Chưa nhận
-            <?php endif; ?>
+              <?php else: ?>
+                <span class="text-secondary">Chưa nhận</span>
+              <?php endif; ?>
             </td>
 
             <!-- Hành động -->
             <td>
-            <?php if($row['status']=='Đang xử lý' && is_null($row['shipper_id'])): ?>
+              <?php if($row['status']=='Đang xử lý' && is_null($row['shipper_id'])): ?>
                 <button class="btn btn-success btn-sm receive-btn" data-id="<?= $row['id'] ?>">Nhận đơn</button>
-            <?php endif; ?>
+              <?php endif; ?>
             </td>
-        </tr>
-    <?php endwhile; ?>
-<?php else: ?>
-<tr><td colspan="11" class="text-center">Không có đơn hàng</td></tr>
-<?php endif; ?>
-</tbody>
-    </table>
+          </tr>
+
+          <!-- Hàng chi tiết -->
+          <tr>
+            <td colspan="7" class="p-0">
+              <div id="order<?= $row['id'] ?>" class="collapse bg-light border-top">
+                <div class="p-3">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <p><b>📞 Điện thoại:</b> <?= htmlspecialchars($row['customer_phone']) ?></p>
+                      <p><b>🏠 Địa chỉ:</b> <?= htmlspecialchars($row['customer_address']) ?></p>
+                      <p><b>📅 Ngày đặt:</b> <?= htmlspecialchars($row['order_date']) ?></p>
+                    </div>
+                    <div class="col-md-6">
+                      <p><b>📦 Sản phẩm:</b> <?= htmlspecialchars($row['product_name']) ?></p>
+                      <p><b>🔢 Số lượng:</b> <?= $row['product_quantity'] ?></p>
+                      <p><b>💰 Tổng tiền:</b> <?= number_format($row['total_price'], 0, ",", ".") ?>₫</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+
+        <?php endwhile; ?>
+      <?php else: ?>
+        <tr><td colspan="7" class="text-center text-muted">Không có đơn hàng</td></tr>
+      <?php endif; ?>
+    </tbody>
+  </table>
 </div>
 
 <!-- Modal chỉnh sửa thông tin shipper -->
