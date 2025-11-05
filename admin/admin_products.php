@@ -205,79 +205,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
 
 
 
-
 // Xử lý thêm sản phẩm 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'add') {
    
-     $name = trim(filter_input(INPUT_POST, 'product_name', FILTER_SANITIZE_STRING));
-     $price_input = $_POST['product_price'] ?? '0';
-     $category = trim(filter_input(INPUT_POST, 'product_category', FILTER_SANITIZE_STRING));
-     $price = clean_price($price_input);
-     $allowed_categories = ['Tai nghe', 'Cáp sạc', 'Ốp lưng', 'Kính cường lực'];
-     $add_error = ''; // Biến lưu lỗi thêm mới
+    $name = trim(filter_input(INPUT_POST, 'product_name', FILTER_SANITIZE_STRING));
+    $price_input = $_POST['product_price'] ?? '0';
+    $category = trim(filter_input(INPUT_POST, 'product_category', FILTER_SANITIZE_STRING));
+    $price = clean_price($price_input);
+    $allowed_categories = ['Tai nghe', 'Cáp sạc', 'Ốp lưng', 'Kính cường lực'];
+    $add_error = ''; // Biến lưu lỗi thêm mới
 
-     if (empty($name) || $price < 0 || empty($category) || !in_array($category, $allowed_categories)) {
-          $add_error = "Dữ liệu thêm sản phẩm không hợp lệ.";
-     } else {
-         $image_name = null;
-         if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] === UPLOAD_ERR_OK) {
-             $file_info = $_FILES['product_image'];
-             $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
-             $max_size = 2 * 1024 * 1024;
+    if (empty($name) || $price < 0 || empty($category) || !in_array($category, $allowed_categories)) {
+        $add_error = "Dữ liệu thêm sản phẩm không hợp lệ.";
+    } else {
+        $image_name = null;
+        if (isset($_FILES['product_image']) && $_FILES['product_image']['error'] === UPLOAD_ERR_OK) {
+            $file_info = $_FILES['product_image'];
+            $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
+            $max_size = 2 * 1024 * 1024;
 
-             if (in_array($file_info['type'], $allowed_types) && $file_info['size'] <= $max_size) {
-                 $upload_dir = 'uploads/';
-                 $extension = pathinfo($file_info['name'], PATHINFO_EXTENSION);
-                 $new_filename = uniqid('prod_', true) . '.' . strtolower($extension);
-                 $target_path = $upload_dir . $new_filename;
+            if (in_array($file_info['type'], $allowed_types) && $file_info['size'] <= $max_size) {
+                $upload_dir = 'uploads/';
+                $extension = pathinfo($file_info['name'], PATHINFO_EXTENSION);
+                $new_filename = uniqid('prod_', true) . '.' . strtolower($extension);
+                $target_path = $upload_dir . $new_filename;
 
-                 if (!is_dir($upload_dir)) {
-                     mkdir($upload_dir, 0775, true);
-                 }
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0775, true);
+                }
 
-                 if (move_uploaded_file($file_info['tmp_name'], $target_path)) {
-                     $image_name = $new_filename;
-                 } else {
-                     $add_error = "Có lỗi khi tải ảnh lên.";
-                 }
-             } else {
-                 $add_error = "Loại file không hợp lệ hoặc kích thước quá lớn khi thêm.";
-             }
-         }
+                if (move_uploaded_file($file_info['tmp_name'], $target_path)) {
+                    $image_name = $new_filename;
+                } else {
+                    $add_error = "Có lỗi khi tải ảnh lên.";
+                }
+            } else {
+                $add_error = "Loại file không hợp lệ hoặc kích thước quá lớn khi thêm.";
+            }
+        }
 
-         if (empty($add_error)) {
-             $product_code = generate_product_code($category, $pdo);
-             try {
+        if (empty($add_error)) {
+            // --- Lấy màu từ checkbox ---
+            $colors = $_POST['product_colors'] ?? [];
+            $color = implode(',', array_map('trim', $colors));
 
+            $product_code = generate_product_code($category, $pdo);
+            try {
+                $sql_insert = "INSERT INTO products (name, price, color, category, image, product_code)
+                               VALUES (:name, :price, :color, :category, :image, :code)";
 
-$sql_insert = "INSERT INTO products (name, price, color, category, image, product_code)
-               VALUES (:name, :price, :color, :category, :image, :code)";
+                $stmt_insert = $pdo->prepare($sql_insert);
+                $stmt_insert->execute([
+                    'name' => $name,
+                    'price' => $price,
+                    'color' => $color,
+                    'category' => $category,
+                    'image' => $image_name,
+                    'code' => $product_code
+                ]);
 
-               $stmt_insert = $pdo->prepare($sql_insert);
-               $stmt_insert->execute([
-              'name' => $name,
-              'price' => $price,
-              'color' => $color,
-              'category' => $category,
-              'image' => $image_name,
-              'code' => $product_code
-            ]);
+                header("Location: {$_SERVER['PHP_SELF']}?status=added");
+                exit;
+            } catch (PDOException $e) {
+                $add_error = "Có lỗi khi thêm sản phẩm vào cơ sở dữ liệu.";
+                error_log("Lỗi thêm sản phẩm: " . $e->getMessage());
+                if (strpos($e->getMessage(), 'Duplicate entry') !== false && strpos($e->getMessage(), 'product_code') !== false) {
+                    $add_error .= " Mã sản phẩm bị trùng, vui lòng thử lại.";
+                }
+            }
+        }
+    }
 
-
-                 header("Location: {$_SERVER['PHP_SELF']}?status=added");
-                 exit;
-             } catch (PDOException $e) {
-                 $add_error = "Có lỗi khi thêm sản phẩm vào cơ sở dữ liệu.";
-                 error_log("Lỗi thêm sản phẩm: " . $e->getMessage());
-                 if (strpos($e->getMessage(), 'Duplicate entry') !== false && strpos($e->getMessage(), 'product_code') !== false) {
-                      $add_error .= " Mã sản phẩm bị trùng, vui lòng thử lại.";
-                 }
-             }
-         }
-     }
-      // Nếu có lỗi $add_error, không redirect, để form hiển thị lại với lỗi
+    // Nếu có lỗi $add_error, không redirect, để form hiển thị lại với lỗi
 }
-
 
 
 
