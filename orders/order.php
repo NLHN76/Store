@@ -1,35 +1,34 @@
 <?php
-session_start(); 
+header('Content-Type: application/json');
 
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "store";
 
-// Lấy user_code từ session (người dùng đã đăng nhập)
-$user_code = $_SESSION['user_code'];
-
-// Kết nối cơ sở dữ liệu 
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$dbname = 'store';
-$conn = new mysqli($host, $username, $password, $dbname);
-
-// Kiểm tra kết nối
+// Kết nối DB
+$conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+    echo json_encode(['status'=>'error','message'=>'Kết nối CSDL thất bại']);
+    exit;
 }
 
-// Truy vấn lấy đơn hàng của người dùng
-$sql = "SELECT * FROM payment WHERE user_code = '$user_code'";
+// Lấy tất cả đơn hàng
+$sql = "SELECT id, customer_name, customer_email, customer_phone, customer_address,
+        user_code, product_name, category, color, product_quantity, total_price, 
+        order_date, status
+        FROM payment ORDER BY order_date DESC";
+
 $result = $conn->query($sql);
 
-if ($result->num_rows > 0) {
-    // Lấy tất cả các đơn hàng và trả về dưới dạng JSON
-    $orders = [];
-    while ($row = $result->fetch_assoc()) {
+$orders = [];
+if($result){
+    while($row = $result->fetch_assoc()){
         $orders[] = $row;
     }
     echo json_encode($orders);
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Không có đơn hàng nào']);
+    echo json_encode(['status'=>'error','message'=>'Lấy dữ liệu thất bại']);
 }
 
 $conn->close();

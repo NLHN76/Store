@@ -1,112 +1,99 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    margin: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background:#f0f2f5;
+    margin:0; padding:20px;
+}
+h1 { text-align:center; margin-bottom:20px; color:#333; }
+
+/* Search form */
+form {
+    text-align:center;
+    margin-bottom:20px;
+}
+form input[type="text"]{
+    width:200px;
+    padding:6px 10px;
+    border-radius:4px;
+    border:1px solid #ccc;
+}
+form button{
+    padding:6px 12px;
+    border:none;
+    background:#007bff;
+    color:#fff;
+    border-radius:4px;
+    cursor:pointer;
+}
+form button:hover { background:#0056b3; }
+
+/* Table wrapper scroll */
+.table-wrapper{
+    overflow-x:auto;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:1000px; /* đảm bảo đủ rộng nếu nhiều cột */
+}
+th,td{
+    padding:10px;
+    border:1px solid #ddd;
+    text-align:left;
+    vertical-align:middle;
+}
+th{
+    background:#343a40;
+    color:#fff;
+    text-align:center;
+}
+tbody tr:hover{ background:#f1f1f1; transition:0.2s; }
+
+/* Avatar */
+.avatar{
+    width:35px;
+    height:35px;
+    border-radius:50%;
+    object-fit:cover;
+    border:1px solid #ccc;
 }
 
-.container {
-    max-width: 1200px;
-    margin: auto;
-    background: #fff;
-    padding: 15px 30px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+/* Buttons */
+button.delete-btn{
+    background:#dc3545;
+    color:#fff;
+    border:none;
+    padding:5px 10px;
+    border-radius:4px;
+    cursor:pointer;
+}
+button.delete-btn:hover{ background:#a71d2a; }
+
+/* Dropdown status */
+select{
+    padding:4px 6px;
+    border-radius:4px;
+    border:1px solid #ccc;
+    cursor:pointer;
+    font-size:0.9em;
 }
 
-h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    color: #333;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-table thead tr {
-    background-color: #007bff;
-    color: white;
-}
-
-table th, table td {
-    padding: 10px 8px;
-    border: 1px solid #ddd;
-    font-size: 14px;
-}
-
-table tbody tr:hover {
-    background-color: #f1f1f1;
-}
-
-.no-orders {
-    text-align: center;
-    font-size: 16px;
-    color: #777;
-}
-
-.action-buttons button {
-    margin: 0 5px;
-    padding: 6px 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.delete-btn {
-    background-color: #dc3545;
-    color: white;
-}
-
-.delete-btn:hover {
-    background-color: #c82333;
-}
-
-.export-btn {
-    background-color: #28a745;
-    color: white;
-}
-
-.export-btn:hover {
-    background-color: #218838;
-}
-
-.back-button img {
-    width: 30px;
-    height: 30px;
-    margin-bottom: 15px;
-    cursor: pointer;
-}
-
-@media (max-width: 768px) {
-    table thead {
-        display: none;
+/* Responsive card view */
+@media screen and (max-width:1000px){
+    table, thead, tbody, th, td, tr{
+        display:block;
     }
-
-    table, tbody, tr, td {
-        display: block;
-        width: 100%;
+    thead tr { display:none; }
+    tr { margin-bottom:15px; background:#fff; border-radius:8px; padding:10px; box-shadow:0 0 5px rgba(0,0,0,0.1);}
+    td{
+        border:none;
+        display:flex;
+        justify-content:space-between;
+        padding:8px 10px;
     }
-
-    tr {
-        margin-bottom: 15px;
-        border: 1px solid #ddd;
-        padding: 10px;
+    td:before{
+        content:attr(data-label);
+        font-weight:bold;
+        flex:1;
     }
-
-    td {
-        text-align: right;
-        padding-left: 50%;
-        position: relative;
-    }
-
-    td::before {
-        content: attr(data-label);
-        position: absolute;
-        left: 10px;
-        width: 45%;
-        padding-left: 10px;
-        font-weight: bold;
-        text-align: left;
-    }
+    td span, td select, td button { flex:1; text-align:right; }
 }
-

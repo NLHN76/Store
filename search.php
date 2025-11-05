@@ -113,6 +113,7 @@ $conn->close();
 // --- Hiển thị kết quả HTML ---
 if (!empty($products)) {
     foreach ($products as $product) {
+        $product_code = urlencode($product['product_code']);
         echo '
             <div class="product" data-name="' . htmlspecialchars($product['name']) . '" data-price="' . $product['price'] . '" data-code="' . htmlspecialchars($product['product_code']) . '" data-id="' . $product['id'] .'">
                 <img src="' . htmlspecialchars($product['image']) . '" alt="' . htmlspecialchars($product['name']) . '" onerror="this.onerror=null; this.src=\'admin/uploads/placeholder.png\';">
@@ -121,9 +122,13 @@ if (!empty($products)) {
                 <p><strong>Loại sản phẩm:</strong> ' . htmlspecialchars($product['category']) . '</p>
                 <p>Giá: ' . number_format($product['price'], 0, ',', '.') . ' VNĐ</p>
                 <button onclick="addToCart(this)">Thêm vào giỏ hàng</button>
+                <a href="product_detail.php?code=' . $product_code . '">
+                    <button>Xem chi tiết</button>
+                </a>
             </div>';
     }
-} else {
+}
+else {
     // Thông báo không tìm thấy phù hợp hơn
     if (!empty($selected_category) && !empty($search_query)) {
         echo '<h2>Không tìm thấy sản phẩm nào thuộc loại "' . htmlspecialchars($selected_category) . '" phù hợp với "' . htmlspecialchars($search_query) . '"!</h2>';
