@@ -333,41 +333,70 @@ function searchProduct(event) {
 
 
 
-// Lấy dữ liệu trang chủ từ admin 
+
 fetch('get_home.php')
-.then(response => response.json()) // Chuyển đổi phản hồi sang JSON
-.then(data => {
-const homeSection = document.getElementById('home'); // Chọn phần tử section với id là "home"
+  .then(response => response.json())
+  .then(data => {
+    const homeSection = document.getElementById('home');
+    homeSection.innerHTML = ''; // Xóa nội dung cũ
 
-// Duyệt qua từng phần tử trong mảng dữ liệu và hiển thị
-data.forEach(item => {
-    // Tạo phần tử div cho từng mục khuyến mãi
-    const promoDiv = document.createElement('div');
-    promoDiv.classList.add('promo-item'); 
+    // --- Banner ---
+    if (data.banner) {
+      const bannerDiv = document.createElement('div');
+      bannerDiv.classList.add('banner');
 
-    // Tạo phần tử cho tiêu đề
-    const title = document.createElement('h3');
-    title.textContent = item.title;
+      const bannerImg = document.createElement('img');
+      bannerImg.src = data.banner.image;
+      bannerImg.alt = data.banner.title;
 
-    // Tạo phần tử cho mô tả
-    const description = document.createElement('p');
-    description.textContent = item.description;
+      const bannerTitle = document.createElement('h1');
+      bannerTitle.textContent = data.banner.title;
 
-    // Tạo phần tử cho hình ảnh
-    const image = document.createElement('img');
-    image.src = item.image;
-    image.alt = item.title;
+      const bannerDesc = document.createElement('p');
+      bannerDesc.textContent = data.banner.description;
 
-    // Thêm tất cả các phần tử vào promoDiv
-    promoDiv.appendChild(title);
-    promoDiv.appendChild(image);
-    promoDiv.appendChild(description);
+      bannerDiv.appendChild(bannerImg);
+      bannerDiv.appendChild(bannerTitle);
+      bannerDiv.appendChild(bannerDesc);
+      homeSection.appendChild(bannerDiv);
+    }
 
-    // Thêm promoDiv vào section "home"
-    homeSection.appendChild(promoDiv);
-});
-})
-.catch(error => console.error('Error:', error)); // Bắt lỗi nếu có
+    // --- Khuyến mãi ---
+    if (data.promotions && data.promotions.length > 0) {
+      const promoSection = document.createElement('div');
+      promoSection.classList.add('promo-grid');
+
+      data.promotions.forEach(item => {
+        const promoDiv = document.createElement('div');
+        promoDiv.classList.add('promo-item');
+
+        const title = document.createElement('h3');
+        title.textContent = item.title;
+
+        const description = document.createElement('p');
+        description.textContent = item.description;
+
+        const image = document.createElement('img');
+        image.src = item.image;
+        image.alt = item.title;
+
+        const ctaBtn = document.createElement('a');
+        ctaBtn.href = item.link || "#";
+        ctaBtn.textContent = "Xem chi tiết";
+        ctaBtn.classList.add('cta-btn');
+
+        promoDiv.appendChild(image);
+        promoDiv.appendChild(title);
+        promoDiv.appendChild(description);
+        promoDiv.appendChild(ctaBtn);
+
+        promoSection.appendChild(promoDiv);
+      });
+
+      homeSection.appendChild(promoSection);
+    }
+  })
+  .catch(error => console.error('Error:', error));
 
 
 

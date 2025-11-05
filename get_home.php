@@ -1,37 +1,26 @@
 <?php
+$dsn = 'mysql:host=localhost;dbname=store;charset=utf8';
+$username = 'root';
+$password = '';
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "store";
+$pdo = new PDO($dsn,$username,$password);
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Kết nối tới cơ sở dữ liệu
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Lấy banner
+$stmt = $pdo->query("SELECT * FROM home WHERE id=1");
+$banner = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Kiểm tra kết nối
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
+// Lấy khuyến mãi
+$stmt = $pdo->query("SELECT * FROM promotions ORDER BY id DESC");
+$promotions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Thêm đường dẫn ảnh
+if(!empty($banner['image'])) $banner['image'] = 'admin/home/uploads/'.$banner['image'];
+foreach($promotions as &$p){
+    if(!empty($p['image'])) $p['image'] = 'admin/home/uploads/'.$p['image'];
 }
 
-// Truy vấn bảng home
-$sql = "SELECT title, description, image FROM home";
-$result = $conn->query($sql);
-
-$homeData = [];
-if ($result->num_rows > 0) {
-    // Lưu dữ liệu vào mảng
-    while ($row = $result->fetch_assoc()) {
-        $row['image'] = 'admin/uploads/' . $row['image']; 
-        $homeData[] = $row;
-    }
-}
-
-// Đóng kết nối
-$conn->close();
-
-// Trả dữ liệu dưới dạng JSON
+// Trả JSON
 header('Content-Type: application/json');
-echo json_encode($homeData);
+echo json_encode(['banner'=>$banner,'promotions'=>$promotions]);
 ?>
-
-

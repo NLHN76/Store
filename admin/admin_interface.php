@@ -173,7 +173,7 @@
         </header>
         <aside class="sidebar">
             <ul>
-                <li class="active"><a href="admin_home.php"><i class="fas fa-home"></i> Quản lý Trang chủ</a></li>
+                <li class="active"><a href="home/admin_home.php"><i class="fas fa-home"></i> Quản lý Trang chủ</a></li>
                 <li><a href="admin_users.php"><i class="fas fa-users"></i> Quản lý Khách hàng</a></li>
                 <li><a href="admin_products.php"><i class="fas fa-boxes"></i> Quản lý sản phẩm</a></li>
                 <li><a href="admin_online.php"><i class="fas fa-shopping-cart"></i> Đơn hàng online</a></li>
