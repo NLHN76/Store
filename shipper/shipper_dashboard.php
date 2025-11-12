@@ -20,7 +20,6 @@ $avatar_login = $avatar_row['avatar'] ?? 'https://via.placeholder.com/40';
 if(isset($_POST['action'])){
     $action = $_POST['action'];
 
-    // Nhận đơn
     if($action=="receive_order"){
         $order_id = intval($_POST['order_id']);
         $stmt = $conn->prepare("
@@ -34,7 +33,6 @@ if(isset($_POST['action'])){
         exit;
     }
 
-    // Cập nhật trạng thái đơn
     if($action=="update_status"){
         $order_id = intval($_POST['order_id']);
         $new_status = $_POST['new_status'];
@@ -54,7 +52,6 @@ if(isset($_POST['action'])){
         exit;
     }
 
-    // Cập nhật thông tin shipper
     if($action=="update_shipper_info"){
         $id = intval($_POST['shipper_id']);
         $name = $_POST['name'];
@@ -64,7 +61,6 @@ if(isset($_POST['action'])){
         $cmt = $_POST['cmt'] ?? '';
         $password = $_POST['password'] ?? '';
 
-        // Upload avatar
         $avatar_path = '';
         if(isset($_FILES['avatar']) && $_FILES['avatar']['error']==0){
             $ext = pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION);
@@ -72,7 +68,6 @@ if(isset($_POST['action'])){
             move_uploaded_file($_FILES['avatar']['tmp_name'], $avatar_path);
         }
 
-        // Build SQL
         $fields = "name=?, email=?, phone=?, dob=?, cmt=?";
         $types = "sssss";
         $params = [$name,$email,$phone,$dob,$cmt];
@@ -82,7 +77,6 @@ if(isset($_POST['action'])){
             $types.="s";
             $params[] = password_hash($password, PASSWORD_DEFAULT);
         }
-
         if($avatar_path){
             $fields.=", avatar=?";
             $types.="s";
@@ -92,15 +86,14 @@ if(isset($_POST['action'])){
         $stmt = $conn->prepare("UPDATE shipper SET $fields WHERE id=?");
         $types.="i";
         $params[] = $id;
-
         $stmt->bind_param($types, ...$params);
         echo $stmt->execute()?"success":$conn->error;
         exit;
     }
 }
 
-// Lấy danh sách đơn hàng với avatar shipper
-$sql = "SELECT p.*, s.name AS shipper_name, s.avatar AS shipper_avatar, s.email AS shipper_email, s.phone AS shipper_phone, p.receive_date
+// Lấy danh sách đơn hàng kèm thông tin shipper
+$sql = "SELECT p.*, s.name AS shipper_name, s.avatar AS shipper_avatar, s.email AS shipper_email, s.phone AS shipper_phone 
         FROM payment p
         LEFT JOIN shipper s ON p.shipper_id = s.id
         ORDER BY p.order_date ASC";
@@ -121,6 +114,8 @@ $result = $conn->query($sql);
 .status-dangxuly { background-color: #fff3cd; }
 .status-danggiaohang { background-color: #cce5ff; }
 .status-dagiao { background-color: #d6d8d9; }
+.color-box { width:30px; height:20px; display:inline-block; border:1px solid #ccc; vertical-align:middle; margin-left:5px; }
+.collapse-row { background-color:#f8f9fa; }
 </style>
 </head>
 <body>
@@ -130,194 +125,117 @@ $result = $conn->query($sql);
         <div class="d-flex align-items-center gap-2">
             <img src="<?= htmlspecialchars($avatar_login) ?>" class="avatar-login" data-bs-toggle="tooltip" title="Click để chỉnh sửa thông tin">
             <span>Xin chào, <?= htmlspecialchars($shipper_name) ?></span>
-            <a href="shipper_logout.php" class="btn btn-sm btn-danger ms-3">Đăng xuất</a></div>
+            <a href="shipper_logout.php" class="btn btn-sm btn-danger ms-3">Đăng xuất</a>
+        </div>
     </div>
 
-   <div class="table-responsive">
-  <table class="table table-bordered align-middle">
-    <thead class="table-dark">
-      <tr>
-        <th>ID</th>
-        <th>Khách hàng</th>
-        <th>Sản phẩm</th>
-        <th>Tổng tiền</th>
-        <th>Trạng thái</th>
-        <th>Shipper</th>
-        <th>Hành động</th>
-      </tr>
-    </thead>
-    <tbody>
-      <?php if($result->num_rows > 0): ?>
-        <?php while($row = $result->fetch_assoc()): ?>
-          <?php
-            $status_class = '';
-            if($row['status']=='Đang xử lý') $status_class='status-dangxuly';
-            elseif($row['status']=='Đang giao hàng') $status_class='status-danggiaohang';
-            elseif($row['status']=='Đã giao hàng') $status_class='status-dagiao';
-
-            // Xác định trạng thái có thể chỉnh
-            $editable_statuses = [];
-            if($row['shipper_id'] == $shipper_id){
-                if($row['status']=='Đang xử lý'){
-                    $editable_statuses = ['Đang xử lý','Đang giao hàng','Đã giao hàng'];
-                } elseif($row['status']=='Đang giao hàng'){
-                    $editable_statuses = ['Đang giao hàng','Đã giao hàng'];
-                }
-            }
-          ?>
-          
-          <!-- Hàng chính -->
-          <tr class="accordion-toggle <?= $status_class ?>" 
-              data-bs-toggle="collapse" 
-              data-bs-target="#order<?= $row['id'] ?>" 
-              style="cursor:pointer;">
-            <td>#<?= $row['id'] ?></td>
-            <td>
-              <b><?= htmlspecialchars($row['customer_name']) ?></b><br>
-              <small class="text-muted"><?= htmlspecialchars($row['customer_phone']) ?></small>
-            </td>
-            <td><?= htmlspecialchars($row['product_name']) ?></td>
-            <td><?= number_format($row['total_price'], 0, ",", ".") ?>₫</td>
-            
-            <!-- Trạng thái -->
-            <td>
-              <?php if(!empty($editable_statuses)): ?>
-                <select class="form-select form-select-sm status-select" data-id="<?= $row['id'] ?>">
-                  <?php foreach($editable_statuses as $s): ?>
-                    <option value="<?= $s ?>" <?= $row['status']==$s?'selected':'' ?>><?= $s ?></option>
-                  <?php endforeach; ?>
-                </select>
-              <?php else: ?>
-                <span class="text-muted"><?= htmlspecialchars($row['status']) ?></span>
-              <?php endif; ?>
-            </td>
-
-            <!-- Shipper -->
-            <td>
-              <?php if($row['shipper_id']): ?>
-                <div class="d-flex align-items-center gap-2">
-                  <img src="<?= htmlspecialchars($row['shipper_avatar'] ?? 'https://via.placeholder.com/30') ?>" 
-                       class="avatar-order" data-bs-toggle="tooltip" data-bs-html="true"
-                       title="
-                         <b>Shipper:</b> <?= htmlspecialchars($row['shipper_name']) ?><br>
-                         <b>Email:</b> <?= htmlspecialchars($row['shipper_email']) ?><br>
-                         <b>SĐT:</b> <?= htmlspecialchars($row['shipper_phone']) ?><br>
-                         <b>Nhận đơn:</b> <?= $row['receive_date'] ? date('d/m/Y H:i', strtotime($row['receive_date'])) : '' ?>
-                       ">
-                  <span><?= htmlspecialchars($row['shipper_name']) ?></span>
-                </div>
-              <?php else: ?>
-                <span class="text-secondary">Chưa nhận</span>
-              <?php endif; ?>
-            </td>
-
-            <!-- Hành động -->
-            <td>
-              <?php if($row['status']=='Đang xử lý' && is_null($row['shipper_id'])): ?>
-                <button class="btn btn-success btn-sm receive-btn" data-id="<?= $row['id'] ?>">Nhận đơn</button>
-              <?php endif; ?>
-            </td>
-          </tr>
-
-          <!-- Hàng chi tiết -->
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle">
+        <thead class="table-dark">
           <tr>
-            <td colspan="7" class="p-0">
-              <div id="order<?= $row['id'] ?>" class="collapse bg-light border-top">
-                <div class="p-3">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <p><b>📞 Điện thoại:</b> <?= htmlspecialchars($row['customer_phone']) ?></p>
-                      <p><b>🏠 Địa chỉ:</b> <?= htmlspecialchars($row['customer_address']) ?></p>
-                      <p><b>📅 Ngày đặt:</b> <?= htmlspecialchars($row['order_date']) ?></p>
-                    </div>
-                    <div class="col-md-6">
-                      <p><b>📦 Sản phẩm:</b> <?= htmlspecialchars($row['product_name']) ?></p>
-                      <p><b>🔢 Số lượng:</b> <?= $row['product_quantity'] ?></p>
-                      <p><b>💰 Tổng tiền:</b> <?= number_format($row['total_price'], 0, ",", ".") ?>₫</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </td>
+            <th>ID</th>
+            <th>Khách hàng</th>
+            <th>Sản phẩm</th>
+            <th>Màu sắc</th>
+            <th>Tổng tiền</th>
+            <th>Trạng thái</th>
+            <th>Shipper</th>
+            <th>Hành động</th>
           </tr>
+        </thead>
+        <tbody>
+        <?php if($result->num_rows > 0): ?>
+            <?php while($row = $result->fetch_assoc()): ?>
+                <?php
+                    $status_class = '';
+                    if($row['status']=='Đang xử lý') $status_class='status-dangxuly';
+                    elseif($row['status']=='Đang giao hàng') $status_class='status-danggiaohang';
+                    elseif($row['status']=='Đã giao hàng') $status_class='status-dagiao';
 
-        <?php endwhile; ?>
-      <?php else: ?>
-        <tr><td colspan="7" class="text-center text-muted">Không có đơn hàng</td></tr>
-      <?php endif; ?>
-    </tbody>
-  </table>
-</div>
+                    $editable_statuses = [];
+                    if($row['shipper_id'] == $shipper_id){
+                        if($row['status']=='Đang xử lý'){
+                            $editable_statuses = ['Đang xử lý','Đang giao hàng','Đã giao hàng'];
+                        } elseif($row['status']=='Đang giao hàng'){
+                            $editable_statuses = ['Đang giao hàng','Đã giao hàng'];
+                        }
+                    }
+                ?>
+                <tr class="<?= $status_class ?>" data-bs-toggle="collapse" data-bs-target="#order<?= $row['id'] ?>" style="cursor:pointer;">
+                    <td>#<?= $row['id'] ?></td>
+                    <td>
+                        <b><?= htmlspecialchars($row['customer_name']) ?></b><br>
+                        <small class="text-muted"><?= htmlspecialchars($row['customer_phone']) ?></small>
+                    </td>
+                    <td><?= htmlspecialchars($row['product_name']) ?></td>
+                    <td>
+                        <?= htmlspecialchars($row['color']) ?>
+                       
+                    </td>
+                    <td><?= number_format($row['total_price'],0,",",".") ?>₫</td>
+                    <td>
+                        <?php if(!empty($editable_statuses)): ?>
+                        <select class="form-select form-select-sm status-select" data-id="<?= $row['id'] ?>">
+                            <?php foreach($editable_statuses as $s): ?>
+                                <option value="<?= $s ?>" <?= $row['status']==$s?'selected':'' ?>><?= $s ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <?php else: ?>
+                        <span class="text-muted"><?= htmlspecialchars($row['status']) ?></span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if($row['shipper_id']): ?>
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="<?= htmlspecialchars($row['shipper_avatar'] ?? 'https://via.placeholder.com/30') ?>" class="avatar-order">
+                            <span><?= htmlspecialchars($row['shipper_name']) ?></span>
+                        </div>
+                        <?php else: ?>
+                        <span class="text-secondary">Chưa nhận</span>
+                        <?php endif; ?>
+                    </td>
+                    <td>
+                        <?php if($row['status']=='Đang xử lý' && is_null($row['shipper_id'])): ?>
+                            <button class="btn btn-success btn-sm receive-btn" data-id="<?= $row['id'] ?>">Nhận đơn</button>
+                        <?php endif; ?>
+                    </td>
+                </tr>
 
-<!-- Modal chỉnh sửa thông tin shipper -->
-<div class="modal fade" id="editShipperModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form id="editShipperForm" enctype="multipart/form-data">
-        <div class="modal-header">
-          <h5 class="modal-title">Chỉnh sửa thông tin</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <input type="hidden" name="shipper_id" value="<?= $shipper_id ?>">
-          <div class="mb-3 text-center">
-            <img id="avatarPreview" src="<?= htmlspecialchars($avatar_login) ?>" 
-                 style="width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:10px;">
-          </div>
-          <div class="mb-3">
-            <label>Ảnh đại diện</label>
-            <input type="file" name="avatar" class="form-control" id="avatarInput">
-          </div>
-          <div class="mb-3"><label>Tên</label><input type="text" name="name" class="form-control" value="<?= htmlspecialchars($shipper_name) ?>" required></div>
-          <div class="mb-3"><label>Email</label><input type="email" name="email" class="form-control" value="<?= htmlspecialchars($avatar_row['email']) ?>" required></div>
-          <div class="mb-3"><label>Số điện thoại</label><input type="text" name="phone" class="form-control" value="<?= htmlspecialchars($avatar_row['phone']) ?>"></div>
-          <div class="mb-3"><label>Ngày sinh</label><input type="date" name="dob" class="form-control" value="<?= htmlspecialchars($avatar_row['dob'] ?? '') ?>"></div>
-          <div class="mb-3"><label>CMND/CCCD</label><input type="text" name="cmt" class="form-control" value="<?= htmlspecialchars($avatar_row['cmt'] ?? '') ?>"></div>
-          <div class="mb-3"><label>Mật khẩu mới (nếu muốn)</label><input type="password" name="password" class="form-control"></div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
-          <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-        </div>
-      </form>
+                <!-- Collapse row hiển thị chi tiết đơn hàng -->
+                <tr class="collapse-row">
+                    <td colspan="8" class="p-0">
+                        <div id="order<?= $row['id'] ?>" class="collapse">
+                            <div class="p-3">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p><b>📞 Điện thoại:</b> <?= htmlspecialchars($row['customer_phone']) ?></p>
+                                        <p><b>🏠 Địa chỉ:</b> <?= htmlspecialchars($row['customer_address']) ?></p>
+                                        <p><b>📅 Ngày đặt:</b> <?= htmlspecialchars($row['order_date']) ?></p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <p><b>📦 Sản phẩm:</b> <?= htmlspecialchars($row['product_name']) ?></p>
+                                        <p><b>🔢 Số lượng:</b> <?= $row['product_quantity'] ?></p>
+                                        <p><b>🎨 Màu sắc:</b> <?= htmlspecialchars($row['color']) ?> </p>
+                                        <p><b>💰 Tổng tiền:</b> <?= number_format($row['total_price'],0,",",".") ?>₫</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+
+            <?php endwhile; ?>
+        <?php else: ?>
+            <tr><td colspan="8" class="text-center text-muted">Không có đơn hàng</td></tr>
+        <?php endif; ?>
+        </tbody>
+      </table>
     </div>
-  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 $(document).ready(function(){
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    tooltipTriggerList.map(el => new bootstrap.Tooltip(el,{html:true}));
-
-    $(".avatar-login").click(()=>$("#editShipperModal").modal('show'));
-
-    $("#avatarInput").change(function(){
-        const file = this.files[0];
-        if(file){
-            const reader = new FileReader();
-            reader.onload = e=>$("#avatarPreview").attr("src", e.target.result);
-            reader.readAsDataURL(file);
-        }
-    });
-
-    $("#editShipperForm").submit(function(e){
-        e.preventDefault();
-        var formData = new FormData(this);
-        formData.append("action","update_shipper_info");
-        $.ajax({
-            url:'shipper_dashboard.php',
-            type:'POST',
-            data: formData,
-            contentType:false,
-            processData:false,
-            success: function(data){
-                if(data=="success"){ alert("Cập nhật thông tin thành công!"); location.reload(); }
-                else alert("Lỗi: "+data);
-            }
-        });
-    });
-
     $(".receive-btn").click(function(){
         var order_id = $(this).data("id");
         $.post("shipper_dashboard.php",{action:"receive_order",order_id:order_id},function(data){

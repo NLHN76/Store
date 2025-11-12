@@ -87,6 +87,7 @@ h1 { text-align: center; color: #222; font-size: 1.8em; margin-bottom: 15px; tex
 <p><span class='label'>Mã Sản Phẩm:</span> <?= htmlspecialchars($row["product_code"]) ?></p>
 <p><span class='label'>Sản Phẩm:</span> <?= htmlspecialchars($row["product_name"]) ?></p>
 <p><span class='label'>Loại Sản Phẩm:</span> <?= htmlspecialchars($row["category"]) ?></p>
+<p><span class='label'>Màu Sắc:</span> <?= htmlspecialchars($row["color"] ?: '-') ?></p>
 <p><span class='label'>Số Lượng:</span> <?= htmlspecialchars($row["product_quantity"]) ?></p>
 </div>
 <div class='line'></div>
@@ -145,6 +146,9 @@ $all_statuses = array_keys($status_colors);
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<a class="back-button" href="admin_interface.php" title="Quay lại trang quản trị">
+  <img src="uploads/exit.jpg" alt="Quay lại" style="width:30px; height:50px; object-fit:cover; border-radius:5px;">
+</a>
 <title>Quản Lý Đơn Hàng</title>
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <style>
@@ -181,7 +185,7 @@ function updateStatus(order_id, select){
 }
 
 $(document).ready(function(){
-    setInterval(loadOrders, 5000); // tự động load lại mỗi 5 giây
+    setInterval(loadOrders, 5000);
 });
 </script>
 </head>
@@ -196,7 +200,7 @@ $(document).ready(function(){
 <thead>
 <tr>
 <th>Mã đơn</th><th>Ngày Đặt</th><th>Tên KH</th><th>Email</th><th>SĐT</th><th>Địa Chỉ</th>
-<th>Mã SP</th><th>Sản Phẩm</th><th>Loại SP</th><th>Số Lượng</th><th>Tổng Tiền</th>
+<th>Mã SP</th><th>Sản Phẩm</th><th>Loại SP</th><th>Màu Sắc</th><th>Số Lượng</th><th>Tổng Tiền</th>
 <th>Mã KH</th><th>Trạng Thái</th><th>Shipper</th><th>Hành Động</th>
 </tr>
 </thead>
@@ -215,6 +219,7 @@ while($row=$result->fetch_assoc()):
 <td><?=htmlspecialchars($row['product_code'])?></td>
 <td><?=htmlspecialchars($row['product_name'])?></td>
 <td><?=htmlspecialchars($row['category'])?></td>
+<td><?=htmlspecialchars($row['color'] ?: '-')?></td>
 <td><?=$row['product_quantity']?></td>
 <td><?=number_format($row['total_price'],0,",",".")?></td>
 <td><?=htmlspecialchars($row['user_code']?:'-')?></td>
@@ -222,7 +227,7 @@ while($row=$result->fetch_assoc()):
 <select onchange="updateStatus(<?=$row['id']?>,this)" class="status-select">
 <?php
 foreach($all_statuses as $s){
-    $sel=($row['status']==$s)?"selected":"";
+    $sel=($row['status']==$s)?"selected":""; 
     echo "<option value=\"$s\" $sel>$s</option>";
 }
 ?>
@@ -244,7 +249,7 @@ foreach($all_statuses as $s){
 </td>
 </tr>
 <?php endwhile; else: ?>
-<tr><td colspan="15" style="text-align:center;">Không có đơn hàng nào</td></tr>
+<tr><td colspan="16" style="text-align:center;">Không có đơn hàng nào</td></tr>
 <?php endif;?>
 </tbody>
 </table>

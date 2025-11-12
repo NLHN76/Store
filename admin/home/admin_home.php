@@ -183,6 +183,7 @@ th, td {
 </head>
 <body>
 <div class="container">
+    
     <h2>Quản lý Trang Chủ</h2>
 
     <!-- Banner -->

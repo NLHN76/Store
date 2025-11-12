@@ -19,10 +19,6 @@
                       <i class="fas fa-box" style="color: white; margin-right: 6px;"></i>
                       Sản Phẩm </a></li>
                   
-                <li><a href="#search" onclick="showSection('search')">
-                      <i class="fas fa-search" style="color: white; margin-right: 6px;"></i>
-                      Tìm kiếm</a></li>
-                  
                   <li><a href="#cart" onclick="showSection('cart')">
                       <i class="fas fa-shopping-cart" style="color: white; margin-right: 6px;"></i>
                       Giỏ Hàng (<span id="cart-quantity">0</span>)</a></li>
@@ -46,12 +42,15 @@
             <h2>Chào Mừng Đến Với Cửa Hàng Chúng Tôi! </h2>
         </section>
      
-        
-        <section id="products">
-            <h2>Sản Phẩm</h2>
-            <div id="cart-items"></div>
-        </section>
-         
+                 <section id="products">
+    <!-- Thanh tìm kiếm -->
+    <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm theo loại , tên hoặc mã...." 
+           style="margin-bottom: 12px; padding: 6px; width:20%; border-radius: 6px; border: 1px solid #ccc;">
+
+    <!-- Nơi hiển thị sản phẩm -->
+    <div id="products-container"></div>
+</section>
+
 
         <section id="search">
             <h2>Tìm Kiếm Sản Phẩm</h2>

@@ -180,7 +180,7 @@
                 <li><a href="admin_contact.php"><i class="fas fa-envelope"></i> Liên hệ</a></li>
                 <li><a href="admin_report.php"><i class="fas fa-chart-bar"></i> Thống kê</a></li>
                <li> <a href="admin_chat.php"> <i class="fas fa-comments"></i> Hỗ trợ khách hàng </a></li>
-
+                <li> <a href="admin_inventory.php"> <i class="fas fa-warehouse"></i> Quản lý Kho </a></li>
             </ul>
         </aside>
         <main>
