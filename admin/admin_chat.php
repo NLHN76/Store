@@ -6,7 +6,12 @@ $conn = new mysqli("localhost", "root", "", "store");
 if ($conn->connect_error) die("Kết nối thất bại: " . $conn->connect_error);
 $conn->set_charset("utf8mb4");
 
-$role = $_SESSION['role'] ?? 'admin'; // admin
+// ======= Cấu hình số ngày giữ tin nhắn =======
+$daysToKeep = 1; 
+$conn->query("DELETE FROM message WHERE created_at < NOW() - INTERVAL $daysToKeep DAY");
+
+// Quyền admin
+$role = $_SESSION['role'] ?? 'admin'; 
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 /* === Gửi tin nhắn === */
@@ -37,7 +42,7 @@ if($action === 'users'){
         $users[] = [
             'user_id' => $row['user_id'],
             'user_name' => $row['user_name'],
-            'last_message' => '' // không cần tin nhắn mới nhất nữa
+            'last_message' => '' 
         ];
     }
     echo json_encode($users);
@@ -49,19 +54,19 @@ if($action === 'fetch'){
     $user_id = intval($_GET['user_id'] ?? 0);
     if(!$user_id) exit("Chưa chọn user!");
 
-   $stmt = $conn->prepare("SELECT sender_role, user_name, content FROM message WHERE user_id=? ORDER BY created_at ASC");
+    $stmt = $conn->prepare("SELECT sender_role, user_name, content FROM message WHERE user_id=? ORDER BY created_at ASC");
     $stmt->bind_param("i",$user_id);
     $stmt->execute();
     $res = $stmt->get_result();
 
     $html = '';
     while($row = $res->fetch_assoc()){
-if($row['sender_role']==='user'){
-    $html .= '<div class="user-message"><strong>'.htmlspecialchars($row['user_name']).':</strong> '.htmlspecialchars($row['content']).'</div>';
-} else {
-    $html .= '<div class="bot-message"><strong>Bạn:</strong> '.htmlspecialchars($row['content']).'</div>';
-}
-
+        $content = nl2br(htmlspecialchars($row['content'])); // giữ xuống dòng
+        if($row['sender_role']==='user'){
+            $html .= '<div class="user-message"><strong>'.htmlspecialchars($row['user_name']).':</strong> '.$content.'</div>';
+        } else {
+            $html .= '<div class="bot-message"><strong>Bạn:</strong> '.$content.'</div>';
+        }
     }
     echo $html;
     exit;
@@ -78,129 +83,23 @@ $conn->close();
 <title>Admin Chat - Mobile Gear</title>
 <style>
 * { box-sizing: border-box; margin:0; padding:0; font-family:'Arial',sans-serif; }
-
-/* Layout gọn */
-body {
-    display: flex;
-    height: 80vh;
-    max-width: 900px;
-    margin: 20px auto;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    overflow: hidden;
-    background: #f0f2f5;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-}
-
-/* Danh sách user */
-.user-list {
-    width: 30%;
-    background: #fff;
-    border-right: 1px solid #ddd;
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-}
-.user-list h3 {
-    text-align: center;
-    padding: 12px 0;
-    background: #4caf50;
-    color: #fff;
-    font-size: 16px;
-}
-.user-item {
-    padding: 10px 12px;
-    cursor: pointer;
-    border-bottom: 1px solid #eee;
-    transition: background 0.2s;
-}
+body { display: flex; height: 80vh; max-width: 900px; margin: 20px auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden; background: #f0f2f5; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+.user-list { width: 30%; background: #fff; border-right: 1px solid #ddd; display: flex; flex-direction: column; overflow-y: auto; }
+.user-list h3 { text-align: center; padding: 12px 0; background: #4caf50; color: #fff; font-size: 16px; }
+.user-item { padding: 10px 12px; cursor: pointer; border-bottom: 1px solid #eee; transition: background 0.2s; }
 .user-item:hover { background: #f1f1f1; }
 .user-item.active { background: #e0f7e0; }
 .user-item strong { display: block; font-size: 14px; color: #333; }
 .user-item span { font-size: 12px; color: #666; margin-top: 3px; }
-
-/* Khung chat */
-.chat-box {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-.chat-header {
-    padding: 12px;
-    background: #fff;
-    border-bottom: 1px solid #ddd;
-    font-weight: bold;
-    color: #333;
-    font-size: 14px;
-}
-.chat-messages {
-    flex: 1;
-    padding: 10px;
-    overflow-y: auto;
-    background: #f9f9f9;
-    display: flex;
-    flex-direction: column;
-    gap: 8px; /* thêm khoảng cách giữa các tin nhắn */
-}
-
-/* Tin nhắn người dùng (bên trái) */
-.user-message {
-    background: #e2e2e2;   /* Xám nhạt */
-    color: #000;
-    text-align: left;
-    align-self: flex-start;
-    border-radius: 12px;
-    padding: 8px 12px;
-    margin-bottom: 8px;
-    max-width: 70%;
-    word-wrap: break-word;
-    font-size: 13px;
-}
-
-/* Tin nhắn admin (bên phải) */
-.bot-message {
-    background: #4caf50;   /* Xanh lá */
-    color: #fff;
-    text-align: right;
-    align-self: flex-end;
-    border-radius: 12px;
-    padding: 8px 12px;
-    margin-bottom: 8px;
-    max-width: 70%;
-    word-wrap: break-word;
-    font-size: 13px;
-}
-
-
-/* Khung nhập tin nhắn */
-.chat-input {
-    display: flex;
-    padding: 10px;
-    border-top: 1px solid #ddd;
-    background: #fff;
-}
-.chat-input input {
-    flex: 1;
-    padding: 8px 10px;
-    border-radius: 20px;
-    border: 1px solid #ccc;
-    outline: none;
-    font-size: 13px;
-}
-.chat-input button {
-    margin-left: 8px;
-    padding: 8px 16px;
-    background: #4caf50;
-    border: none;
-    color: #fff;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 13px;
-    transition: background 0.2s;
-}
+.chat-box { flex: 1; display: flex; flex-direction: column; }
+.chat-header { padding: 12px; background: #fff; border-bottom: 1px solid #ddd; font-weight: bold; color: #333; font-size: 14px; }
+.chat-messages { flex: 1; padding: 10px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 8px; }
+.user-message { background: #e2e2e2; color: #000; text-align: left; align-self: flex-start; border-radius: 12px; padding: 8px 12px; max-width: 70%; word-wrap: break-word; font-size: 13px; }
+.bot-message { background: #4caf50; color: #fff; text-align: right; align-self: flex-end; border-radius: 12px; padding: 8px 12px; max-width: 70%; word-wrap: break-word; font-size: 13px; }
+.chat-input { display: flex; padding: 10px; border-top: 1px solid #ddd; background: #fff; }
+.chat-input input { flex: 1; padding: 8px 10px; border-radius: 20px; border: 1px solid #ccc; outline: none; font-size: 13px; }
+.chat-input button { margin-left: 8px; padding: 8px 16px; background: #4caf50; border: none; color: #fff; border-radius: 20px; cursor: pointer; font-size: 13px; transition: background 0.2s; }
 .chat-input button:hover { background: #45a049; }
-
-/* Scrollbar nhỏ */
 .chat-messages::-webkit-scrollbar { width: 5px; }
 .chat-messages::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 </style>
@@ -231,15 +130,13 @@ function loadUsers(){
     .then(users => {
         const usersDiv = document.getElementById('users');
         usersDiv.innerHTML='';
-    users.forEach(u => {
-    const div = document.createElement('div');
-    div.className='user-item';
-    div.innerHTML = `<strong>${u.user_name}</strong><span>${u.last_message || ''}</span>`;
-
+        users.forEach(u => {
+            const div = document.createElement('div');
+            div.className='user-item';
+            div.innerHTML = `<strong>${u.user_name}</strong><span>${u.last_message || ''}</span>`;
             div.onclick = function(){
                 selectedUserId = u.user_id;
-              document.getElementById('chat-header').textContent = u.user_name;
-
+                document.getElementById('chat-header').textContent = u.user_name;
                 document.querySelectorAll('.user-item').forEach(d=>d.classList.remove('active'));
                 div.classList.add('active');
                 loadMessages();
@@ -288,7 +185,6 @@ document.getElementById('admin-input').addEventListener('keypress', function(e){
 setInterval(loadUsers,5000);
 setInterval(loadMessages,2000);
 loadUsers();
-
 </script>
 
 </body>

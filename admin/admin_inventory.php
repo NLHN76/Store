@@ -95,6 +95,33 @@ if(isset($_POST['update_stock'])){
     exit();
 }
 
+// ----------------- Xóa sản phẩm theo màu -----------------
+if(isset($_POST['delete_stock'])){
+    $product_id = $_POST['delete_product_id'];
+    $color = $_POST['delete_color'];
+
+    if($product_id && $color){
+        // Xóa trong bảng product_inventory
+        $stmt = $conn->prepare("DELETE FROM product_inventory WHERE product_id=? AND color=?");
+        $stmt->bind_param("is", $product_id, $color);
+        $stmt->execute();
+        $stmt->close();
+
+        // Ghi lịch sử xóa
+        $note = "Xóa màu '$color' khỏi sản phẩm ID #$product_id";
+        $stmt_hist = $conn->prepare(
+            "INSERT INTO inventory_history (product_id, color, quantity_change, import_price, type, note)
+             VALUES (?, ?, 0, 0, 'Xóa hàng', ?)"
+        );
+        $stmt_hist->bind_param("iss", $product_id, $color, $note);
+        $stmt_hist->execute();
+        $stmt_hist->close();
+    }
+
+    header("Location: admin_inventory.php");
+    exit();
+}
+
 // ----------------- Lọc lịch sử theo ngày -----------------
 $from_date = $_GET['from_date'] ?? '';
 $to_date = $_GET['to_date'] ?? '';
@@ -200,150 +227,159 @@ $stmt_hist->close();
 <body>
 <div class="container mt-4">
     <a class="back-button" href="admin_interface.php" title="Quay lại trang quản trị">
-  <img src="uploads/exit.jpg" alt="Quay lại" style="width:30px; height:50px; object-fit:cover; border-radius:5px;">
-</a>
-<h2>Quản lý tồn kho sản phẩm</h2>
+        <img src="uploads/exit.jpg" alt="Quay lại" style="width:30px; height:50px; object-fit:cover; border-radius:5px;">
+    </a>
+    <h2>Quản lý tồn kho sản phẩm</h2>
 
-<!-- Tabs -->
-<ul class="nav nav-tabs mt-3" id="tabMenu" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="stock-tab" data-bs-toggle="tab" data-bs-target="#stock" type="button" role="tab">Tồn kho</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab">Lịch sử</button>
-  </li>
-</ul>
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mt-3" id="tabMenu" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="stock-tab" data-bs-toggle="tab" data-bs-target="#stock" type="button" role="tab">Tồn kho</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="history-tab" data-bs-toggle="tab" data-bs-target="#history" type="button" role="tab">Lịch sử</button>
+        </li>
+    </ul>
 
-<div class="tab-content mt-3">
-  <!-- Tab Tồn kho -->
-  <div class="tab-pane fade show active" id="stock" role="tabpanel">
-    <div class="row">
-        <!-- Form nhập hàng -->
-        <div class="col-md-4">
-            <div class="card mb-4">
-                <div class="card-header">Nhập hàng mới</div>
-                <div class="card-body">
+    <div class="tab-content mt-3">
+        <!-- Tab Tồn kho -->
+        <div class="tab-pane fade show active" id="stock" role="tabpanel">
+            <div class="row">
+                <!-- Form nhập hàng -->
+                <div class="col-md-4">
+                    <div class="card mb-4">
+                        <div class="card-header">Nhập hàng mới</div>
+                        <div class="card-body">
+                            <form method="post">
+                                <div class="mb-3">
+                                    <label>Sản phẩm</label>
+                                    <select class="form-select" name="product_id" id="product_id" required onchange="loadColors(this.value)">
+                                        <option value="">Chọn sản phẩm</option>
+                                        <?php 
+                                        $products->data_seek(0);
+                                        while($row = $products->fetch_assoc()):
+                                        ?>
+                                            <option value="<?= $row['id'] ?>" data-colors="<?= htmlspecialchars($row['color']) ?>">
+                                                <?= $row['name'] ?>
+                                            </option>
+                                        <?php endwhile; ?>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label>Màu sắc</label>
+                                    <select class="form-select" name="color" id="color" required>
+                                        <option value="">Chọn màu</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label>Số lượng nhập</label>
+                                    <input type="number" class="form-control" name="quantity" id="quantity" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label>Giá nhập</label>
+                                    <input type="number" step="1" class="form-control" name="import_price" id="import_price" required>
+                                </div>
+                                <button type="submit" name="add_stock" class="btn btn-success">Cập nhật tồn kho</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bảng tồn kho + chỉnh sửa thực tế -->
+                <div class="col-md-8">
                     <form method="post">
-                        <div class="mb-3">
-                            <label>Sản phẩm</label>
-                            <select class="form-select" name="product_id" id="product_id" required onchange="loadColors(this.value)">
-                                <option value="">Chọn sản phẩm</option>
-                                <?php 
-                                $products->data_seek(0);
-                                while($row = $products->fetch_assoc()):
-                                ?>
-                                    <option value="<?= $row['id'] ?>" data-colors="<?= htmlspecialchars($row['color']) ?>">
-                                        <?= $row['name'] ?>
-                                    </option>
-                                <?php endwhile; ?>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label>Màu sắc</label>
-                            <select class="form-select" name="color" id="color" required>
-                                <option value="">Chọn màu</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label>Số lượng nhập</label>
-                            <input type="number" class="form-control" name="quantity" id="quantity" required>
-                        </div>
-                        <div class="mb-3">
-                            <label>Giá nhập</label>
-                            <input type="number" step="1" class="form-control" name="import_price" id="import_price" required>
-                        </div>
-                        <button type="submit" name="add_stock" class="btn btn-success">Cập nhật tồn kho</button>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Màu sắc</th>
+                                <th>Tồn kho thực tế</th>
+                                <th>Đã bán</th>
+                                <th>Giá nhập</th>
+                                <th>Giá bán</th>
+                                <th>Lợi nhuận</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?php foreach($inventoryData as $productName => $items): ?>
+                            <?php $collapseId = "collapse_".md5($productName); ?>
+                            <tr class="parent-row" data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>" aria-expanded="false">
+                                <td><?= $productName ?></td>
+                                <td colspan="7">[▼] Nhấn để xem chi tiết</td>
+                            </tr>
+                            <?php foreach($items as $item): ?>
+                                <tr class="collapse child-row" id="<?= $collapseId ?>">
+                                    <td></td>
+                                    <td><?= $item['color'] ?></td>
+                                    <td>
+                                        <input type="number" class="form-control form-control-sm" 
+                                               name="adjust_stock[<?= $item['product_id'] ?>][<?= $item['color'] ?>]" 
+                                               value="<?= $item['actual_stock'] ?>">
+                                    </td>
+                                    <td><?= $item['sold'] ?></td>
+                                    <td><?= number_format($item['import_price'],0,'','.') ?></td>
+                                    <td><?= number_format($item['sale_price'],0,'','.') ?></td>
+                                    <td><?= number_format($item['profit'],0,'','.') ?></td>
+                                    <td>
+                                        <form method="post" style="display:inline;" onsubmit="return confirm('Bạn có chắc muốn xóa màu này không?');">
+                                            <input type="hidden" name="delete_product_id" value="<?= $item['product_id'] ?>">
+                                            <input type="hidden" name="delete_color" value="<?= $item['color'] ?>">
+                                            <button type="submit" name="delete_stock" class="btn btn-danger btn-sm">Xóa</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <button type="submit" name="update_stock" class="btn btn-primary mt-2">Sửa</button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Bảng tồn kho + chỉnh sửa thực tế -->
-        <div class="col-md-8">
-            <form method="post">
+        <!-- Tab Lịch sử -->
+        <div class="tab-pane fade" id="history" role="tabpanel">
+            <form method="get" class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <input type="date" class="form-control" name="from_date" value="<?= htmlspecialchars($from_date) ?>" placeholder="Từ ngày">
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control" name="to_date" value="<?= htmlspecialchars($to_date) ?>" placeholder="Đến ngày">
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-secondary">Lọc</button>
+                </div>
+            </form>
             <table class="table table-bordered">
                 <thead>
                     <tr>
+                        <th>Thời gian</th>
                         <th>Sản phẩm</th>
                         <th>Màu sắc</th>
-                        <th>Tồn kho thực tế</th>
-                        <th>Đã bán</th>
+                        <th>Số lượng thay đổi</th>
                         <th>Giá nhập</th>
-                        <th>Giá bán</th>
-                        <th>Lợi nhuận</th>
+                        <th>Loại thao tác</th>
+                        <th>Ghi chú</th>
                     </tr>
                 </thead>
                 <tbody>
-                <?php foreach($inventoryData as $productName => $items): ?>
-                    <?php $collapseId = "collapse_".md5($productName); ?>
-                    <tr class="parent-row" data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>" aria-expanded="false">
-                        <td><?= $productName ?></td>
-                        <td colspan="6">[▼] Nhấn để xem chi tiết</td>
+                    <?php foreach($history as $h): ?>
+                    <tr>
+                        <td><?= $h['created_at'] ?></td>
+                        <td><?= $h['product_name'] ?></td>
+                        <td><?= $h['color'] ?></td>
+                        <td><?= $h['quantity_change'] ?></td>
+                        <td><?= number_format($h['import_price'],0,'','.') ?></td>
+                        <td><?= $h['type'] ?></td>
+                        <td><?= htmlspecialchars($h['note']) ?></td>
                     </tr>
-                    <?php foreach($items as $item): ?>
-                        <tr class="collapse child-row" id="<?= $collapseId ?>">
-                            <td></td>
-                            <td><?= $item['color'] ?></td>
-                            <td>
-                                <input type="number" class="form-control form-control-sm" 
-                                       name="adjust_stock[<?= $item['product_id'] ?>][<?= $item['color'] ?>]" 
-                                       value="<?= $item['actual_stock'] ?>">
-                            </td>
-                            <td><?= $item['sold'] ?></td>
-                            <td><?= number_format($item['import_price'],0,'','.') ?></td>
-                            <td><?= number_format($item['sale_price'],0,'','.') ?></td>
-                            <td><?= number_format($item['profit'],0,'','.') ?></td>
-                        </tr>
                     <?php endforeach; ?>
-                <?php endforeach; ?>
                 </tbody>
             </table>
-            <button type="submit" name="update_stock" class="btn btn-primary mt-2">Sửa</button>
-            </form>
         </div>
     </div>
-  </div>
-
-  <!-- Tab Lịch sử -->
-  <div class="tab-pane fade" id="history" role="tabpanel">
-    <form method="get" class="row g-3 mb-3">
-        <div class="col-md-3">
-            <input type="date" class="form-control" name="from_date" value="<?= htmlspecialchars($from_date) ?>" placeholder="Từ ngày">
-        </div>
-        <div class="col-md-3">
-            <input type="date" class="form-control" name="to_date" value="<?= htmlspecialchars($to_date) ?>" placeholder="Đến ngày">
-        </div>
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-secondary">Lọc</button>
-        </div>
-    </form>
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Thời gian</th>
-                <th>Sản phẩm</th>
-                <th>Màu sắc</th>
-                <th>Số lượng thay đổi</th>
-                <th>Giá nhập</th>
-                <th>Loại thao tác</th>
-                <th>Ghi chú</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach($history as $h): ?>
-            <tr>
-                <td><?= $h['created_at'] ?></td>
-                <td><?= $h['product_name'] ?></td>
-                <td><?= $h['color'] ?></td>
-                <td><?= $h['quantity_change'] ?></td>
-                <td><?= number_format($h['import_price'],0,'','.') ?></td>
-                <td><?= $h['type'] ?></td>
-                <td><?= htmlspecialchars($h['note']) ?></td>
-            </tr>
-            <?php endforeach; ?>
-        </tbody>
-    </table>
-  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -369,7 +405,6 @@ function loadColors(productId){
 
 <script>
 document.addEventListener("DOMContentLoaded", function(){
-    // Lấy tab từ URL hash nếu có
     const hash = window.location.hash;
     if(hash){
         const triggerEl = document.querySelector('button[data-bs-target="' + hash + '"]');
@@ -378,16 +413,7 @@ document.addEventListener("DOMContentLoaded", function(){
             tab.show();
         }
     }
-
-    // Khi bấm nút lọc, thêm hash vào URL để lưu tab 'history'
-    const filterForm = document.querySelector('#history form');
-    if(filterForm){
-        filterForm.addEventListener('submit', function(){
-            window.location.hash = '#history';
-        });
-    }
 });
 </script>
-
 </body>
 </html>

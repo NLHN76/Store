@@ -6,6 +6,10 @@ $conn = new mysqli("localhost", "root", "", "store");
 if ($conn->connect_error) die("Kết nối thất bại: ".$conn->connect_error);
 $conn->set_charset("utf8mb4");
 
+// ===== Xóa tin nhắn cũ sau 30 ngày =====
+$daysToKeep = 1;
+$conn->query("DELETE FROM message WHERE created_at < NOW() - INTERVAL $daysToKeep DAY");
+
 $action = $_GET['action'] ?? $_POST['action'] ?? '';
 
 $user_id = $_SESSION['user_id'] ?? 0;
@@ -41,10 +45,11 @@ if($action==='fetch'){
 
     $html = '';
     while($row = $res->fetch_assoc()){
+        $content = nl2br(htmlspecialchars($row['content']));
         if($row['sender_role']==='user'){
-            $html .= '<div class="user-message"><strong>Bạn:</strong> '.htmlspecialchars($row['content']).'</div>';
+            $html .= '<div class="user-message"><strong>Bạn:</strong> '.$content.'</div>';
         } else {
-            $html .= '<div class="bot-message"><strong>Admin:</strong> '.htmlspecialchars($row['content']).'</div>';
+            $html .= '<div class="bot-message"><strong>Admin:</strong> '.$content.'</div>';
         }
     }
     echo $html;
