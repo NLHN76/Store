@@ -1,4 +1,5 @@
 <?php
+session_start();
 header('Content-Type: application/json');
 
 $servername = "localhost";
@@ -13,23 +14,34 @@ if ($conn->connect_error) {
     exit;
 }
 
-// Lấy tất cả đơn hàng
+// Kiểm tra khách hàng đã đăng nhập chưa
+if(!isset($_SESSION['user_code'])){
+    echo json_encode(['status'=>'error','message'=>'Chưa đăng nhập']);
+    exit;
+}
+
+$user_code = $_SESSION['user_code'];
+
+// Lấy các đơn hàng của khách hàng đang đăng nhập
 $sql = "SELECT id, customer_name, customer_email, customer_phone, customer_address,
         user_code, product_name, category, color, product_quantity, total_price, 
         order_date, status
-        FROM payment ORDER BY order_date DESC";
+        FROM payment 
+        WHERE user_code = ? 
+        ORDER BY order_date DESC";
 
-$result = $conn->query($sql);
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $user_code);
+$stmt->execute();
+$result = $stmt->get_result();
 
 $orders = [];
-if($result){
-    while($row = $result->fetch_assoc()){
-        $orders[] = $row;
-    }
-    echo json_encode($orders);
-} else {
-    echo json_encode(['status'=>'error','message'=>'Lấy dữ liệu thất bại']);
+while($row = $result->fetch_assoc()){
+    $orders[] = $row;
 }
 
+echo json_encode($orders);
+
+$stmt->close();
 $conn->close();
 ?>

@@ -22,10 +22,10 @@ if($product_code && $color){
     $quantity = (int)($result['quantity'] ?? 0);
     $stmt->close();
 
-    // Lấy đã bán (đã thanh toán / đã giao)
+    // Lấy đã bán (chỉ tính khi đã giao hàng)
     $stmt2 = $conn->prepare("SELECT SUM(product_quantity) as sold 
                              FROM payment 
-                             WHERE product_code=? AND color=? AND status IN ('Đã thanh toán','Đã giao hàng')");
+                             WHERE product_code=? AND color=? AND status='Đã giao hàng'");
     $stmt2->bind_param("ss", $product_code, $color);
     $stmt2->execute();
     $result2 = $stmt2->get_result()->fetch_assoc();

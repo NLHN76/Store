@@ -24,7 +24,7 @@ $sql = "
         p.product_code, 
         p.name, 
         p.price, 
-        p.color,               -- ✅ Cột màu sắc
+        p.color,              
         p.image, 
         p.category, 
         p.is_active,
