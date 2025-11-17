@@ -67,7 +67,7 @@ function renderProducts(data) {
             <p><strong>Giá:</strong> ${priceFormatted} VNĐ</p>
             ${colorSelectHTML}
             <button onclick="addToCart(this)">Thêm vào giỏ hàng</button>
-            <a href="no_feedback.php?code=${product.product_code}">
+            <a href="product_detail.php?code=${product.product_code}">
                 <button>Xem chi tiết</button>
             </a>
             <p><strong>Đánh giá:</strong> ⭐ ${product.avg_rating} / 5 (${product.total_reviews} lượt đánh giá)</p>
