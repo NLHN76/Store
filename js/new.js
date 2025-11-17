@@ -348,17 +348,6 @@ document.getElementById('contact-form').addEventListener('submit', function(even
     
     
 
-
-
-
-
-
-
-
-
-
-
-
 // Lấy thông tin trang chủ  
 fetch('get_home.php')
   .then(response => response.json())
@@ -457,6 +446,7 @@ function showSection(sectionId) {
 document.addEventListener("DOMContentLoaded", function() {
     showSection('home'); // Hiện trang chủ khi tải trang
 });
+
 
 
 
