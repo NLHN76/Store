@@ -59,23 +59,33 @@ function renderProducts(data) {
         const priceNumber = parseFloat(product.price.replace(/\./g, '').replace(',', '.'));
         const priceFormatted = priceNumber.toLocaleString('vi-VN');
 
+        // ======================
+        //  ẢNH BẤM ĐỂ XEM CHI TIẾT
+        // ======================
         productDiv.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" style="width:150px; height:150px;">
+            <img src="${product.image}" 
+                 alt="${product.name}" 
+                 class="product-image"
+                 style="width:150px; height:150px; cursor:pointer;">
+
             <h3>${product.name}</h3>
             <p><strong>Mã sản phẩm:</strong> ${product.product_code}</p>
             <p><strong>Loại sản phẩm:</strong> ${product.category}</p>
             <p><strong>Giá:</strong> ${priceFormatted} VNĐ</p>
             ${colorSelectHTML}
             <button onclick="addToCart(this)">Thêm vào giỏ hàng</button>
-            <a href="no_feedback.php?code=${product.product_code}">
-                <button>Xem chi tiết</button>
-            </a>
             <p><strong>Đánh giá:</strong> ⭐ ${product.avg_rating} / 5 (${product.total_reviews} lượt đánh giá)</p>
         `;
 
         productsContainer.appendChild(productDiv);
 
-        // Xử lý tồn kho theo màu
+        // Sự kiện click vào ảnh
+        const img = productDiv.querySelector('.product-image');
+        img.addEventListener('click', () => {
+            window.location.href = `no_feedback.php?code=${product.product_code}`;
+        });
+
+        // Tồn kho theo màu
         const select = productDiv.querySelector('.color-select');
         const stockSpan = productDiv.querySelector('.stock');
         const soldSpan = productDiv.querySelector('.sold');
@@ -212,7 +222,6 @@ function updateCartDisplay() {
     document.getElementById('total-quantity').textContent = 'Tổng số sản phẩm: ' + itemCount;
     document.getElementById('cart-quantity').textContent = itemCount;
 }
-
 
 
 

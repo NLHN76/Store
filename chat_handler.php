@@ -6,7 +6,7 @@ $conn = new mysqli("localhost", "root", "", "store");
 if ($conn->connect_error) die("Kết nối thất bại: ".$conn->connect_error);
 $conn->set_charset("utf8mb4");
 
-// ===== Xóa tin nhắn cũ sau 30 ngày =====
+// ===== Xóa tin nhắn cũ sau n ngày =====
 $daysToKeep = 1;
 $conn->query("DELETE FROM message WHERE created_at < NOW() - INTERVAL $daysToKeep DAY");
 
