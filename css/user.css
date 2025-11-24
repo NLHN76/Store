@@ -639,3 +639,27 @@ footer {
     border-radius: 6px;
     text-decoration: none;
 }
+
+/* Khung chứa ô tìm kiếm và lọc danh mục */
+.filter-bar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+/* Ô tìm kiếm */
+#searchInput {
+    padding: 6px;
+    width: 280px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+/* Dropdown danh mục */
+#categoryFilter {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}

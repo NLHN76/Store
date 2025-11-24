@@ -42,24 +42,32 @@
             <h2>Chào Mừng Đến Với Cửa Hàng Chúng Tôi! </h2>
         </section>
      
-                 <section id="products">
-    <!-- Thanh tìm kiếm -->
-    <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm theo loại , tên hoặc mã...." 
-           style="margin-bottom: 12px; padding: 6px; width:20%; border-radius: 6px; border: 1px solid #ccc;">
+             <section id="products">
+
+    <!-- Thanh tìm kiếm + lọc danh mục -->
+    <div class="filter-bar">
+
+        <input type="text" id="searchInput"
+               placeholder="Tìm kiếm sản phẩm theo loại, tên hoặc mã...">
+
+        <select id="categoryFilter">
+            <option value="all">Tất cả danh mục</option>
+            <option value="Tai nghe">Tai nghe</option>
+            <option value="Cáp sạc">Cáp sạc</option>
+            <option value="Ốp lưng">Ốp lưng</option>
+            <option value="Kính cường lực">Kính cường lực</option>
+        </select>
+
+    </div>
+
+    <div id="products-container"></div>
+
+</section>
 
     <!-- Nơi hiển thị sản phẩm -->
     <div id="products-container"></div>
 </section>
 
-
-        <section id="search">
-            <h2>Tìm Kiếm Sản Phẩm</h2>
-            <form id="search-form" method="POST" onsubmit="searchProduct(event)">
-                <input type="text" id="search-query" name="search_query" placeholder="Nhập loại , tên hoặc mã sản phẩm..." required>
-                <button type="submit">Tìm Kiếm</button>
-            </form>
-            <div id="search-results"></div> 
-        </section>
 
 
         <section id="cart">

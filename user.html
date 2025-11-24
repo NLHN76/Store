@@ -40,12 +40,27 @@
     <main>
         <section id="home"> </section>
      
+     <section id="products">
 
-          <section id="products">
-    <!-- Thanh tìm kiếm -->
-    <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm theo loại , tên hoặc mã...." 
-           style="margin-bottom: 12px; padding: 6px; width:20%; border-radius: 6px; border: 1px solid #ccc;">
+    <!-- Thanh tìm kiếm + lọc danh mục -->
+    <div class="filter-bar">
 
+        <input type="text" id="searchInput"
+               placeholder="Tìm kiếm sản phẩm theo loại, tên hoặc mã...">
+
+        <select id="categoryFilter">
+            <option value="all">Tất cả danh mục</option>
+            <option value="Tai nghe">Tai nghe</option>
+            <option value="Cáp sạc">Cáp sạc</option>
+            <option value="Ốp lưng">Ốp lưng</option>
+            <option value="Kính cường lực">Kính cường lực</option>
+        </select>
+
+    </div>
+
+    <div id="products-container"></div>
+
+</section>
     <!-- Nơi hiển thị sản phẩm -->
     <div id="products-container"></div>
 </section>
