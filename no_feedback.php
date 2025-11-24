@@ -169,7 +169,7 @@ $result_fb = $stmt_fb->get_result();
       <div class="related-products">
         <?php while ($rel = $result_suggested->fetch_assoc()): ?>
           <div class="related-item">
-            <a href="product_detail.php?code=<?php echo $rel['product_code']; ?>">
+            <a href="no_feedback.php?code=<?php echo $rel['product_code']; ?>">
               <img src="admin/uploads/<?php echo $rel['image']; ?>" alt="<?php echo $rel['name']; ?>">
               <p><?php echo $rel['name']; ?></p>
               <p class="price"><?php echo number_format($rel['price'], 0, ',', '.'); ?> VNĐ</p>

@@ -242,8 +242,6 @@ function updateCartDisplay() {
 
 
 
-
-
 //Cảnh báo cần đăng nhập để mua hàng 
 document.addEventListener("DOMContentLoaded", function () {
     const checkoutButton = document.getElementById("checkout");
