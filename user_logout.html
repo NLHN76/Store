@@ -42,9 +42,10 @@
             <h2>Chào Mừng Đến Với Cửa Hàng Chúng Tôi! </h2>
         </section>
      
-         <section id="products">
+           <section id="products">
     <div class="filter-bar">
         <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm theo loại, tên hoặc mã...">
+
         <select id="categoryFilter">
             <option value="all">Tất cả danh mục</option>
             <option value="Tai nghe">Tai nghe</option>
@@ -52,7 +53,18 @@
             <option value="Ốp lưng">Ốp lưng</option>
             <option value="Kính cường lực">Kính cường lực</option>
         </select>
+
+        <!-- Price filter sẽ hiển thị khi chọn danh mục -->
+        <select id="priceFilter" style="display:none;">
+            <option value="all">Tất cả giá</option>
+            <option value="0-100">Dưới 100K</option>
+            <option value="100-300">100K - 300K</option>
+            <option value="300-500">300K - 500K</option>
+            <option value="500-1000">500K - 1 triệu</option>
+            <option value="1000+">Trên 1 triệu</option>
+        </select>
     </div>
+
     <div id="products-container"></div>
 </section>
 

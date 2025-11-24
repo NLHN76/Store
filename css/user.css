@@ -343,7 +343,6 @@ button:hover {
 
 
   
-  
   #checkout {
     display: block;
     width: 100%;
@@ -366,7 +365,7 @@ button:hover {
 footer {
     background-color:#343a40 ;
     color: #fff;
-    padding: 40px 20px 20px;
+    padding: 20px 10px 10px;
     font-family: Arial, sans-serif;
 }
 
@@ -374,16 +373,37 @@ footer {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    align-items: flex-start; /* Giúp các cột thẳng hàng trên cùng 1 dòng */
     gap: 20px;
 }
 
-.footer-column {
-    flex: 1 1 300px;
+/* --- CỘT TRÁI (Mobile Gear) --- */
+.footer-column:first-child {
+    flex: 1;
+    padding-top: 20px; /* Kéo Mobile Gear xuống thấp hơn */
+}
+
+/* --- CỘT GIỮA (Bản đồ) --- */
+.footer-column:nth-child(2) {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* --- CỘT PHẢI (Liên kết nhanh + Social) --- */
+.footer-column:last-child {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;   /* Căn giữa nội dung */
+    text-align: center;    /* Căn chữ giữa */
+    margin-left: auto;     /* Đẩy toàn bộ cột sang phải */
 }
 
 .footer-column h3, .footer-column h4 {
     margin-bottom: 15px;
-    color: #f4b400;
+    color: #fafaf7;
 }
 
 .footer-column p, .footer-column li {
@@ -407,7 +427,7 @@ footer {
 
 .social-icons a {
     display: inline-block;
-    margin-right: 10px;
+    margin-left: 10px;
     color: #fff;
     font-size: 20px;
     transition: 0.3s;
@@ -430,6 +450,12 @@ footer {
     .footer-container {
         flex-direction: column;
         gap: 30px;
+    }
+
+    /* Trên mobile tất cả căn trái cho dễ đọc */
+    .footer-column:last-child {
+        align-items: flex-start;
+        text-align: left;
     }
 }
 
@@ -643,25 +669,56 @@ footer {
 }
 
 /* Khung chứa ô tìm kiếm và lọc danh mục */
+/* Filter bar */
 .filter-bar {
     display: flex;
-    justify-content: flex-start;
+    flex-wrap: wrap; /* Khi màn hình nhỏ xuống dòng */
     align-items: center;
-    gap: 15px;
+    gap: 10px;
     margin-bottom: 15px;
 }
 
-/* Ô tìm kiếm */
+/* Tìm kiếm */
 #searchInput {
-    padding: 6px;
+    padding: 6px 10px;
     width: 280px;
     border-radius: 6px;
     border: 1px solid #ccc;
 }
 
-/* Dropdown danh mục */
-#categoryFilter {
-    padding: 8px;
+/* Dropdown category và price */
+#categoryFilter,
+#priceFilter {
+    padding: 6px 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.3s, transform 0.2s;
+}
+
+/* Hover effect */
+#categoryFilter:hover,
+#priceFilter:hover {
+    border-color: #ff5722;
+    transform: translateY(-1px);
+}
+
+/* Khi priceFilter hiện ra */
+#priceFilter {
+    display: none; /* JS sẽ bật khi chọn danh mục != all */
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .filter-bar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #searchInput,
+    #categoryFilter,
+    #priceFilter {
+        width: 100%;
+    }
 }

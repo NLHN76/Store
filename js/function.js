@@ -1,16 +1,15 @@
-
-//  GIỎ HÀNG - BIẾN TOÀN CỤC
+// ================= GIỎ HÀNG TOÀN CỤC =================
 let cart = [];
 let totalPrice = 0;
+let allProducts = [];
 
 const productsContainer = document.getElementById('products-container');
 const searchInput = document.getElementById('searchInput');
 const categoryFilter = document.getElementById('categoryFilter');
+const priceFilter = document.getElementById('priceFilter');
 const notification = document.getElementById('notification');
 
-//  LOAD SẢN PHẨM TỪ SERVER
-let allProducts = [];
-
+// ================= LOAD SẢN PHẨM TỪ SERVER =================
 fetch('get_products.php')
     .then(res => res.json())
     .then(data => {
@@ -19,47 +18,61 @@ fetch('get_products.php')
     })
     .catch(err => console.error('❌ Lỗi khi tải sản phẩm:', err));
 
-
-//  HIỂN THỊ SECTION
-
+// ================= HIỂN THỊ SECTION =================
 function showSection(section) {
-    const sections = document.querySelectorAll('main > section');
-    sections.forEach(sec => sec.style.display = 'none');
-
+    document.querySelectorAll('main > section').forEach(sec => sec.style.display = 'none');
     const activeSection = document.getElementById(section);
     if (activeSection) activeSection.style.display = 'block';
-
     if (section === 'cart') updateCartDisplay();
 }
 
-
-//  LỌC THEO TỪ KHÓA + DANH MỤC
-
+// ================= LỌC SẢN PHẨM =================
 function applyFilters() {
     const keyword = searchInput.value.toLowerCase();
     const category = categoryFilter.value;
+    const priceRange = priceFilter.value;
 
     const filtered = allProducts.filter(p => {
+        const price = parseFloat(p.price.replace(/\./g, '').replace(',', '.'));
+
         const matchKeyword =
             p.name.toLowerCase().includes(keyword) ||
             p.product_code.toLowerCase().includes(keyword) ||
             p.category.toLowerCase().includes(keyword);
 
-        const matchCategory =
-            category === "all" ||
-            p.category.toLowerCase() === category.toLowerCase();
+        const matchCategory = category === "all" || p.category.toLowerCase() === category.toLowerCase();
 
-        return matchKeyword && matchCategory;
+        let matchPrice = true;
+        if (category !== "all") {
+            if (priceRange === "0-100") matchPrice = price < 100000;
+            else if (priceRange === "100-300") matchPrice = price >= 100000 && price <= 300000;
+            else if (priceRange === "300-500") matchPrice = price >= 300000 && price <= 500000;
+            else if (priceRange === "500-1000") matchPrice = price >= 500000 && price <= 1000000;
+            else if (priceRange === "1000+") matchPrice = price > 1000000;
+        }
+
+        return matchKeyword && matchCategory && matchPrice;
     });
 
     renderProducts(filtered);
 }
 
+// ================= EVENT LỌC =================
 searchInput.addEventListener('input', applyFilters);
-categoryFilter.addEventListener('change', applyFilters);
 
+categoryFilter.addEventListener('change', () => {
+    if (categoryFilter.value === "all") {
+        priceFilter.style.display = "none";
+        priceFilter.value = "all";
+    } else {
+        priceFilter.style.display = "inline-block";
+    }
+    applyFilters();
+});
 
-//  RENDER SẢN PHẨM
+priceFilter.addEventListener('change', applyFilters);
+
+// ================= RENDER SẢN PHẨM =================
 function renderProducts(data) {
     productsContainer.innerHTML = '';
 
@@ -91,28 +104,23 @@ function renderProducts(data) {
         const priceFormatted = priceNumber.toLocaleString('vi-VN');
 
         productDiv.innerHTML = `
-            <img src="${product.image}" alt="${product.name}" class="product-image"
-                 style="width:150px; height:150px; cursor:pointer;">
-
+            <img src="${product.image}" alt="${product.name}" class="product-image" style="width:150px; height:150px; cursor:pointer;">
             <h3>${product.name}</h3>
             <p><strong>Mã sản phẩm:</strong> ${product.product_code}</p>
-          
             <p><strong>Giá:</strong> ${priceFormatted} VNĐ</p>
-
             ${colorSelectHTML}
-
             <button onclick="addToCart(this)">Thêm vào giỏ hàng</button>
             <p><strong>Đánh giá:</strong> ⭐ ${product.avg_rating} / 5 (${product.total_reviews} lượt)</p>
         `;
 
         productsContainer.appendChild(productDiv);
 
-        // Chuyển sang trang chi tiết khi click ảnh
+        // Click vào ảnh → chi tiết sản phẩm
         productDiv.querySelector('.product-image').addEventListener('click', () => {
             window.location.href = `product_detail.php?code=${product.product_code}`;
         });
 
-        //  LOAD TỒN KHO THEO MÀU
+        // Load tồn kho theo màu
         const select = productDiv.querySelector('.color-select');
         const stockSpan = productDiv.querySelector('.stock');
         const soldSpan = productDiv.querySelector('.sold');
@@ -126,7 +134,6 @@ function renderProducts(data) {
                     .then(inv => {
                         stockSpan.textContent = inv.quantity;
                         soldSpan.textContent = inv.sold;
-
                         if (inv.quantity <= 0) {
                             addBtn.disabled = true;
                             warning.style.display = 'block';
@@ -136,23 +143,20 @@ function renderProducts(data) {
                         }
                     });
             };
-
             select.addEventListener('change', loadStock);
             loadStock();
         }
     });
 }
 
-//  THÊM SẢN PHẨM VÀO GIỎ HÀNG
+// ================= THÊM VÀO GIỎ HÀNG =================
 function addToCart(button) {
     const product = button.parentElement;
     const productName = product.getAttribute('data-name');
     const price = parseFloat(product.getAttribute('data-price'));
     const image = product.querySelector('img').src;
-
     const colorSelect = product.querySelector('.color-select');
     const color = colorSelect ? colorSelect.value : 'Không có màu';
-
     const stockQty = parseInt(product.querySelector('.stock').textContent);
 
     const existing = cart.find(item => item.name === productName && item.color === color);
@@ -162,13 +166,9 @@ function addToCart(button) {
         return;
     }
 
-    if (existing) {
-        existing.quantity++;
-    } else {
-        if (stockQty <= 0) {
-            alert('Sản phẩm này đã hết hàng!');
-            return;
-        }
+    if (existing) existing.quantity++;
+    else {
+        if (stockQty <= 0) { alert('Sản phẩm này đã hết hàng!'); return; }
         cart.push({ name: productName, color, price, quantity: 1, image });
     }
 
@@ -181,8 +181,7 @@ function addToCart(button) {
     showSection('cart');
 }
 
-
-//  HIỂN THỊ GIỎ HÀNG
+// ================= HIỂN THỊ GIỎ HÀNG =================
 function updateCartDisplay() {
     const cartItemsDiv = document.getElementById('cart-items');
     cartItemsDiv.innerHTML = '';
@@ -223,8 +222,7 @@ function updateCartDisplay() {
 
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = 'Xóa';
-        deleteBtn.onclick = () =>
-            { cart = cart.filter(c => !(c.name === item.name && c.color === item.color)); updateCartDisplay(); };
+        deleteBtn.onclick = () => { cart = cart.filter(c => !(c.name === item.name && c.color === item.color)); updateCartDisplay(); };
 
         itemDiv.appendChild(decreaseBtn);
         itemDiv.appendChild(increaseBtn);
@@ -240,8 +238,6 @@ function updateCartDisplay() {
     document.getElementById('total-quantity').textContent = 'Tổng sản phẩm: ' + itemCount;
     document.getElementById('cart-quantity').textContent = itemCount;
 }
-
-
 
 
 

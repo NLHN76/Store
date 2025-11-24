@@ -76,32 +76,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rating']) && !isset($
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/product_detail.css">
   <title>Chi tiết sản phẩm - <?php echo htmlspecialchars($product['name']); ?></title>
-  <style>
-    body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f5f5; color:#333; }
-    .product-detail { max-width:1000px; margin:30px auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.1); }
-    .product-detail h1,h2 { margin-bottom:20px; font-size:28px; color:#222; }
-    .product-detail img { max-width:300px; border-radius:8px; display:block; margin-bottom:15px; }
-    .product-detail p { font-size:16px; margin:8px 0; }
-    .product-detail strong { color:#444; }
-    .related-products { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:15px; margin-top:15px; }
-    .related-item { background:#fff; border-radius:8px; text-align:center; padding:10px; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow:0 2px 5px rgba(0,0,0,0.05); }
-    .related-item:hover { transform:translateY(-5px); box-shadow:0 6px 12px rgba(0,0,0,0.1); }
-    .related-item img { max-width:100%; height:150px; object-fit:contain; margin-bottom:10px; }
-    .related-item p { margin:5px 0; font-size:15px; }
-    .feedback-item { border-bottom:1px solid #ddd; margin:10px 0; padding-bottom:8px; }
-    .feedback-item p { margin:4px 0; }
-    .feedback-item small { color:#666; }
-    textarea { width:100%; padding:8px; border-radius:5px; border:1px solid #ccc; }
-    button { padding:8px 15px; border:none; border-radius:5px; cursor:pointer; background:#28a745; color:#fff; }
-    button:hover { background:#218838; }
-  </style>
 </head>
 <body>
+
   <div class="product-detail">
     <h1><?php echo htmlspecialchars($product['name']); ?></h1>
     <img src="admin/uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
@@ -155,18 +139,28 @@ $result_fb = $stmt_fb->get_result();
 
   <?php if ($is_logged_in): ?>
     <p><strong>Người dùng:</strong> <?php echo htmlspecialchars($user_name); ?></p>
-    <form method="POST">
-      <label>Chọn số sao:</label>
-      <div style="font-size:25px;">
-        <input type="radio" name="rating" value="5" id="star5"><label for="star5">⭐5</label>
-        <input type="radio" name="rating" value="4" id="star4"><label for="star4">⭐4</label>
-        <input type="radio" name="rating" value="3" id="star3"><label for="star3">⭐3</label>
-        <input type="radio" name="rating" value="2" id="star2"><label for="star2">⭐2</label>
-        <input type="radio" name="rating" value="1" id="star1" required><label for="star1">⭐1</label>
-      </div>
-      <textarea name="message" placeholder="Nhập nội dung đánh giá..." rows="3"></textarea>
-      <button type="submit" style="margin-top:10px;">Gửi đánh giá</button>
-    </form>
+    <form method="POST" style="display:flex; align-items:center; gap:10px;">
+  <div style="flex:1;">
+    <label>Chọn số sao:</label>
+    <div style="font-size:25px;">
+      <input type="radio" name="rating" value="5" id="star5"><label for="star5">⭐5</label>
+      <input type="radio" name="rating" value="4" id="star4"><label for="star4">⭐4</label>
+      <input type="radio" name="rating" value="3" id="star3"><label for="star3">⭐3</label>
+      <input type="radio" name="rating" value="2" id="star2"><label for="star2">⭐2</label>
+      <input type="radio" name="rating" value="1" id="star1" required><label for="star1">⭐1</label>
+    </div>
+    <textarea name="message" placeholder="Nhập nội dung đánh giá..." rows="3" style="margin-top:10px;"></textarea>
+  </div>
+  
+  <?php if ($is_logged_in): ?>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <button type="submit" class="btn-submit">Gửi đánh giá</button>
+      <a href="user_logout.html" class="btn-back">⬅ Quay về</a>
+    </div>
+  <?php endif; ?>
+</form>
+
+
   <?php else: ?>
     <p style="color:red;">Bạn cần đăng nhập để gửi đánh giá.</p>
   <?php endif; ?>
@@ -195,6 +189,8 @@ $result_fb = $stmt_fb->get_result();
 
 </body>
 </html>
+
+
 <?php
 $conn->close();
 ?>

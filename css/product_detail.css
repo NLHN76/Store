@@ -1,0 +1,149 @@
+/* ==== BODY & THIẾT LẬP CHUNG ==== */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f5f5f5;
+    color: #333;
+}
+
+/* ==== CHI TIẾT SẢN PHẨM ==== */
+.product-detail {
+    max-width: 1000px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.product-detail h1,
+.product-detail h2 {
+    margin-bottom: 20px;
+    font-size: 28px;
+    color: #222;
+}
+
+.product-detail img {
+    max-width: 300px;
+    border-radius: 8px;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.product-detail p {
+    font-size: 16px;
+    margin: 8px 0;
+}
+
+.product-detail strong {
+    color: #444;
+}
+
+/* ==== SẢN PHẨM LIÊN QUAN ==== */
+.related-products {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.related-item {
+    background: #fff;
+    border-radius: 8px;
+    text-align: center;
+    padding: 10px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.related-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
+
+.related-item img {
+    max-width: 100%;
+    height: 150px;
+    object-fit: contain;
+    margin-bottom: 10px;
+}
+
+.related-item p {
+    margin: 5px 0;
+    font-size: 15px;
+}
+
+/* ==== ĐÁNH GIÁ ==== */
+.feedback-item {
+    border-bottom: 1px solid #ddd;
+    margin: 10px 0;
+    padding-bottom: 8px;
+}
+
+.feedback-item p {
+    margin: 4px 0;
+}
+
+.feedback-item small {
+    color: #666;
+}
+
+textarea {
+    width: 95%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-top: 10px;
+}
+
+/* ==== NÚT GỬI ĐÁNH GIÁ ==== */
+.btn-submit {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background: #28a745;
+    color: #fff;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.btn-submit:hover {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
+/* ==== NÚT QUAY VỀ ==== */
+.btn-back {
+    padding:8px 15px;
+    border-radius:5px;
+    text-decoration: none;
+    background: #007bff;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    display: inline-block;
+    margin-top: 10px;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.btn-back:hover {
+    background: #0056b3;
+    transform: translateY(-1px);
+}
+
+/* ==== FORM ĐÁNH GIÁ HÀNG DỌC ==== */
+.feedback-form-wrapper {
+    display: block; /* mọi thứ từ trên xuống */
+}
+
+.feedback-form-left {
+    margin-bottom: 15px; /* cách textarea + số sao với nút */
+}
+
+.feedback-form-right {
+    display: block; /* các nút từ trên xuống */
+}
