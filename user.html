@@ -40,14 +40,9 @@
     <main>
         <section id="home"> </section>
      
-     <section id="products">
-
-    <!-- Thanh tìm kiếm + lọc danh mục -->
+        <section id="products">
     <div class="filter-bar">
-
-        <input type="text" id="searchInput"
-               placeholder="Tìm kiếm sản phẩm theo loại, tên hoặc mã...">
-
+        <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm theo loại, tên hoặc mã...">
         <select id="categoryFilter">
             <option value="all">Tất cả danh mục</option>
             <option value="Tai nghe">Tai nghe</option>
@@ -55,13 +50,7 @@
             <option value="Ốp lưng">Ốp lưng</option>
             <option value="Kính cường lực">Kính cường lực</option>
         </select>
-
     </div>
-
-    <div id="products-container"></div>
-
-</section>
-    <!-- Nơi hiển thị sản phẩm -->
     <div id="products-container"></div>
 </section>
 
@@ -151,13 +140,51 @@
     </main>
     
 
-    <footer>
-        <p>Copyright @2025 mobilegear.vn</p>
-        <p>MOBILE GEAR </p>
-        <p>Địa chỉ: Số 254 Tây Sơn - P. Trung Liệt - Q. Đống Đa - TP. Hà Nội</p>
-        <p>Điện thoại: 0587.911.287</p>
-        <p>Email: mobilegear@gmail.com</p>
-    </footer>
+<footer>
+    <div class="footer-container">
+
+        <!-- Cột 1: Thông tin cửa hàng -->
+        <div class="footer-column">
+            <h3>MOBILE GEAR</h3>
+            <p>Địa chỉ: Số 254 Tây Sơn - P. Trung Liệt - Q. Đống Đa - TP. Hà Nội</p>
+            <p>Điện thoại: 0587.911.287</p>
+            <p>Email: mobilegear@gmail.com</p>
+        </div>
+
+        <!-- Cột 2: Bản đồ Google Maps -->
+        <div class="footer-column">
+            <h4>Bản đồ cửa hàng</h4>
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.850620123456!2d105.82664431540412!3d21.00818248599739!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab123456789%3A0xabcdef123456!2s254%20Tay%20Son%2C%20Trung%20Liet%2C%20Dong%20Da%2C%20Hanoi!5e0!3m2!1sen!2s!4v1700000000000"
+                width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+
+        <!-- Cột 3: Liên kết nhanh + mạng xã hội -->
+        <div class="footer-column">
+            <h4>Liên kết nhanh</h4>
+            <ul>
+    <li><a href="#home" onclick="showSection('home')">Trang Chủ</a></li>
+    <li><a href="#products" onclick="showSection('products')">Sản Phẩm</a></li>
+    <li><a href="#cart" onclick="showSection('cart')">Giỏ Hàng</a></li>
+    <li><a href="#contact" onclick="showSection('contact')">Liên Hệ</a></li>
+            </ul>
+
+            <h4>Kết nối với chúng tôi</h4>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/nam.nguyen.133454" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://zalo.me/0587911287" target="_blank"><i class="fab fa-zalo"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bản quyền -->
+    <div class="footer-bottom">
+        <p>&copy; 2025 MOBILE GEAR. All rights reserved.</p>
+    </div>
+</footer>
+
 
 
 

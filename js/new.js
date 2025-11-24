@@ -1,20 +1,14 @@
-// =============================
+
 //  GIỎ HÀNG - BIẾN TOÀN CỤC
-// =============================
 let cart = [];
 let totalPrice = 0;
 
-// =============================
-//  DOM
-// =============================
 const productsContainer = document.getElementById('products-container');
 const searchInput = document.getElementById('searchInput');
 const categoryFilter = document.getElementById('categoryFilter');
 const notification = document.getElementById('notification');
 
-// =============================
 //  LOAD SẢN PHẨM TỪ SERVER
-// =============================
 let allProducts = [];
 
 fetch('get_products.php')
@@ -25,9 +19,9 @@ fetch('get_products.php')
     })
     .catch(err => console.error('❌ Lỗi khi tải sản phẩm:', err));
 
-// =============================
+
 //  HIỂN THỊ SECTION
-// =============================
+
 function showSection(section) {
     const sections = document.querySelectorAll('main > section');
     sections.forEach(sec => sec.style.display = 'none');
@@ -38,9 +32,9 @@ function showSection(section) {
     if (section === 'cart') updateCartDisplay();
 }
 
-// =============================
+
 //  LỌC THEO TỪ KHÓA + DANH MỤC
-// =============================
+
 function applyFilters() {
     const keyword = searchInput.value.toLowerCase();
     const category = categoryFilter.value;
@@ -64,9 +58,8 @@ function applyFilters() {
 searchInput.addEventListener('input', applyFilters);
 categoryFilter.addEventListener('change', applyFilters);
 
-// =============================
+
 //  RENDER SẢN PHẨM
-// =============================
 function renderProducts(data) {
     productsContainer.innerHTML = '';
 
@@ -103,7 +96,7 @@ function renderProducts(data) {
 
             <h3>${product.name}</h3>
             <p><strong>Mã sản phẩm:</strong> ${product.product_code}</p>
-            <p><strong>Loại sản phẩm:</strong> ${product.category}</p>
+            
             <p><strong>Giá:</strong> ${priceFormatted} VNĐ</p>
 
             ${colorSelectHTML}
@@ -119,9 +112,7 @@ function renderProducts(data) {
             window.location.href = `no_feedback.php?code=${product.product_code}`;
         });
 
-        // =============================
         //  LOAD TỒN KHO THEO MÀU
-        // =============================
         const select = productDiv.querySelector('.color-select');
         const stockSpan = productDiv.querySelector('.stock');
         const soldSpan = productDiv.querySelector('.sold');
@@ -152,9 +143,7 @@ function renderProducts(data) {
     });
 }
 
-// =============================
 //  THÊM SẢN PHẨM VÀO GIỎ HÀNG
-// =============================
 function addToCart(button) {
     const product = button.parentElement;
     const productName = product.getAttribute('data-name');
@@ -192,9 +181,8 @@ function addToCart(button) {
     showSection('cart');
 }
 
-// =============================
+
 //  HIỂN THỊ GIỎ HÀNG
-// =============================
 function updateCartDisplay() {
     const cartItemsDiv = document.getElementById('cart-items');
     cartItemsDiv.innerHTML = '';

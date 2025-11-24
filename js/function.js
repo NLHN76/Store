@@ -96,7 +96,7 @@ function renderProducts(data) {
 
             <h3>${product.name}</h3>
             <p><strong>Mã sản phẩm:</strong> ${product.product_code}</p>
-            <p><strong>Loại sản phẩm:</strong> ${product.category}</p>
+          
             <p><strong>Giá:</strong> ${priceFormatted} VNĐ</p>
 
             ${colorSelectHTML}
