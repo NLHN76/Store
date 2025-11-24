@@ -68,36 +68,59 @@ section {
 }
 
 /*Product */
+/* Container sản phẩm */
+#products-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 cột đều nhau */
+    gap: 10px; /* khoảng cách giữa các sản phẩm */
+    padding: 10px;
+}
+
+/* Mỗi sản phẩm */
 .product {
-    border: 1px solid #ffffff;
-    padding: 15px;  
-    margin: 1px; 
-    background: #ffffff;
-    display: inline-block;
-    width: calc(25% - 40px);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease; 
-    border-radius: 8px; 
+    background: #fff;
+    padding: 10px;
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .product:hover {
-    transform: translateY(-5px);  
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);  
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
 }
 
 .product img {
-  width: 90%;
-  height: 190px;           
-  object-fit: contain;     
-  background: white;       
-  display: block;
-  margin: 0 auto;
-  padding: 10px;             
+    width: 100%;
+    height: 150px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto;
 }
 
-/* Tùy chỉnh modal nếu muốn */
-#product-detail-modal img {
-    max-width: 100%;
+/* Responsive cho màn hình nhỏ */
+@media (max-width: 1200px) {
+    #products-container {
+        grid-template-columns: repeat(4, 1fr); /* 4 sản phẩm trên 1 hàng */
+    }
+}
+
+@media (max-width: 992px) {
+    #products-container {
+        grid-template-columns: repeat(3, 1fr); /* 3 sản phẩm trên 1 hàng */
+    }
+}
+
+@media (max-width: 768px) {
+    #products-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 sản phẩm trên 1 hàng */
+    }
+}
+
+@media (max-width: 480px) {
+    #products-container {
+        grid-template-columns: 1fr; /* 1 sản phẩm trên 1 hàng */
+    }
 }
 
 
@@ -195,7 +218,22 @@ button:hover {
 }
 
 
+/* Căn chỉnh màu sắc*/
+.color-select-container {
+    display: flex;       /* sắp xếp label + select theo hàng */
+    flex-wrap: wrap;     /* nếu quá dài, mới xuống dòng */
+    gap: 5px;            /* khoảng cách giữa label và select */
+    align-items: center; /* căn label + select cùng dòng */
+}
 
+.color-select {
+    width: auto;         /* vừa chữ, không chiếm hết dòng */
+    max-width: 150px;    /* giới hạn độ rộng */
+    padding: 4px;
+    border-radius: 6px;
+    display: inline-block;
+    box-sizing: border-box;
+}
 
 
 
@@ -341,8 +379,6 @@ button:hover {
   padding: 0 5px;
 }
 
-
-  
   #checkout {
     display: block;
     width: 100%;
@@ -559,6 +595,8 @@ footer {
 }
 
 
+
+
 /* Section home */
 #home {
   display: grid;
@@ -667,6 +705,7 @@ footer {
     border-radius: 6px;
     text-decoration: none;
 }
+
 
 /* Khung chứa ô tìm kiếm và lọc danh mục */
 /* Filter bar */

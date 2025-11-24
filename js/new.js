@@ -93,12 +93,18 @@ function renderProducts(data) {
         `;
 
         const colorSelectHTML = colors.length > 0
-            ? `<label><strong>Chọn màu:</strong></label>
-               <select class="color-select" style="margin:4px 0; padding:4px; border-radius:6px;">
-                   ${colors.map(c => `<option value="${c}">${c}</option>`).join('')}
-               </select>
-               ${inventoryHTML}`
-            : `<p><strong>Màu sắc:</strong> Không có tùy chọn</p>${inventoryHTML}`;
+    ? `<div class="color-select-container">
+           <label><strong>Màu sắc:</strong></label>
+           <select class="color-select">
+               ${colors.map(c => `<option value="${c}">${c}</option>`).join('')}
+           </select>
+       </div>
+       ${inventoryHTML}`
+    : `<div class="color-select-container">
+           <p><strong>Màu sắc:</strong> Không có tùy chọn</p>
+       </div>
+       ${inventoryHTML}`;
+
 
         const priceNumber = parseFloat(product.price.replace(/\./g, '').replace(',', '.'));
         const priceFormatted = priceNumber.toLocaleString('vi-VN');
@@ -110,7 +116,7 @@ function renderProducts(data) {
             <p><strong>Giá:</strong> ${priceFormatted} VNĐ</p>
             ${colorSelectHTML}
             <button onclick="addToCart(this)">Thêm vào giỏ hàng</button>
-            <p><strong>Đánh giá:</strong> ⭐ ${product.avg_rating} / 5 (${product.total_reviews} lượt)</p>
+            <p><strong>Đánh giá:</strong> ⭐ ${product.avg_rating} </p>
         `;
 
         productsContainer.appendChild(productDiv);
