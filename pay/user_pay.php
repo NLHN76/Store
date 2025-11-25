@@ -36,81 +36,118 @@ $cart = $_SESSION['cart'];
 $totalPrice = $itemCount = 0;
 $productCodes = $productCategories = $productDetailsList = $colorsList = [];
 
-foreach ($cart as $item) {
-    $quantity = (int)$item['quantity'];
-    $price = (float)$item['price'];
-    $totalPrice += $price * $quantity;
-    $itemCount += $quantity;
-    $productDetailsList[] = htmlspecialchars($item['name']) . " (x$quantity)";
-
-    $color = $item['color'] ?? 'Không có màu';
-    $colorsList[] = $color;
-
-    $product_code = $item['product_code'] ?? 'N/A';
-    $category = 'N/A';
-
-    if ($product_code === 'N/A') {
-        $queryProd = "SELECT product_code, category FROM products WHERE name = ?";
-        $stmtProd = $conn->prepare($queryProd);
+// Chuẩn hóa giỏ hàng
+foreach ($cart as &$item) {
+    // Bắt buộc phải có product_code
+    if (empty($item['product_code'])) {
+        $stmtProd = $conn->prepare("SELECT product_code, category FROM products WHERE name = ?");
         $stmtProd->bind_param("s", $item['name']);
         $stmtProd->execute();
         $stmtProd->bind_result($db_product_code, $db_category);
         if ($stmtProd->fetch()) {
-            $product_code = $db_product_code ?: 'N/A';
-            $category = $db_category ?: 'N/A';
+            $item['product_code'] = $db_product_code;
+            $item['category'] = $db_category ?: 'N/A';
+        } else {
+            throw new Exception("Sản phẩm " . htmlspecialchars($item['name']) . " không tồn tại trong hệ thống.");
         }
         $stmtProd->close();
-    } else {
-        $queryCat = "SELECT category FROM products WHERE product_code = ?";
-        $stmtCat = $conn->prepare($queryCat);
-        $stmtCat->bind_param("s", $product_code);
-        $stmtCat->execute();
-        $stmtCat->bind_result($db_category);
-        if ($stmtCat->fetch()) {
-            $category = $db_category ?: 'N/A';
-        }
-        $stmtCat->close();
     }
 
-    $productCodes[] = $product_code;
-    $productCategories[] = $category;
+    // Chuẩn hóa màu
+    if (empty($item['color'])) {
+        $item['color'] = 'Mặc định';
+    }
+
+    // Tính tổng và chuẩn bị thông tin chi tiết
+    $quantity = (int)$item['quantity'];
+    $price    = (float)$item['price'];
+    $totalPrice += $price * $quantity;
+    $itemCount += $quantity;
+
+    $productDetailsList[] = htmlspecialchars($item['name']) . " (x$quantity)";
+    $colorsList[]         = $item['color'];
+    $productCodes[]       = $item['product_code'];
+    $productCategories[]  = $item['category'] ?? 'N/A';
 }
 
-$productDetailsString = implode(', ', $productDetailsList);
-$productCodesString = implode(', ', $productCodes);
+$productDetailsString    = implode(', ', $productDetailsList);
+$productCodesString      = implode(', ', $productCodes);
 $productCategoriesString = implode(', ', array_unique(array_filter($productCategories)));
-$colorsString = implode(', ', $colorsList);
+$colorsString            = implode(', ', $colorsList);
 
 $isPaymentConfirmed = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $name_post = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
-    $email_post = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-    $phone_post = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_STRING);
+    $name_post    = filter_input(INPUT_POST, 'name', FILTER_SANITIZE_STRING);
+    $email_post   = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+    $phone_post   = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_STRING);
     $address_post = filter_input(INPUT_POST, 'address', FILTER_SANITIZE_STRING);
 
     if (!$name_post || !$email_post || !$phone_post || !$address_post) {
         echo "Vui lòng điền đủ thông tin.";
-    } else {
-        // Lưu đơn hàng vào bảng payment, bao gồm màu sắc
+        exit;
+    }
+
+    $conn->begin_transaction();
+    try {
+        // 1️⃣ Kiểm tra tồn kho khả dụng và đặt trước
+        foreach ($cart as $item) {
+            $product_code = $item['product_code'];
+            $color        = $item['color'] ?? 'Mặc định';
+            $quantity     = (int)$item['quantity'];
+
+            $stmtStock = $conn->prepare("
+                SELECT quantity, reserved_quantity 
+                FROM product_inventory 
+                WHERE product_code = ? AND color = ? FOR UPDATE
+            ");
+            $stmtStock->bind_param("ss", $product_code, $color);
+            $stmtStock->execute();
+            $stmtStock->bind_result($stock, $reserved);
+            if (!$stmtStock->fetch()) {
+                throw new Exception("Sản phẩm " . htmlspecialchars($item['name']) . " màu $color không tồn tại trong kho.");
+            }
+            $stmtStock->close();
+
+            if (($stock - $reserved) < $quantity) {
+                throw new Exception("Sản phẩm " . htmlspecialchars($item['name']) . " màu $color chỉ còn " . ($stock - $reserved) . " sản phẩm khả dụng.");
+            }
+
+            // Tăng reserved_quantity
+            $stmtUpdate = $conn->prepare("
+                UPDATE product_inventory 
+                SET reserved_quantity = reserved_quantity + ? 
+                WHERE product_code = ? AND color = ?
+            ");
+            $stmtUpdate->bind_param("iss", $quantity, $product_code, $color);
+            $stmtUpdate->execute();
+            $stmtUpdate->close();
+        }
+
+        // 2️⃣ Lưu đơn hàng vào bảng payment
         $stmt = $conn->prepare("INSERT INTO payment 
             (customer_name, customer_email, customer_phone, customer_address, user_code, product_code, product_name, product_quantity, total_price, category, color) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
         $stmt->bind_param(
             "sssssssiiss",
             $name_post, $email_post, $phone_post, $address_post, $user_code,
             $productCodesString, $productDetailsString, $itemCount, $totalPrice, $productCategoriesString, $colorsString
         );
-
-        if ($stmt->execute()) {
-            sendConfirmationEmail($name_post, $email_post, $totalPrice, $cart, $address_post, $productCodes, $user_code, $productCategories, $productDetailsList, $colorsList);
-            $isPaymentConfirmed = true;
-            unset($_SESSION['cart']); // Xóa giỏ hàng
-        } else {
-            echo "Lỗi lưu đơn hàng: " . htmlspecialchars($stmt->error);
+        if (!$stmt->execute()) {
+            throw new Exception("Lỗi lưu đơn hàng: " . $stmt->error);
         }
         $stmt->close();
+
+        // 3️⃣ Gửi email xác nhận
+        sendConfirmationEmail($name_post, $email_post, $totalPrice, $cart, $address_post, $productCodes, $user_code, $productCategories, $productDetailsList, $colorsList);
+
+        $conn->commit();
+        $isPaymentConfirmed = true;
+        unset($_SESSION['cart']); // Xóa giỏ hàng
+    } catch (Exception $e) {
+        $conn->rollback();
+        echo "Đặt hàng thất bại: " . $e->getMessage();
+        exit;
     }
 }
 
@@ -151,7 +188,7 @@ function generateEmailBody($name, $totalPrice, $cart, $address, $productCodes, $
     foreach ($productDetailsList as $index => $detail) {
         $productCode = htmlspecialchars($productCodes[$index] ?? 'N/A');
         $category    = htmlspecialchars($productCategories[$index] ?? 'N/A');
-        $color       = htmlspecialchars($colorsList[$index] ?? 'Không có màu');
+        $color       = htmlspecialchars($colorsList[$index] ?? 'Mặc định');
         $itemTotal   = number_format($cart[$index]['price'] * $cart[$index]['quantity'], 0, ',', '.');
 
         $body .= "<li style='margin-bottom:8px;'>
@@ -169,6 +206,7 @@ function generateEmailBody($name, $totalPrice, $cart, $address, $productCodes, $
 
 $conn->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="vi">

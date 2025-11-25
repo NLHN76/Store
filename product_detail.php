@@ -1,183 +1,165 @@
 <?php
+session_start();
+
 // ====== Kết nối CSDL ======
-$conn = new mysqli("localhost", "root", "", "store"); 
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
+$conn = new mysqli("localhost", "root", "", "store");
+if ($conn->connect_error) die("Kết nối thất bại: " . $conn->connect_error);
 
 // ====== Lấy mã sản phẩm từ URL ======
-$code = isset($_GET['code']) ? $_GET['code'] : '';
+$code = $_GET['code'] ?? '';
 
-$sql = "
-SELECT p.*, d.description, d.material, d.compatibility, d.warranty, d.origin, d.features
-FROM products p
-LEFT JOIN product_details d ON p.id = d.product_id
-WHERE p.product_code = ? AND p.is_active = 1
-";
-
-$stmt = $conn->prepare($sql);
+$stmt = $conn->prepare("
+    SELECT p.*, d.description, d.material, d.compatibility, d.warranty, d.origin, d.features
+    FROM products p
+    LEFT JOIN product_details d ON p.id = d.product_id
+    WHERE p.product_code = ? AND p.is_active = 1
+");
 $stmt->bind_param("s", $code);
 $stmt->execute();
-$result = $stmt->get_result();
+$product = $stmt->get_result()->fetch_assoc();
+$stmt->close();
 
-if ($result->num_rows > 0) {
-    $product = $result->fetch_assoc();
-} else {
-    echo "Không tìm thấy sản phẩm!";
-    exit;
-}
+if (!$product) die("Không tìm thấy sản phẩm!");
 
-session_start(); // đảm bảo session hoạt động
+// ====== Xử lý người dùng ======
 $is_logged_in = isset($_SESSION['user_id']);
 $user_name = 'Khách';
-$user_id = null;
+$user_id = $is_logged_in ? $_SESSION['user_id'] : null;
 
 if ($is_logged_in) {
-    $user_id = $_SESSION['user_id'];
-    // Lấy tên người dùng từ database
     $stmt_user = $conn->prepare("SELECT name FROM users WHERE id = ?");
     $stmt_user->bind_param("i", $user_id);
     $stmt_user->execute();
-    $result_user = $stmt_user->get_result();
-    if ($result_user->num_rows > 0) {
-        $user_name = $result_user->fetch_assoc()['name'];
-    }
+    $res = $stmt_user->get_result();
+    if ($res->num_rows) $user_name = $res->fetch_assoc()['name'];
     $stmt_user->close();
 }
 
-// ====== Xử lý xóa đánh giá ======
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_feedback'])) {
-    if ($is_logged_in) {
-        $delete_id = intval($_POST['delete_id']);
-        $stmt = $conn->prepare("DELETE FROM feedback WHERE id = ? AND user_id = ?");
-        $stmt->bind_param("ii", $delete_id, $user_id);
-        $stmt->execute();
-        $stmt->close();
-        echo "<script>alert('Đánh giá của bạn đã được xóa!'); window.location.href = window.location.href;</script>";
-        exit;
+// ====== Xử lý đánh giá (gửi/xóa) ======
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!$is_logged_in) {
+        echo "<script>alert('Vui lòng đăng nhập để thực hiện thao tác.');</script>";
     } else {
-        echo "<script>alert('Bạn cần đăng nhập để xóa đánh giá.');</script>";
+        if (isset($_POST['delete_feedback'])) {
+            $delete_id = intval($_POST['delete_id']);
+            $stmt = $conn->prepare("DELETE FROM feedback WHERE id = ? AND user_id = ?");
+            $stmt->bind_param("ii", $delete_id, $user_id);
+            $stmt->execute();
+            $stmt->close();
+            echo "<script>alert('Đánh giá đã được xóa!'); window.location.href=window.location.href;</script>";
+            exit;
+        } elseif (isset($_POST['rating'])) {
+            $rating = intval($_POST['rating']);
+            $message = trim($_POST['message']);
+            $stmt = $conn->prepare("INSERT INTO feedback (product_code, user_id, rating, message) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("siis", $product['product_code'], $user_id, $rating, $message);
+            $stmt->execute();
+            $stmt->close();
+            echo "<script>alert('Cảm ơn bạn đã gửi đánh giá!'); window.location.href=window.location.href;</script>";
+            exit;
+        }
     }
 }
 
-// ====== Xử lý gửi đánh giá ======
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rating']) && !isset($_POST['delete_feedback'])) {
-    if ($is_logged_in) {
-        $rating = intval($_POST['rating']);
-        $message = trim($_POST['message']);
-        $stmt = $conn->prepare("INSERT INTO feedback (product_code, user_id, rating, message) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("siis", $product['product_code'], $user_id, $rating, $message);
-        $stmt->execute();
-        $stmt->close();
-        echo "<script>alert('Cảm ơn bạn đã gửi đánh giá!'); window.location.href = window.location.href;</script>";
-        exit;
-    } else {
-        echo "<script>alert('Vui lòng đăng nhập để gửi đánh giá.');</script>";
-    }
-}
+// ====== Lấy sản phẩm gợi ý ======
+$stmt_suggested = $conn->prepare("SELECT * FROM products WHERE product_code != ? AND category = ? AND is_active = 1 ORDER BY RAND() LIMIT 4");
+$stmt_suggested->bind_param("ss", $product['product_code'], $product['category']);
+$stmt_suggested->execute();
+$related_products = $stmt_suggested->get_result();
+$stmt_suggested->close();
+
+// ====== Lấy danh sách đánh giá ======
+$stmt_fb = $conn->prepare("SELECT f.*, u.name AS user_name FROM feedback f JOIN users u ON f.user_id = u.id WHERE f.product_code = ? ORDER BY f.created_at DESC");
+$stmt_fb->bind_param("s", $product['product_code']);
+$stmt_fb->execute();
+$feedbacks = $stmt_fb->get_result();
+$stmt_fb->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/product_detail.css">
-  <title>Chi tiết sản phẩm - <?php echo htmlspecialchars($product['name']); ?></title>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="css/product_detail.css">
+<title>Chi tiết sản phẩm - <?= htmlspecialchars($product['name']) ?></title>
+<style>
+    .related-products { display:flex; gap:15px; flex-wrap:wrap; }
+    .related-item { border:1px solid #ccc; padding:10px; width:200px; text-align:center; }
+    .feedback-item { border-bottom:1px solid #ccc; padding:10px 0; }
+    .btn-submit { padding:5px 10px; cursor:pointer; background:green; color:white; border:none; }
+    .btn-back { padding:5px 10px; background:#888; color:white; text-decoration:none; display:inline-block; text-align:center; }
+</style>
 </head>
 <body>
 
-  <div class="product-detail">
-    <h1><?php echo htmlspecialchars($product['name']); ?></h1>
-    <img src="admin/uploads/<?php echo htmlspecialchars($product['image']); ?>" alt="<?php echo htmlspecialchars($product['name']); ?>">
-    <p><strong>Mã sản phẩm:</strong> <?php echo htmlspecialchars($product['product_code']); ?></p>
-    <p><strong>Loại sản phẩm:</strong> <?php echo htmlspecialchars($product['category']); ?></p>
-    <p><strong>Giá:</strong> <?php echo number_format($product['price'],0,',','.'); ?> VNĐ</p>
-    <p><strong>Mô tả:</strong> <?php echo !empty($product['description']) ? htmlspecialchars($product['description']) : "Chưa có mô tả"; ?></p>
-    <p><strong>Chất liệu:</strong> <?php echo !empty($product['material']) ? htmlspecialchars($product['material']) : "Chưa có thông tin"; ?></p>
-    <p><strong>Tương thích:</strong> <?php echo !empty($product['compatibility']) ? htmlspecialchars($product['compatibility']) : "Chưa có thông tin"; ?></p>
-    <p><strong>Bảo hành:</strong> <?php echo !empty($product['warranty']) ? htmlspecialchars($product['warranty']) : "Chưa có thông tin"; ?></p>
-    <p><strong>Xuất xứ:</strong> <?php echo !empty($product['origin']) ? htmlspecialchars($product['origin']) : "Chưa có thông tin"; ?></p>
-    <p><strong>Tính năng:</strong> <?php echo !empty($product['features']) ? htmlspecialchars($product['features']) : "Chưa có thông tin"; ?></p>
-  </div>
+<div class="product-detail">
+    <h1><?= htmlspecialchars($product['name']) ?></h1>
+    <img src="admin/uploads/<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" style="max-width:300px;">
+    <p><strong>Mã sản phẩm:</strong> <?= htmlspecialchars($product['product_code']) ?></p>
+    <p><strong>Loại sản phẩm:</strong> <?= htmlspecialchars($product['category']) ?></p>
+    <p><strong>Giá:</strong> <?= number_format($product['price'],0,',','.') ?> VNĐ</p>
+    <p><strong>Mô tả:</strong> <?= htmlspecialchars($product['description'] ?: "Chưa có mô tả") ?></p>
+    <p><strong>Chất liệu:</strong> <?= htmlspecialchars($product['material'] ?: "Chưa có thông tin") ?></p>
+    <p><strong>Tương thích:</strong> <?= htmlspecialchars($product['compatibility'] ?: "Chưa có thông tin") ?></p>
+    <p><strong>Bảo hành:</strong> <?= htmlspecialchars($product['warranty'] ?: "Chưa có thông tin") ?></p>
+    <p><strong>Xuất xứ:</strong> <?= htmlspecialchars($product['origin'] ?: "Chưa có thông tin") ?></p>
+    <p><strong>Tính năng:</strong> <?= htmlspecialchars($product['features'] ?: "Chưa có thông tin") ?></p>
+</div>
 
-<?php
-// ====== Lấy gợi ý sản phẩm khác ======
-$sql_suggested = "SELECT * FROM products WHERE product_code != ? AND category = ? AND is_active = 1 ORDER BY RAND() LIMIT 4";
-$stmt_suggested = $conn->prepare($sql_suggested);
-$stmt_suggested->bind_param("ss", $product['product_code'], $product['category']);
-$stmt_suggested->execute();
-$result_suggested = $stmt_suggested->get_result();
-?>
-
-<?php if ($result_suggested->num_rows > 0): ?>
-  <div class="product-detail" style="margin-top:20px;">
+<?php if ($related_products->num_rows): ?>
+<div class="product-detail" style="margin-top:20px;">
     <h2>Gợi ý sản phẩm khác</h2>
     <div class="related-products">
-      <?php while ($rel = $result_suggested->fetch_assoc()): ?>
-        <div class="related-item">
-          <a href="product_detail.php?code=<?php echo htmlspecialchars($rel['product_code']); ?>">
-            <img src="admin/uploads/<?php echo htmlspecialchars($rel['image']); ?>" alt="<?php echo htmlspecialchars($rel['name']); ?>">
-            <p><?php echo htmlspecialchars($rel['name']); ?></p>
-            <p><?php echo number_format($rel['price'],0,',','.'); ?> VNĐ</p>
-          </a>
-        </div>
-      <?php endwhile; ?>
+        <?php while($rel = $related_products->fetch_assoc()): ?>
+            <div class="related-item">
+                <a href="product_detail.php?code=<?= htmlspecialchars($rel['product_code']) ?>">
+                    <img src="admin/uploads/<?= htmlspecialchars($rel['image']) ?>" alt="<?= htmlspecialchars($rel['name']) ?>" style="width:100%; height:auto;">
+                    <p><?= htmlspecialchars($rel['name']) ?></p>
+                    <p><?= number_format($rel['price'],0,',','.') ?> VNĐ</p>
+                </a>
+            </div>
+        <?php endwhile; ?>
     </div>
-  </div>
+</div>
 <?php endif; ?>
 
-<?php
-// ====== Lấy danh sách đánh giá ======
-$stmt_fb = $conn->prepare("SELECT f.*, u.name AS user_name FROM feedback f JOIN users u ON f.user_id = u.id WHERE f.product_code = ? ORDER BY f.created_at DESC");
-$stmt_fb->bind_param("s", $product['product_code']);
-$stmt_fb->execute();
-$result_fb = $stmt_fb->get_result();
-?>
-
+<!-- Đánh giá sản phẩm -->
 <div class="product-detail" style="margin-top:30px;">
   <h2>Đánh giá sản phẩm</h2>
 
   <?php if ($is_logged_in): ?>
-    <p><strong>Người dùng:</strong> <?php echo htmlspecialchars($user_name); ?></p>
-    <form method="POST" style="display:flex; align-items:center; gap:10px;">
-  <div style="flex:1;">
-    <label>Chọn số sao:</label>
-    <div style="font-size:25px;">
-      <input type="radio" name="rating" value="5" id="star5"><label for="star5">⭐5</label>
-      <input type="radio" name="rating" value="4" id="star4"><label for="star4">⭐4</label>
-      <input type="radio" name="rating" value="3" id="star3"><label for="star3">⭐3</label>
-      <input type="radio" name="rating" value="2" id="star2"><label for="star2">⭐2</label>
-      <input type="radio" name="rating" value="1" id="star1" required><label for="star1">⭐1</label>
-    </div>
-    <textarea name="message" placeholder="Nhập nội dung đánh giá..." rows="3" style="margin-top:10px;"></textarea>
-  </div>
-  
-  <?php if ($is_logged_in): ?>
-    <div style="display:flex; flex-direction:column; gap:10px;">
-      <button type="submit" class="btn-submit">Gửi đánh giá</button>
-      <a href="user_logout.html" class="btn-back">⬅ Quay về</a>
-    </div>
-  <?php endif; ?>
-</form>
-
-
+    <p><strong>Người dùng:</strong> <?= htmlspecialchars($user_name) ?></p>
+    <form method="POST" style="display:flex; gap:20px; align-items:flex-start;">
+      <div style="flex:1;">
+        <label>Chọn số sao:</label>
+        <div style="font-size:25px; margin-top:5px;">
+          <?php for($i=5; $i>=1; $i--): ?>
+            <input type="radio" name="rating" value="<?= $i ?>" id="star<?= $i ?>" required>
+            <label for="star<?= $i ?>">⭐<?= $i ?></label>
+          <?php endfor; ?>
+        </div>
+        <textarea name="message" placeholder="Nhập nội dung đánh giá..." rows="3" style="margin-top:10px; width:100%;"></textarea>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <button type="submit" class="btn-submit">Gửi đánh giá</button>
+        <a href="user_logout.html" class="btn-back">⬅ Quay về</a>
+      </div>
+    </form>
   <?php else: ?>
     <p style="color:red;">Bạn cần đăng nhập để gửi đánh giá.</p>
   <?php endif; ?>
 
-  <hr>
-  <h3>Đánh giá gần đây</h3>
-  <?php if ($result_fb->num_rows > 0): ?>
-    <?php while ($fb = $result_fb->fetch_assoc()): ?>
+  <h3 style="margin-top:20px;">Đánh giá gần đây</h3>
+  <?php if ($feedbacks->num_rows > 0): ?>
+    <?php while($fb = $feedbacks->fetch_assoc()): ?>
       <div class="feedback-item">
-        <p><strong><?php echo htmlspecialchars($fb['user_name']); ?></strong> - <?php echo str_repeat("⭐", $fb['rating']); ?></p>
-        <p><?php echo nl2br(htmlspecialchars($fb['message'])); ?></p>
-        <small><i><?php echo $fb['created_at']; ?></i></small>
-
+        <p><strong><?= htmlspecialchars($fb['user_name']) ?></strong> - <?= str_repeat("⭐",$fb['rating']) ?></p>
+        <p><?= nl2br(htmlspecialchars($fb['message'])) ?></p>
+        <small><i><?= $fb['created_at'] ?></i></small>
         <?php if ($is_logged_in && $fb['user_id'] == $user_id): ?>
           <form method="POST" style="display:inline;">
-            <input type="hidden" name="delete_id" value="<?php echo $fb['id']; ?>">
-            <button type="submit" name="delete_feedback" onclick="return confirm('Bạn có chắc muốn xóa đánh giá này không?')" style="background:red;">Xóa</button>
+            <input type="hidden" name="delete_id" value="<?= $fb['id'] ?>">
+            <button type="submit" name="delete_feedback" onclick="return confirm('Bạn có chắc muốn xóa đánh giá này không?')" style="background:red; color:white; border:none; padding:3px 6px; cursor:pointer;">Xóa</button>
           </form>
         <?php endif; ?>
       </div>
@@ -190,7 +172,4 @@ $result_fb = $stmt_fb->get_result();
 </body>
 </html>
 
-
-<?php
-$conn->close();
-?>
+<?php $conn->close(); ?>

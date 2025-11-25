@@ -1,186 +1,137 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Phụ Kiện Điện Thoại</title>
+    <title>Phụ Kiện Điện Thoại</title>
     <link rel="stylesheet" href="css/user.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    
 </head>
-
 <body>
-    <header>
-        <h1> Mobile Gear</h1>
-        <nav>
-            <ul>
-                <li><a href="#home" onclick="showSection('home')">Trang Chủ</a> </li>
+<header>
+    <h1>Mobile Gear</h1>
+    <nav>
+        <ul>
+            <li><a href="#home" onclick="showSection('home')">Trang Chủ</a></li>
+            <li><a href="#products" onclick="showSection('products')"><i class="fas fa-box"></i> Sản Phẩm</a></li>
+            <li><a href="#cart" onclick="showSection('cart')"><i class="fas fa-shopping-cart"></i> Giỏ Hàng (<span id="cart-quantity">0</span>)</a></li>
+            <li><a href="#contact" onclick="showSection('contact')"><i class="fas fa-phone"></i> Liên Hệ</a></li>
+            <li><a href="#login" onclick="showSection('login')"><i class="fas fa-right-to-bracket"></i> Đăng Nhập</a></li>
+        </ul>
+    </nav>
+</header>
 
-                <li><a href="#products" onclick="showSection('products')">
-                      <i class="fas fa-box" style="color: white; margin-right: 6px;"></i>
-                      Sản Phẩm </a> </li>
-                  
-                  <li><a href="#cart" onclick="showSection('cart')">
-                      <i class="fas fa-shopping-cart" style="color: white; margin-right: 6px;"></i>
-                      Giỏ Hàng (<span id="cart-quantity">0</span>)</a></li>
-                  
-                  <li><a href="#contact" onclick="showSection('contact')">
-                      <i class="fas fa-phone" style="color: white; margin-right: 6px;"></i>
-                      Liên Hệ </a></li>
-                  
-                <li><a href="#login" onclick="showSection('login')">
-                      <i class="fas fa-right-to-bracket" style="color: white; margin-right: 6px;"></i>
-                      Đăng Nhập </a></li>
+<main>
+    <section id="home"></section>
 
-            </ul>
-        </nav>
-    </header>
-
-
-    <main>
-        <section id="home"> </section>
-     
     <section id="products">
-    <div class="filter-bar">
-        <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm theo loại, tên hoặc mã...">
+        <div class="filter-bar">
+            <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm theo loại, tên hoặc mã...">
+            <select id="categoryFilter">
+                <option value="all">Tất cả danh mục</option>
+                <option value="Tai nghe">Tai nghe</option>
+                <option value="Cáp sạc">Cáp sạc</option>
+                <option value="Ốp lưng">Ốp lưng</option>
+                <option value="Kính cường lực">Kính cường lực</option>
+            </select>
+            <select id="priceFilter" style="display:none;">
+                <option value="all">Tất cả giá</option>
+                <option value="0-100">Dưới 100K</option>
+                <option value="100-300">100K - 300K</option>
+                <option value="300-500">300K - 500K</option>
+                <option value="500-1000">500K - 1 triệu</option>
+                <option value="1000+">Trên 1 triệu</option>
+            </select>
+        </div>
+        <div id="products-container"></div>
+    </section>
 
-        <select id="categoryFilter">
-            <option value="all">Tất cả danh mục</option>
-            <option value="Tai nghe">Tai nghe</option>
-            <option value="Cáp sạc">Cáp sạc</option>
-            <option value="Ốp lưng">Ốp lưng</option>
-            <option value="Kính cường lực">Kính cường lực</option>
-        </select>
+    <section id="cart">
+        <h2>Giỏ Hàng</h2>
+        <div id="cart-items"></div>
+        <div id="total-quantity">Tổng số sản phẩm: 0</div>
+        <div id="total-price">Tổng giá trị: 0 VNĐ</div>
+        <button id="checkout" style="display:none;" onclick="checkout()">Đặt hàng</button>
+    </section>
 
-        <!-- Price filter sẽ hiển thị khi chọn danh mục -->
-        <select id="priceFilter" style="display:none;">
-            <option value="all">Tất cả giá</option>
-            <option value="0-100">Dưới 100K</option>
-            <option value="100-300">100K - 300K</option>
-            <option value="300-500">300K - 500K</option>
-            <option value="500-1000">500K - 1 triệu</option>
-            <option value="1000+">Trên 1 triệu</option>
-        </select>
+    <div id="login-section" class="container" style="display:none;">
+        <h1>Đăng Nhập</h1>
+        <form id="login-form" class="form" method="POST" action="user_login.php">
+            <div class="form-group">
+                <label for="login-name">Tên:</label>
+                <input type="text" id="login-name" name="login-name" required>
+            </div>
+            <div class="form-group">
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" name="login-email" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">Mật Khẩu:</label>
+                <input type="password" id="login-password" name="login-password" required>
+                <span class="toggle-password" onclick="togglePassword('login-password')">👁️</span>
+            </div>
+            <button type="submit">Đăng Nhập</button>
+            <p class="register-link">Chưa có tài khoản? <a href="#register" onclick="showSection('register')"><i class="fas fa-user-plus"></i> Đăng ký tại đây</a></p>
+            <p><a href="pay/forgot_password.php">Quên mật khẩu?</a></p>
+        </form>
     </div>
 
-    <div id="products-container"></div>
-</section>
+    <div id="register-section" class="container" style="display:none;">
+        <h2>Đăng Ký</h2>
+        <form id="register-form" class="form" method="POST" action="user_register.php">
+            <div class="form-group">
+                <label for="register-name">Tên:</label>
+                <input type="text" id="register-name" name="register-name" required>
+            </div>
+            <div class="form-group">
+                <label for="register-email">Email:</label>
+                <input type="email" id="register-email" name="register-email" required>
+            </div>
+            <div class="form-group">
+                <label for="register-password">Mật Khẩu:</label>
+                <input type="password" id="register-password" name="register-password" required>
+                <span class="toggle-password" onclick="togglePassword('register-password')">👁️</span>
+            </div>
+            <button type="submit">Đăng Ký</button>
+        </form>
+    </div>
 
+    <section id="contact" style="display:none;">
+        <h2>Liên Hệ</h2>
+        <form id="contact-form">
+            <label for="name">Tên:</label><input type="text" id="name" required>
+            <label for="email">Email:</label><input type="email" id="email" required>
+            <label for="phone">Số điện thoại:</label><input type="tel" id="phone" required>
+            <label for="message">Nội dung:</label><textarea id="message" required></textarea>
+            <button type="submit">Gửi</button>
+        </form>
+    </section>
 
-        <section id="cart">
-            <h2>Giỏ Hàng</h2>
-            <div id="cart-items"></div>
-            <div id="total-quantity">Tổng số sản phẩm: 0</div>
-            <div id="total-price">Tổng giá trị: 0 VNĐ</div>
-            <button id="checkout" style="display: none;" onclick="checkout()">Đặt hàng</button>
-        </section>
-
-
-
-
-        <div class="container" id="login-section" style="display: none;">
-            <h1>Đăng Nhập</h1>
-            <form id="login-form" class="form" method="POST" action="user_login.php">
-                <div class="form-group">
-                    <label for="login-name">Tên:</label>
-                    <input type="text" id="login-name" name="login-name" required>
-                </div>
-                <div class="form-group">
-                    <label for="login-email">Email:</label>
-                    <input type="email" id="login-email" name="login-email" required>
-                </div>
-                <div class="form-group">
-                    <label for="login-password">Mật Khẩu:</label>
-                    <input type="password" id="login-password" name="login-password" required>
-                    <span class="toggle-password" onclick="togglePassword('login-password')">👁️</span>
-                </div>
-                <button type="submit">Đăng Nhập</button>
-                <p class="register-link">
-    Chưa có tài khoản? 
-    <a href="#register" onclick="showSection('register')">
-        <i class="fas fa-user-plus" style="margin-right: 4px;"></i> 
-        Đăng ký tại đây
-    </a>
-</p>
-
-                <p><a href="pay/forgot_password.php">Quên mật khẩu?</a></p>
-            </form>
-        </div>
-        
-
-
-
-        <div class="container" id="register-section" style="display: none;">
-            <h2>Đăng Ký</h2>
-            <form id="register-form" class="form" method="POST" action="user_register.php">
-                <div class="form-group">
-                    <label for="register-name">Tên:</label>
-                    <input type="text" id="register-name" name="register-name" required>
-                </div>
-                <div class="form-group">
-                    <label for="register-email">Email:</label>
-                    <input type="email" id="register-email" name="register-email" required>
-                </div>
-                <div class="form-group">
-                    <label for="register-password">Mật Khẩu:</label>
-                    <input type="password" id="register-password" name="register-password" required>
-                    <span class="toggle-password" onclick="togglePassword('register-password')">👁️</span>
-                </div>
-                <button type="submit">Đăng Ký</button>
-            </form>
-        </div>
-
-
-
-        <section id="contact" style="display: none;">
-            <h2>Liên Hệ</h2>
-            <form id="contact-form">
-                <label for="name">Tên:</label>
-                <input type="text" id="name" required>
-                <label for="email">Email:</label>
-                <input type="email" id="email" required>
-                <label for="phone">Số điện thoại:</label>
-                <input type="tel" id="phone" required>
-                <label for="message">Nội dung:</label>
-                <textarea id="message" required></textarea>
-                <button type="submit">Gửi</button>
-            </form>
-        </section>
-
-        <div id="notification"></div>
-
-    </main>
-    
+    <div id="notification"></div>
+</main>
 
 <footer>
     <div class="footer-container">
-
-        <!-- Cột 1: Thông tin cửa hàng -->
         <div class="footer-column">
             <h3>MOBILE GEAR</h3>
             <p>Địa chỉ: Số 254 Tây Sơn - P. Trung Liệt - Q. Đống Đa - TP. Hà Nội</p>
             <p>Điện thoại: 0587.911.287</p>
             <p>Email: mobilegear@gmail.com</p>
         </div>
-
-        <!-- Cột 2: Bản đồ Google Maps -->
+        
         <div class="footer-column">
             <h4>Bản đồ cửa hàng</h4>
-            <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.850620123456!2d105.82664431540412!3d21.00818248599739!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab123456789%3A0xabcdef123456!2s254%20Tay%20Son%2C%20Trung%20Liet%2C%20Dong%20Da%2C%20Hanoi!5e0!3m2!1sen!2s!4v1700000000000"
-                width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.850620123456!2d105.82664431540412!3d21.00818248599739!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab123456789%3A0xabcdef123456!2s254%20Tay%20Son%2C%20Trung%20Liet%2C%20Dong%20Da%2C%20Hanoi!5e0!3m2!1sen!2s!4v1700000000000" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
         </div>
 
-        <!-- Cột 3: Liên kết nhanh + mạng xã hội -->
         <div class="footer-column">
             <h4>Liên kết nhanh</h4>
             <ul>
-    <li><a href="#home" onclick="showSection('home')">Trang Chủ</a></li>
-    <li><a href="#products" onclick="showSection('products')">Sản Phẩm</a></li>
-    <li><a href="#cart" onclick="showSection('cart')">Giỏ Hàng</a></li>
-    <li><a href="#contact" onclick="showSection('contact')">Liên Hệ</a></li>
+                <li><a href="#home" onclick="showSection('home')">Trang Chủ</a></li>
+                <li><a href="#products" onclick="showSection('products')">Sản Phẩm</a></li>
+                <li><a href="#cart" onclick="showSection('cart')">Giỏ Hàng</a></li>
+                <li><a href="#contact" onclick="showSection('contact')">Liên Hệ</a></li>
             </ul>
-
             <h4>Kết nối với chúng tôi</h4>
             <div class="social-icons">
                 <a href="https://www.facebook.com/nam.nguyen.133454" target="_blank"><i class="fab fa-facebook-f"></i></a>
@@ -188,62 +139,36 @@
                 <a href="#"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
-
     </div>
-
-    <!-- Bản quyền -->
     <div class="footer-bottom">
         <p>&copy; 2025 MOBILE GEAR. All rights reserved.</p>
     </div>
 </footer>
 
-
-
-
-<a href="#" id="zalo-float">
-    <img src="admin/uploads/download.png" alt="Chat Zalo" class="zalo-icon">
-</a>
-
-<a href="#" id="messenger-float">
-    <img src="admin/uploads/mess.jpg" alt="Chat Messenger" class="messenger-icon">
-</a>
-
-
+<a href="#" id="zalo-float"><img src="admin/uploads/download.png" alt="Chat Zalo" class="zalo-icon"></a>
+<a href="#" id="messenger-float"><img src="admin/uploads/mess.jpg" alt="Chat Messenger" class="messenger-icon"></a>
 
 <script>
 const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
-document.getElementById('zalo-float').addEventListener('click', function(e){
+document.getElementById('zalo-float').addEventListener('click', e => {
     e.preventDefault();
-    if(isLoggedIn){
-        window.open('https://zalo.me/0587911287', '_blank');
-    } else {
-        alert('Vui lòng đăng nhập !');
-    }
+    isLoggedIn ? window.open('https://zalo.me/0587911287', '_blank') : alert('Vui lòng đăng nhập !');
 });
 
-document.getElementById('messenger-float').addEventListener('click', function(e){
+document.getElementById('messenger-float').addEventListener('click', e => {
     e.preventDefault();
-    if(isLoggedIn){
-        window.open('https://www.facebook.com/nam.nguyen.133454?mibextid=ZbWKwL', '_blank');
-    } else {
-        alert('Vui lòng đăng nhập!');
-    }
+    isLoggedIn ? window.open('https://www.facebook.com/nam.nguyen.133454?mibextid=ZbWKwL', '_blank') : alert('Vui lòng đăng nhập!');
 });
-</script>
 
-<script>
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", () => {
     if(window.location.hash === "#cart") {
         showSection("cart");
-        updateCartDisplay(); // render lại đầy đủ hình ảnh, giá, nút
+        updateCartDisplay();
     }
 });
 </script>
 
-
-
-  <script src="js/new.js"></script>
+<script src="js/new.js"></script>
 </body>
 </html>
-                                        

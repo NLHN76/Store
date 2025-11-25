@@ -399,11 +399,6 @@ if (!empty($edit_error) && !isset($_GET['status'])) {
 }
 ?>
 
-
-
-
-
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -411,8 +406,6 @@ if (!empty($edit_error) && !isset($_GET['status'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QUẢN LÍ SẢN PHẨM</title>
     <link rel="stylesheet" href="css/products.css">
-     
-       
 </head>
 
 <body>
@@ -421,7 +414,7 @@ if (!empty($edit_error) && !isset($_GET['status'])) {
             <img src="uploads/exit.jpg" alt="Quay lại"> 
         </a>
         <h2>QUẢN LÍ SẢN PHẨM</h2>
-        <!--Trạng thái -->
+
         <?php if (!empty($status_message)): ?>
             <div id="status-message" class="status-message <?= $status_type  ?>">
                 <?= htmlspecialchars($status_message) ?>
@@ -429,102 +422,95 @@ if (!empty($edit_error) && !isset($_GET['status'])) {
         <?php endif; ?>
         
         <ul class="center-button">
-  <li>
-    <a href="admin_products-detail.php" class="btn-add">
-      <i class="fas fa-list-ul" style="margin-right:6px;"></i>
-      Thêm chi tiết sản phẩm
-    </a>
-  </li>
-</ul>
+            <li>
+                <a href="admin_products-detail.php" class="btn-add">
+                    <i class="fas fa-list-ul" style="margin-right:6px;"></i>
+                    Thêm chi tiết sản phẩm
+                </a>
+            </li>
+        </ul>
 
-           <!--Box tìm kiếm-->
+        <!-- Box tìm kiếm -->
         <div class="search-box">
             <form method="GET" action="<?= $_SERVER['PHP_SELF'] ?>">
                 <input type="text" name="search" placeholder="Tìm theo loại,tên hoặc mã sản phẩm..." value="<?= htmlspecialchars($search) ?>" aria-label="Ô tìm kiếm sản phẩm">
                 <button type="submit" aria-label="Tìm kiếm">🔍</button>
             </form>
         </div>
-       
-         
 
-<!-- 🔘 Nút hiển thị form -->
-<button id="toggle-color-panel" 
-        style="background-color:#17a2b8;color:white;padding:8px 15px;border:none;border-radius:5px;cursor:pointer;">
-    ⚙ Mở Quản Lý Màu Sắc
-</button>
-
-<!-- 🟢 Khối chứa cả hai form (ẩn mặc định) -->
-<div id="color-panel" 
-     style="display:none; margin-top:15px; padding:15px; background:#f8f9fa; border:1px solid #ccc; border-radius:8px;">
-
-    <!-- 🟢 Form thêm màu -->
-    <form method="POST" style="margin-bottom:20px;">
-        <input type="hidden" name="action" value="add_color">
-        <label><strong>➕ Thêm màu mới:</strong></label><br>
-        <input type="text" name="new_color" placeholder="Nhập tên màu (VD: Tím)" required
-               style="padding:6px; border:1px solid #ccc; border-radius:5px;">
-        <button type="submit" 
-                style="padding:6px 12px; background:#28a745; color:white; border:none; border-radius:5px;">
-            ✅ Lưu màu
+        <!-- Nút mở quản lý màu sắc -->
+        <button id="toggle-color-panel" 
+                style="background-color:#17a2b8;color:white;padding:8px 15px;border:none;border-radius:5px;cursor:pointer;">
+            ⚙ Mở Quản Lý Màu Sắc
         </button>
-    </form>
 
-    <!-- 🔴 Danh sách xóa màu -->
-    <div>
-        <label><strong>🗑 Xóa màu:</strong></label>
-        <?php if (!empty($available_colors)): ?>
-            <ul style="list-style:none; padding-left:0; margin-top:8px;">
-                <?php foreach ($available_colors as $color): ?>
-                    <li style="margin-bottom:8px;">
-                        <span style="display:inline-block; width:100px;"><?= htmlspecialchars($color) ?></span>
-                        <form method="POST" style="display:inline;">
-                            <input type="hidden" name="action" value="delete_color">
-                            <input type="hidden" name="delete_color" value="<?= htmlspecialchars($color) ?>">
-                            <button type="submit" 
-                                    style="padding:4px 8px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">
-                                ❌ Xóa
-                            </button>
-                        </form>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        <?php else: ?>
-            <p style="color:#777;">⚠️ Chưa có màu nào để xóa.</p>
-        <?php endif; ?>
-    </div>
-</div>
+        <!-- Khối quản lý màu sắc -->
+        <div id="color-panel" 
+             style="display:none; margin-top:15px; padding:15px; background:#f8f9fa; border:1px solid #ccc; border-radius:8px;">
 
-        <!--Nút thêm sản phẩm-->
-        <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
-             <button id="toggle-add-form-btn" type="button" aria-controls="add-product-modal" aria-expanded="false" style="padding: 12px 25px; font-size: 1em; background-color: #17a2b8; border: none; border-radius: 6px; color: white; cursor: pointer;">
-                 Thêm Sản Phẩm
-             </button>
+            <!-- Thêm màu -->
+            <form method="POST" style="margin-bottom:20px;">
+                <input type="hidden" name="action" value="add_color">
+                <label><strong>➕ Thêm màu mới:</strong></label><br>
+                <input type="text" name="new_color" placeholder="Nhập tên màu (VD: Tím)" required
+                       style="padding:6px; border:1px solid #ccc; border-radius:5px;">
+                <button type="submit" 
+                        style="padding:6px 12px; background:#28a745; color:white; border:none; border-radius:5px;">
+                    ✅ Lưu màu
+                </button>
+            </form>
+
+            <!-- Xóa màu -->
+            <div>
+                <label><strong>🗑 Xóa màu:</strong></label>
+                <?php if (!empty($available_colors)): ?>
+                    <ul style="list-style:none; padding-left:0; margin-top:8px;">
+                        <?php foreach ($available_colors as $color): ?>
+                            <li style="margin-bottom:8px;">
+                                <span style="display:inline-block; width:100px;"><?= htmlspecialchars($color) ?></span>
+                                <form method="POST" style="display:inline;">
+                                    <input type="hidden" name="action" value="delete_color">
+                                    <input type="hidden" name="delete_color" value="<?= htmlspecialchars($color) ?>">
+                                    <button type="submit" 
+                                            style="padding:4px 8px; background:#dc3545; color:white; border:none; border-radius:4px; cursor:pointer;">
+                                        ❌ Xóa
+                                    </button>
+                                </form>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php else: ?>
+                    <p style="color:#777;">⚠️ Chưa có màu nào để xóa.</p>
+                <?php endif; ?>
+            </div>
         </div>
 
-       <!-- Nút báo giá sản phẩm -->
-      <form action="product_quote.php" method="get" target="_blank" style="margin-bottom: 15px; text-align: center;">
-        <button type="submit">Báo Giá Sản Phẩm</button>
-      </form>
+        <!-- Nút thêm sản phẩm -->
+        <div style="text-align: center; margin-top: 30px; margin-bottom: 20px;">
+            <button id="toggle-add-form-btn" type="button" style="padding: 12px 25px; font-size: 1em; background-color: #17a2b8; border: none; border-radius: 6px; color: white; cursor: pointer;">
+                Thêm Sản Phẩm
+            </button>
+        </div>
 
+        <!-- Báo giá -->
+        <form action="product_quote.php" method="get" target="_blank" style="margin-bottom: 15px; text-align: center;">
+            <button type="submit">Báo Giá Sản Phẩm</button>
+        </form>
 
-
-
-            <!--Tìm kiếm khi trạng thái bật-tắt sản phẩm -->
+        <!-- Hiển thị sản phẩm -->
         <div class="product-container">
             <?php if (empty($products)): ?>
                 <p class="no-products">
                     <?php if (!empty($search)): ?>
-                         Không tìm thấy sản phẩm nào phù hợp với "<?= htmlspecialchars($search) ?>".
+                        Không tìm thấy sản phẩm nào phù hợp với "<?= htmlspecialchars($search) ?>".
                     <?php else: ?>
-                         Chưa có sản phẩm nào trong cửa hàng.
+                        Chưa có sản phẩm nào trong cửa hàng.
                     <?php endif; ?>
                 </p>
             <?php else: ?>
                 <?php foreach ($products as $product): ?>
                     <?php $is_active = $product['is_active'] == 1; ?>
-                    <div class="product-box <?= !$is_active ? 'inactive' : '' /* Thêm class nếu không active */ ?>">
-
-                        <!--  Thông báo trạng thái nếu không active -->
+                    <div class="product-box <?= !$is_active ? 'inactive' : '' ?>">
                         <?php if (!$is_active): ?>
                             <div class="inactive-overlay">ĐÃ TẮT</div>
                         <?php endif; ?>
@@ -533,20 +519,16 @@ if (!empty($edit_error) && !isset($_GET['status'])) {
                         <p class="product-code">Mã: <?= htmlspecialchars($product['product_code'] ?? 'N/A') ?></p>
                         <p>Loại: <?= htmlspecialchars($product['category']) ?></p>
                         <?php
-                            $image_path = 'uploads/' . ($product['image'] ?? '');
-                            if (!empty($product['image']) && file_exists($image_path)):
+                        $image_path = 'uploads/' . ($product['image'] ?? '');
+                        if (!empty($product['image']) && file_exists($image_path)):
                         ?>
                             <img src="<?= htmlspecialchars($image_path) ?>" alt="Ảnh <?= htmlspecialchars($product['name']) ?>">
                         <?php else: ?>
-                             <img src="uploads/placeholder.png" alt="Ảnh mẫu">
+                            <img src="uploads/placeholder.png" alt="Ảnh mẫu">
                         <?php endif; ?>
                         <p class="product-price"><?= number_format($product['price'], 0, ',', '.') ?> VNĐ</p>
 
-
-
-
-
-                        <!--  Form Bật/Tắt Sản Phẩm -->
+                        <!-- Bật/Tắt sản phẩm -->
                         <form method="POST" action="<?= $_SERVER['PHP_SELF'] ?>" class="toggle-form">
                             <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
                             <input type="hidden" name="action" value="toggle_status">
@@ -557,44 +539,43 @@ if (!empty($edit_error) && !isset($_GET['status'])) {
                             <?php endif; ?>
                         </form>
 
-
-
-
-
-
-                        <!-- Form Sửa/Xóa Sản Phẩm -->
+                        <!-- Form sửa/xóa sản phẩm -->
                         <form method="POST" enctype="multipart/form-data" action="<?= $_SERVER['PHP_SELF'] ?>" class="edit-form">
                             <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                            <input type="text" name="product_name" value="<?= htmlspecialchars($product['name']) ?>" placeholder="Tên sản phẩm" required aria-label="Tên sản phẩm">
-                            <input type="text" name="product_price" value="<?= number_format($product['price'], 0, ',', '.') ?>" placeholder="Giá (VD: 20.000)" required aria-label="Giá sản phẩm">
-                             <label>Chọn màu sắc:</label>
-<div class="color-options" style="text-align:left;">
-    <?php if (!empty($available_colors)): ?>
-        <?php foreach ($available_colors as $color): ?>
-            <label>
-                <input type="checkbox" name="product_colors[]" value="<?= htmlspecialchars($color) ?>"
-                    <?= in_array($color, explode(',', $product['color'] ?? '')) ? 'checked' : '' ?>>
-                <?= htmlspecialchars($color) ?>
-            </label><br>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <p style="color:#999;">⚠️ Chưa có màu nào. Hãy thêm ở phần “Quản lý Màu Sắc”.</p>
-    <?php endif; ?>
-</div>
+                            <input type="text" name="product_name" value="<?= htmlspecialchars($product['name']) ?>" placeholder="Tên sản phẩm" required>
+                            <input type="text" name="product_price" value="<?= number_format($product['price'], 0, ',', '.') ?>" placeholder="Giá (VD: 20.000)" required>
 
-                            <select name="product_category" required aria-label="Loại sản phẩm">
+                            <!-- Checkbox màu sắc (Đã sửa) -->
+                            <label>Chọn màu sắc:</label>
+                            <div class="color-options" style="text-align:left;">
+                                <?php
+                                $product_colors = explode(',', $product['color'] ?? '');
+                                if (!empty($available_colors)):
+                                    foreach ($available_colors as $color): ?>
+                                        <label>
+                                            <input type="checkbox" name="product_colors[]" value="<?= htmlspecialchars($color) ?>"
+                                                <?= in_array($color, $product_colors) ? 'checked' : '' ?>>
+                                            <?= htmlspecialchars($color) ?>
+                                        </label><br>
+                                    <?php endforeach;
+                                endif;
+                                ?>
+                                <!-- Mặc định luôn có -->
+                                <label>
+                                    <input type="checkbox" name="product_colors[]" value="Mặc định"
+                                        <?= in_array('Mặc định', $product_colors) ? 'checked' : '' ?>>
+                                    Màu mặc định
+                                </label><br>
+                            </div>
+
+                            <select name="product_category" required>
                                 <?php
                                 $categories = ['Tai nghe', 'Cáp sạc', 'Ốp lưng', 'Kính cường lực'];
                                 foreach ($categories as $cat): ?>
                                     <option value="<?= $cat ?>" <?= ($product['category'] ?? '') == $cat ? 'selected' : '' ?>><?= $cat ?></option>
                                 <?php endforeach; ?>
                             </select>
-                            <input type="file" name="product_image" accept="image/jpeg, image/png, image/gif" aria-label="Chọn ảnh mới (không bắt buộc)">
-                           
-                            <?php if (!empty($product['image'])): ?>
-                               
-                            <?php endif; ?>
-                           
+                            <input type="file" name="product_image" accept="image/jpeg, image/png, image/gif">
                             <div class="form-actions">
                                 <button type="submit" name="action" value="edit">Lưu</button>
                                 <button type="submit" name="action" value="delete" onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm \'<?= htmlspecialchars(addslashes($product['name'])) ?>\'?\n');">Xóa</button>
@@ -605,77 +586,60 @@ if (!empty($edit_error) && !isset($_GET['status'])) {
             <?php endif; ?>
         </div>
 
-               
+        <!-- Modal thêm sản phẩm mới -->
+        <div id="modal-overlay" class="modal-overlay" aria-hidden="true"></div> 
+        <div id="add-product-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
+            <div class="modal-content">
+                <button id="close-modal-btn" class="close-button" aria-label="Đóng">×</button>
 
+                <div class="add-product-form">
+                    <h2 id="modal-title">Thêm Sản Phẩm Mới</h2>
+                    <form method="POST" enctype="multipart/form-data" action="<?= $_SERVER['PHP_SELF'] ?>">
 
-    <div id="modal-overlay" class="modal-overlay" aria-hidden="true"></div> 
+                        <!-- Checkbox màu sắc (Đã sửa) -->
+                        <label>Chọn màu sắc:</label>
+                        <div class="color-options" style="text-align:left;">
+                            <?php if (!empty($available_colors)): ?>
+                                <?php foreach ($available_colors as $color): ?>
+                                    <label>
+                                        <input type="checkbox" name="product_colors[]" value="<?= htmlspecialchars($color) ?>">
+                                        <?= htmlspecialchars($color) ?>
+                                    </label><br>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <p style="color:#999;">⚠️ Chưa có màu nào. Hãy thêm màu mới ở phần “Quản lý Màu Sắc”.</p>
+                            <?php endif; ?>
+                            <label>
+                                <input type="checkbox" name="product_colors[]" value="Mặc định">
+                                Màu mặc định
+                            </label><br>
+                        </div>
 
-<div id="add-product-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-hidden="true">
-    <div class="modal-content">
-        <button id="close-modal-btn" class="close-button" aria-label="Đóng">×</button>
+                        <label for="add_product_name_modal">Tên sản phẩm:</label>
+                        <input type="text" id="add_product_name_modal" name="product_name" placeholder="Tên sản phẩm" required>
 
+                        <label for="add_product_price_modal">Giá sản phẩm:</label>
+                        <input type="text" id="add_product_price_modal" name="product_price" placeholder="Chỉ nhập số, VD: 150.000" required inputmode="numeric">
 
+                        <label for="add_product_category_modal">Loại sản phẩm:</label>
+                        <select id="add_product_category_modal" name="product_category" required>
+                            <option value="" disabled selected>-- Chọn loại sản phẩm --</option>
+                            <option value="Tai nghe">Tai nghe</option>
+                            <option value="Cáp sạc">Cáp sạc</option>
+                            <option value="Ốp lưng">Ốp lưng</option>
+                            <option value="Kính cường lực">Kính cường lực</option>
+                        </select>
 
-      
-
-
-        <div class="add-product-form">
-            <h2 id="modal-title">Thêm Sản Phẩm Mới</h2>
-            <form method="POST" enctype="multipart/form-data" action="<?= $_SERVER['PHP_SELF'] ?>">
-                
-              <label style="display:block;text-align:left;margin-top:10px;font-weight:500;">Chọn màu sắc:</label>
-<div class="color-options" style="text-align:left;">
-  <?php if (!empty($available_colors)): ?>
-    <?php foreach ($available_colors as $color): ?>
-      <label>
-        <input type="checkbox" name="product_colors[]" value="<?= htmlspecialchars($color) ?>"> 
-        <?= htmlspecialchars($color) ?>
-      </label><br>
-    <?php endforeach; ?>
-  <?php else: ?>
-    <p style="color:#999;">⚠️ Chưa có màu nào. Hãy thêm màu mới ở phần “Quản lý Màu Sắc”.</p>
-  <?php endif; ?>
-</div>
-
-
-
-                
-                <label for="add_product_name_modal" style="display: block; text-align: left; margin-top: 10px; font-weight: 500;">Tên sản phẩm:</label>
-                <input type="text" id="add_product_name_modal" name="product_name" placeholder="Tên sản phẩm" required aria-label="Tên sản phẩm mới">
-
-                <label for="add_product_price_modal" style="display: block; text-align: left; margin-top: 10px; font-weight: 500;">Giá sản phẩm:</label>
-                <input type="text" id="add_product_price_modal" name="product_price" placeholder="Chỉ nhập số, VD: 150.000" required aria-label="Giá sản phẩm mới" inputmode="numeric">
-                <small style="display: block; text-align: left; margin-top: 3px; color: #6c757d; font-size: 0.85em;">
-                    
-                </small>
-
-                <label for="add_product_category_modal" style="display: block; text-align: left; margin-top: 15px; font-weight: 500;">Loại sản phẩm:</label>
-                <select id="add_product_category_modal" name="product_category" required aria-label="Loại sản phẩm mới">
-                    <option value="" disabled selected>-- Chọn loại sản phẩm --</option>
-                    <option value="Tai nghe">Tai nghe</option>
-                    <option value="Cáp sạc">Cáp sạc</option>
-                    <option value="Ốp lưng">Ốp lưng</option>
-                    <option value="Kính cường lực">Kính cường lực</option>
-                </select>
-
-                <label for="add_product_image_modal" style="display: block; text-align: left; margin-top: 15px; font-weight: 500;"></label>
-                <input type="file" id="add_product_image_modal" name="product_image" accept="image/jpeg, image/png, image/gif" aria-label="Chọn ảnh sản phẩm ">
-
-                <input type="hidden" name="action" value="add">
-                <button type="submit" style="margin-top: 20px; width: 100%;">Thêm sản phẩm</button>
-            </form>
-        </div>
-        
-
-    </div> 
-</div> 
-
+                        <input type="file" id="add_product_image_modal" name="product_image" accept="image/jpeg, image/png, image/gif">
+                        <input type="hidden" name="action" value="add">
+                        <button type="submit" style="margin-top: 20px; width: 100%;">Thêm sản phẩm</button>
+                    </form>
+                </div>
+            </div> 
+        </div>   
+    </div>
 </body>
 </html>
-
-
-
-
 
 <script>
     function formatNumberInput(input) {

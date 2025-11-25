@@ -55,9 +55,9 @@ function syncStockFromPayment($conn){
         $colors = explode(',', $row['color']);
         $product_codes = explode(',', $row['product_code']);
 
-        foreach($colors as $i => $color){
-            $color = trim($color);
-            $product_code = trim($product_codes[$i] ?? '');
+        foreach($product_codes as $i => $product_code){
+            $product_code = trim($product_code);
+            $color = trim($colors[$i] ?? '');
             $qty = 0;
 
             if(isset($product_names[$i])){
@@ -65,18 +65,17 @@ function syncStockFromPayment($conn){
                 $qty = isset($matches[1]) ? (int)$matches[1] : 1;
             }
 
-            if($qty > 0 && $product_code){
-                // Lấy product_id từ products
+            if($qty > 0 && $product_code && $color){
+                // Lấy product_id từ product_code
                 $stmt_id = $conn->prepare("SELECT id FROM products WHERE product_code=? LIMIT 1");
                 $stmt_id->bind_param("s", $product_code);
                 $stmt_id->execute();
                 $res_id = $stmt_id->get_result()->fetch_assoc();
                 $stmt_id->close();
-
-                if(!$res_id) continue; // bỏ qua nếu product_code không tồn tại
+                if(!$res_id) continue;
                 $product_id = $res_id['id'];
 
-                // Trừ tồn kho trực tiếp
+                // Trừ tồn kho chính xác theo product_id và color
                 $stmt = $conn->prepare("UPDATE product_inventory SET quantity=GREATEST(quantity-?,0) WHERE product_id=? AND color=?");
                 $stmt->bind_param("iis", $qty, $product_id, $color);
                 $stmt->execute();
@@ -99,7 +98,36 @@ function syncStockFromPayment($conn){
         $stmt2->close();
     }
 }
+
+/* ----------------- Tính tổng số đã bán cho mỗi sản phẩm-color ----------------- */
+function calculateSoldQuantity($conn){
+    $soldData = []; // [product_code][color] => total sold
+    $res = $conn->query("SELECT product_name, color, product_code FROM payment WHERE status='Đã giao hàng'");
+    while($row = $res->fetch_assoc()){
+        $names = explode(',', $row['product_name']);
+        $colors = explode(',', $row['color']);
+        $codes = explode(',', $row['product_code']);
+
+        foreach($codes as $i => $code){
+            $code = trim($code);
+            $color = trim($colors[$i] ?? '');
+            $qty = 0;
+            if(isset($names[$i])) preg_match('/\(x(\d+)\)/', $names[$i], $matches);
+            $qty = isset($matches[1]) ? (int)$matches[1] : 1;
+
+            if($code && $color && $qty > 0){
+                if(!isset($soldData[$code])) $soldData[$code] = [];
+                if(!isset($soldData[$code][$color])) $soldData[$code][$color] = 0;
+                $soldData[$code][$color] += $qty;
+            }
+        }
+    }
+    return $soldData;
+}
+
+// Thực hiện đồng bộ và tính sold
 syncStockFromPayment($conn);
+$soldQuantities = calculateSoldQuantity($conn);
 
 /* ----------------- Thêm / Nhập hàng ----------------- */
 if(isset($_POST['add_stock'])){
@@ -140,6 +168,7 @@ if(isset($_POST['add_stock'])){
         exit();
     }
 }
+
 /* ----------------- Xử lý cập nhật tồn kho theo dòng ----------------- */
 if(isset($_POST['update_stock']) && !empty($_POST['adjust_stock'])){
     foreach($_POST['adjust_stock'] as $product_id => $colors){
@@ -224,7 +253,7 @@ $resP = $conn->query("SELECT id,name,color,product_code FROM products ORDER BY n
 while($r = $resP->fetch_assoc()) $productOptions[]=$r;
 $resP->close();
 
-/* ----------------- Lấy tồn kho thực tế ----------------- */
+/* ----------------- Lấy tồn kho thực tế và số đã bán ----------------- */
 $inventoryData = [];
 $resInv = $conn->query("SELECT * FROM product_inventory ORDER BY product_code ASC,color ASC");
 while($row = $resInv->fetch_assoc()){
@@ -236,31 +265,10 @@ while($row = $resInv->fetch_assoc()){
 
     $row['product_name'] = $p['name'];
     $row['sale_price'] = $p['price'];
-
-    // Tồn kho thực tế = quantity trong DB
     $row['actual_stock'] = (int)$row['quantity'];
 
-    // Tổng đã bán (từ payment) để báo cáo
-    $stmtSold = $conn->prepare("SELECT product_name,color FROM payment WHERE status='Đã giao hàng'");
-    $stmtSold->execute();
-    $resS = $stmtSold->get_result();
-    $soldQty=0;
-    while($s=$resS->fetch_assoc()){
-        $names = explode(',', $s['product_name']);
-        $colors = explode(',', $s['color']);
-        foreach($colors as $i=>$c){
-            $c=trim($c);
-            if($c===$row['color']){
-                $qty=0;
-                if(isset($names[$i])) preg_match('/\(x(\d+)\)/',$names[$i],$matches);
-                $qty = isset($matches[1])?(int)$matches[1]:1;
-                $soldQty += $qty;
-            }
-        }
-    }
-    $stmtSold->close();
-
-    $row['sold'] = $soldQty;
+    // Lấy tổng đã bán
+    $row['sold'] = $soldQuantities[$row['product_code']][$row['color']] ?? 0;
     $row['profit'] = ($row['sale_price']*$row['sold']) - ($row['import_price']*$row['sold']);
 
     $inventoryData[$row['product_name']][]=$row;
