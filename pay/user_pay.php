@@ -6,17 +6,17 @@ $username = "root";
 $password = "";
 $dbname = "store";
 
+// Kết nối DB
 $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Kết nối thất bại: " . $conn->connect_error);
 }
 
+// Lấy thông tin user
 $name = $email = $phone = $address = $user_code = '';
-
 if (isset($_SESSION['user_id'])) {
     $userId = $_SESSION['user_id'];
-    $query = "SELECT name, email, user_code FROM users WHERE id = ?";
-    $stmt = $conn->prepare($query);
+    $stmt = $conn->prepare("SELECT name, email, user_code FROM users WHERE id = ?");
     $stmt->bind_param("i", $userId);
     $stmt->execute();
     $stmt->bind_result($name, $email, $user_code);
@@ -27,18 +27,20 @@ if (isset($_SESSION['user_id'])) {
     exit;
 }
 
+// Kiểm tra giỏ hàng
 if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
     echo "Giỏ hàng của bạn trống.";
     exit;
 }
 
 $cart = $_SESSION['cart'];
-$totalPrice = $itemCount = 0;
-$productCodes = $productCategories = $productDetailsList = $colorsList = [];
+$totalPrice = 0;
+$itemCount = 0;
 
-// Chuẩn hóa giỏ hàng
-foreach ($cart as &$item) {
-    // Bắt buộc phải có product_code
+// Bước 1: Chuẩn hóa và gộp giỏ hàng theo product_code + color
+$itemsGrouped = [];
+foreach ($cart as $item) {
+    // Lấy product_code nếu chưa có
     if (empty($item['product_code'])) {
         $stmtProd = $conn->prepare("SELECT product_code, category FROM products WHERE name = ?");
         $stmtProd->bind_param("s", $item['name']);
@@ -53,27 +55,26 @@ foreach ($cart as &$item) {
         $stmtProd->close();
     }
 
-    // Chuẩn hóa màu
-    if (empty($item['color'])) {
-        $item['color'] = 'Mặc định';
+    $color = $item['color'] ?? 'Mặc định';
+    $key = $item['product_code'] . '||' . $color;
+
+    if (!isset($itemsGrouped[$key])) {
+        $itemsGrouped[$key] = [
+            'name' => $item['name'],
+            'product_code' => $item['product_code'],
+            'category' => $item['category'] ?? 'N/A',
+            'color' => $color,
+            'price' => (float)$item['price'],
+            'quantity' => (int)$item['quantity']
+        ];
+    } else {
+        // Cộng dồn số lượng nếu cùng product + color
+        $itemsGrouped[$key]['quantity'] += (int)$item['quantity'];
     }
 
-    // Tính tổng và chuẩn bị thông tin chi tiết
-    $quantity = (int)$item['quantity'];
-    $price    = (float)$item['price'];
-    $totalPrice += $price * $quantity;
-    $itemCount += $quantity;
-
-    $productDetailsList[] = htmlspecialchars($item['name']) . " (x$quantity)";
-    $colorsList[]         = $item['color'];
-    $productCodes[]       = $item['product_code'];
-    $productCategories[]  = $item['category'] ?? 'N/A';
+    $totalPrice += $item['price'] * $item['quantity'];
+    $itemCount += (int)$item['quantity'];
 }
-
-$productDetailsString    = implode(', ', $productDetailsList);
-$productCodesString      = implode(', ', $productCodes);
-$productCategoriesString = implode(', ', array_unique(array_filter($productCategories)));
-$colorsString            = implode(', ', $colorsList);
 
 $isPaymentConfirmed = false;
 
@@ -90,41 +91,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $conn->begin_transaction();
     try {
-        // 1️⃣ Kiểm tra tồn kho khả dụng và đặt trước
-        foreach ($cart as $item) {
-            $product_code = $item['product_code'];
-            $color        = $item['color'] ?? 'Mặc định';
-            $quantity     = (int)$item['quantity'];
-
+        // Bước 2: Kiểm tra tồn kho + update reserved_quantity
+        foreach ($itemsGrouped as $item) {
             $stmtStock = $conn->prepare("
                 SELECT quantity, reserved_quantity 
                 FROM product_inventory 
                 WHERE product_code = ? AND color = ? FOR UPDATE
             ");
-            $stmtStock->bind_param("ss", $product_code, $color);
+            $stmtStock->bind_param("ss", $item['product_code'], $item['color']);
             $stmtStock->execute();
             $stmtStock->bind_result($stock, $reserved);
             if (!$stmtStock->fetch()) {
-                throw new Exception("Sản phẩm " . htmlspecialchars($item['name']) . " màu $color không tồn tại trong kho.");
+                throw new Exception("Sản phẩm " . htmlspecialchars($item['name']) . " màu " . htmlspecialchars($item['color']) . " không tồn tại trong kho.");
             }
             $stmtStock->close();
 
-            if (($stock - $reserved) < $quantity) {
-                throw new Exception("Sản phẩm " . htmlspecialchars($item['name']) . " màu $color chỉ còn " . ($stock - $reserved) . " sản phẩm khả dụng.");
+            if (($stock - $reserved) < $item['quantity']) {
+                throw new Exception("Sản phẩm " . htmlspecialchars($item['name']) . " màu " . htmlspecialchars($item['color']) . " chỉ còn " . ($stock - $reserved) . " sản phẩm khả dụng.");
             }
 
-            // Tăng reserved_quantity
+            // Cập nhật reserved_quantity
             $stmtUpdate = $conn->prepare("
                 UPDATE product_inventory 
                 SET reserved_quantity = reserved_quantity + ? 
                 WHERE product_code = ? AND color = ?
             ");
-            $stmtUpdate->bind_param("iss", $quantity, $product_code, $color);
+            $stmtUpdate->bind_param("iss", $item['quantity'], $item['product_code'], $item['color']);
             $stmtUpdate->execute();
             $stmtUpdate->close();
         }
 
-        // 2️⃣ Lưu đơn hàng vào bảng payment
+        // Bước 3: Lưu đơn hàng
+        $productCodesString = implode(', ', array_map(fn($i) => $i['product_code'], $itemsGrouped));
+        $productDetailsString = implode(', ', array_map(fn($i) => $i['name'] . " (x" . $i['quantity'] . ")", $itemsGrouped));
+        $productCategoriesString = implode(', ', array_unique(array_map(fn($i) => $i['category'], $itemsGrouped)));
+        $colorsString = implode(', ', array_map(fn($i) => $i['color'], $itemsGrouped));
+
         $stmt = $conn->prepare("INSERT INTO payment 
             (customer_name, customer_email, customer_phone, customer_address, user_code, product_code, product_name, product_quantity, total_price, category, color) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -138,12 +140,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $stmt->close();
 
-        // 3️⃣ Gửi email xác nhận
-        sendConfirmationEmail($name_post, $email_post, $totalPrice, $cart, $address_post, $productCodes, $user_code, $productCategories, $productDetailsList, $colorsList);
+        // Bước 4: Gửi email xác nhận
+        sendConfirmationEmail($name_post, $email_post, $totalPrice, $itemsGrouped, $address_post, $user_code);
 
         $conn->commit();
         $isPaymentConfirmed = true;
-        unset($_SESSION['cart']); // Xóa giỏ hàng
+        unset($_SESSION['cart']);
     } catch (Exception $e) {
         $conn->rollback();
         echo "Đặt hàng thất bại: " . $e->getMessage();
@@ -151,7 +153,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-function sendConfirmationEmail($name, $email, $totalPrice, $cart, $address, $productCodes, $user_code, $productCategories, $productDetailsList, $colorsList) {
+// Hàm gửi email
+function sendConfirmationEmail($name, $email, $totalPrice, $itemsGrouped, $address, $user_code) {
     require 'vendor/autoload.php';
     $mail = new PHPMailer\PHPMailer\PHPMailer();
     try {
@@ -169,7 +172,7 @@ function sendConfirmationEmail($name, $email, $totalPrice, $cart, $address, $pro
 
         $mail->isHTML(true);
         $mail->Subject = mb_encode_mimeheader('Xác nhận đơn hàng thành công - Mobile Gear', 'UTF-8');
-        $mail->Body = generateEmailBody($name, $totalPrice, $cart, $address, $productCodes, $user_code, $productCategories, $productDetailsList, $colorsList);
+        $mail->Body = generateEmailBody($name, $totalPrice, $itemsGrouped, $address, $user_code);
 
         $mail->send();
     } catch (Exception $e) {
@@ -177,7 +180,8 @@ function sendConfirmationEmail($name, $email, $totalPrice, $cart, $address, $pro
     }
 }
 
-function generateEmailBody($name, $totalPrice, $cart, $address, $productCodes, $user_code, $productCategories, $productDetailsList, $colorsList) {
+// Nội dung email
+function generateEmailBody($name, $totalPrice, $itemsGrouped, $address, $user_code) {
     $body = "<html><body><h1>Xác Nhận Đơn Hàng</h1>";
     $body .= "<p>Khách hàng: <strong>" . htmlspecialchars($name) . "</strong></p>";
     $body .= "<p>Mã KH: <strong>" . htmlspecialchars($user_code) . "</strong></p>";
@@ -185,18 +189,14 @@ function generateEmailBody($name, $totalPrice, $cart, $address, $productCodes, $
     $body .= "<p>Tổng tiền: <strong>" . number_format($totalPrice, 0, ',', '.') . " VNĐ</strong></p>";
     $body .= "<h3>Chi tiết sản phẩm:</h3><ul>";
 
-    foreach ($productDetailsList as $index => $detail) {
-        $productCode = htmlspecialchars($productCodes[$index] ?? 'N/A');
-        $category    = htmlspecialchars($productCategories[$index] ?? 'N/A');
-        $color       = htmlspecialchars($colorsList[$index] ?? 'Mặc định');
-        $itemTotal   = number_format($cart[$index]['price'] * $cart[$index]['quantity'], 0, ',', '.');
-
+    foreach ($itemsGrouped as $item) {
+        $itemTotal = $item['price'] * $item['quantity'];
         $body .= "<li style='margin-bottom:8px;'>
-                    <strong>Tên:</strong> {$detail}<br>
-                    <strong>Mã sản phẩm:</strong> {$productCode}<br>
-                    <strong>Màu sắc:</strong> {$color}<br>
-                    <strong>Loại:</strong> {$category}<br>
-                    <strong>Thành tiền:</strong> {$itemTotal} VNĐ
+                    <strong>Tên:</strong> " . htmlspecialchars($item['name']) . " (x{$item['quantity']})<br>
+                    <strong>Mã sản phẩm:</strong> " . htmlspecialchars($item['product_code']) . "<br>
+                    <strong>Màu sắc:</strong> " . htmlspecialchars($item['color']) . "<br>
+                    <strong>Loại:</strong> " . htmlspecialchars($item['category']) . "<br>
+                    <strong>Thành tiền:</strong> " . number_format($itemTotal, 0, ',', '.') . " VNĐ
                   </li>";
     }
 
@@ -206,7 +206,6 @@ function generateEmailBody($name, $totalPrice, $cart, $address, $productCodes, $
 
 $conn->close();
 ?>
-
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -257,17 +256,14 @@ form button:hover { background-color: #4cae4c; }
 <p><strong>Tổng Tiền:</strong> <?php echo number_format($totalPrice, 0, ',', '.'); ?> VNĐ</p>
 <h3>Chi Tiết Sản Phẩm:</h3>
 <ul>
-<?php foreach ($cart as $index => $item): ?>
+<?php foreach ($itemsGrouped as $item): ?>
 <li>
 <?php
-$pCode = htmlspecialchars($productCodes[$index] ?? 'N/A');
-$pCat  = htmlspecialchars($productCategories[$index] ?? 'N/A');
-$color = htmlspecialchars($colorsList[$index] ?? 'Không có màu');
 $itemTotal = $item['price'] * $item['quantity'];
-echo "<strong>Mã:</strong> {$pCode}<br>";
+echo "<strong>Mã:</strong> " . htmlspecialchars($item['product_code']) . "<br>";
 echo "<strong>Tên:</strong> " . htmlspecialchars($item['name']) . " (x" . htmlspecialchars($item['quantity']) . ")<br>";
-echo "<strong>Màu:</strong> {$color}<br>";
-echo "<strong>Loại:</strong> {$pCat}<br>";
+echo "<strong>Màu:</strong> " . htmlspecialchars($item['color']) . "<br>";
+echo "<strong>Loại:</strong> " . htmlspecialchars($item['category']) . "<br>";
 echo "<strong>Giá:</strong> " . number_format($itemTotal, 0, ',', '.') . " VNĐ";
 ?>
 </li>

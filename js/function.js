@@ -42,15 +42,14 @@ function applyFilters() {
         const matchCategory = category === "all" || p.category.toLowerCase() === category.toLowerCase();
 
         let matchPrice = true;
-        if (category !== "all") {
-            switch(priceRange) {
-                case "0-100": matchPrice = price < 100000; break;
-                case "100-300": matchPrice = price >= 100000 && price <= 300000; break;
-                case "300-500": matchPrice = price >= 300000 && price <= 500000; break;
-                case "500-1000": matchPrice = price >= 500000 && price <= 1000000; break;
-                case "1000+": matchPrice = price > 1000000; break;
-            }
+        switch(priceRange) {
+            case "0-100": matchPrice = price < 100000; break;
+            case "100-300": matchPrice = price >= 100000 && price <= 300000; break;
+            case "300-500": matchPrice = price >= 300000 && price <= 500000; break;
+            case "500-1000": matchPrice = price >= 500000 && price <= 1000000; break;
+            case "1000+": matchPrice = price > 1000000; break;
         }
+
         return matchKeyword && matchCategory && matchPrice;
     });
 
@@ -60,6 +59,7 @@ function applyFilters() {
 // ================= RENDER SẢN PHẨM =================
 function renderProducts(data) {
     productsContainer.innerHTML = '';
+
     data.forEach(product => {
         const div = document.createElement('div');
         div.classList.add('product');
@@ -67,10 +67,16 @@ function renderProducts(data) {
         div.dataset.price = parseFloat(product.price.replace(/\./g, '').replace(',', '.'));
         div.dataset.code = product.product_code;
 
-        const colors = product.color?.split(',').map(c => c.trim()).filter(Boolean) || [];
+        // Lưu tồn kho riêng theo màu
+        product.stockByColor = product.color?.split(',').reduce((acc, c) => { 
+            acc[c.trim()] = 0; 
+            return acc; 
+        }, {}) || {};
+
+        const colors = Object.keys(product.stockByColor);
         const inventoryHTML = `
             <p><strong>Kho:</strong> <span class="stock">0</span></p>
-            <p><strong>Đã bán:</strong> <span class="sold">0</span></p>
+            <p class="sold" style="display:none;"><strong>Đã bán:</strong> <span>0</span></p>
             <p class="text-danger stock-warning" style="display:none;">❌ Màu này đã hết hàng!</p>
         `;
         const colorSelectHTML = colors.length
@@ -83,7 +89,7 @@ function renderProducts(data) {
         div.innerHTML = `
             <img src="${product.image}" alt="${product.name}" class="product-image" style="width:150px; height:150px; cursor:pointer;">
             <h3>${product.name}</h3>
-            <p><strong>Mã sản phẩm:</strong> ${product.product_code}</p>
+            <p class="product-code" style="display:none;"><strong>Mã sản phẩm:</strong> ${product.product_code}</p>
             <p><strong>Giá:</strong> ${formatPrice(product.price)} VNĐ</p>
             ${colorSelectHTML}
             <button onclick="addToCart(this)">Thêm vào giỏ hàng</button>
@@ -96,20 +102,20 @@ function renderProducts(data) {
             window.location.href = `product_detail.php?code=${product.product_code}`;
         });
 
-        // Load tồn kho
+        // Load tồn kho từ server
         const select = div.querySelector('.color-select');
         const stockSpan = div.querySelector('.stock');
-        const soldSpan = div.querySelector('.sold');
-        const warning = div.querySelector('.stock-warning');
         const addBtn = div.querySelector('button');
+        const warning = div.querySelector('.stock-warning');
 
         const loadStock = () => {
             if (!select) return;
-            fetch(`get_inventory.php?product_code=${product.product_code}&color=${encodeURIComponent(select.value)}`)
+            const color = select.value;
+            fetch(`get_inventory.php?product_code=${product.product_code}&color=${encodeURIComponent(color)}`)
                 .then(res => res.json())
                 .then(inv => {
+                    product.stockByColor[color] = inv.quantity;
                     stockSpan.textContent = inv.quantity;
-                    soldSpan.textContent = inv.sold;
                     addBtn.disabled = inv.quantity <= 0;
                     warning.style.display = inv.quantity <= 0 ? 'block' : 'none';
                 });
@@ -127,22 +133,35 @@ function addToCart(btn) {
     const p = btn.parentElement;
     const name = p.dataset.name;
     const price = parseFloat(p.dataset.price);
+    const code = p.dataset.code;
     const image = p.querySelector('img').src;
     const color = p.querySelector('.color-select')?.value || 'Không có màu';
-    const stockQty = parseInt(p.querySelector('.stock').textContent);
+
+    const product = allProducts.find(p => p.product_code === code);
+    const stockQty = product?.stockByColor[color] || 0;
 
     const existing = cart.find(i => i.name === name && i.color === color);
-    if (existing && existing.quantity >= stockQty) { alert('Số lượng vượt quá tồn kho!'); return; }
+    if (existing && existing.quantity >= stockQty) { 
+        alert('Số lượng vượt quá tồn kho!'); 
+        return; 
+    }
     if (existing) existing.quantity++; 
     else if (stockQty > 0) cart.push({ name, color, price, quantity:1, image });
-    else { alert('Sản phẩm này đã hết hàng!'); return; }
+    else { 
+        alert('Sản phẩm này đã hết hàng!'); 
+        return; 
+    }
 
+    showNotification(`Đã thêm "${name}" (${color}) vào giỏ hàng!`);
     updateCartDisplay();
-    notification.textContent = `Đã thêm "${name}" (${color}) vào giỏ hàng!`;
-    notification.style.display = 'block';
-    setTimeout(() => notification.style.display = 'none', 1000);
-
     showSection('cart');
+}
+
+function showNotification(text) {
+    notification.textContent = text;
+    notification.style.display = 'block';
+    clearTimeout(notification.timer);
+    notification.timer = setTimeout(() => notification.style.display = 'none', 1500);
 }
 
 function updateCartDisplay() {
@@ -162,19 +181,32 @@ function updateCartDisplay() {
     cart.forEach(item => {
         const div = document.createElement('div');
         div.classList.add('cart-item');
+
         div.innerHTML = `<img src="${item.image}" style="width:100px; height:100px; margin-right:10px;">
                          <span>${item.name} - <em>${item.color}</em> (x${item.quantity}): ${(item.price*item.quantity).toLocaleString('vi-VN')} VNĐ</span>`;
+        
         ['-', '+', 'Xóa'].forEach(action => {
             const btn = document.createElement('button');
             btn.textContent = action;
+
             btn.onclick = () => {
-                if (action === '+') item.quantity++;
-                else if (action === '-') item.quantity > 1 ? item.quantity-- : cart.splice(cart.indexOf(item),1);
-                else cart.splice(cart.indexOf(item),1);
+                const product = allProducts.find(p => p.name === item.name);
+                const stockQty = product?.stockByColor[item.color] ?? Infinity;
+
+                if (action === '+') {
+                    if (item.quantity < stockQty) item.quantity++;
+                    else { alert('Số lượng vượt quá tồn kho!'); return; }
+                } else if (action === '-') {
+                    if (item.quantity > 1) item.quantity--;
+                    else cart.splice(cart.indexOf(item),1);
+                } else { // Xóa
+                    cart.splice(cart.indexOf(item),1);
+                }
                 updateCartDisplay();
             };
             div.appendChild(btn);
         });
+
         cartDiv.appendChild(div);
         count += item.quantity;
         total += item.price * item.quantity;
@@ -187,7 +219,9 @@ function updateCartDisplay() {
     document.getElementById('cart-quantity').textContent = count;
 }
 
-// ================= THAO TÁC KHÁC =================
+
+
+// Thanh toán 
 async function checkout() {
     try {
         const res = await fetch('pay/save_cart.php', {
@@ -202,7 +236,7 @@ async function checkout() {
 }
 
 
-
+// Liên hệ
 document.getElementById('contact-form')?.addEventListener('submit', function(e) {
     e.preventDefault();
     const formData = new URLSearchParams(new FormData(this));
@@ -210,6 +244,7 @@ document.getElementById('contact-form')?.addEventListener('submit', function(e) 
         .then(res => res.ok ? (alert('Cảm ơn bạn!'), this.reset()) : res.text().then(t => alert('Lỗi: '+t)));
 });
 
+// Trang chủ
 async function loadHome() {
     try {
         const data = await fetchJSON('get_home.php');
@@ -237,7 +272,7 @@ async function loadHome() {
     } catch(err){ console.error(err); }
 }
 
-// ================= KHỞI TẠO =================
+// Lấy sản phẩm
 document.addEventListener('DOMContentLoaded', () => {
     showSection('home');
     fetchJSON('get_products.php').then(data => { allProducts=data; renderProducts(allProducts); });
@@ -248,6 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }).catch(console.error);
 });
 
+// Đăng xuất
 function logout() { cart=[]; totalPrice=0; updateCartDisplay(); alert('Đăng xuất thành công'); window.location.href='user.html'; }
 
 searchInput.addEventListener('input', applyFilters);
