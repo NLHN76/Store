@@ -22,10 +22,18 @@ function getProductCode($conn, $product_id) {
 }
 
 /* ----------------- Nhận tham số lọc lịch sử ----------------- */
-$from_date = $_GET['from_date'] ?? '';
-$to_date = $_GET['to_date'] ?? '';
+$tab_active = $_GET['tab'] ?? 'stock'; 
+$today = date('Y-m-d'); // Ngày hiện tại server
+
+if($tab_active == 'history') {
+    $from_date = $_GET['from_date'] ?? $today;
+    $to_date   = $_GET['to_date']   ?? $today;
+} else {
+    $from_date = $_GET['from_date'] ?? '';
+    $to_date   = $_GET['to_date']   ?? '';
+}
+
 $product_code_filter = $_GET['product_code'] ?? '';
-$tab_active = $_GET['tab'] ?? 'stock';
 
 $history_where = "";
 $params = [];
@@ -47,9 +55,11 @@ if($product_code_filter){
     $types .= "s";
 }
 
-/* ----------------- Đồng bộ tồn kho từ payment đã giao ----------------- */
-function syncStockFromPayment($conn){
-    $res = $conn->query("SELECT * FROM payment WHERE status='Đã giao hàng' AND is_deducted IS NULL");
+
+
+/* ----------------- Hoàn lại tồn kho khi hủy đơn ----------------- */
+function restoreStockFromCancelledPayment($conn){
+    $res = $conn->query("SELECT * FROM payment WHERE status='Đã hủy' AND is_restored IS NULL");
     while($row = $res->fetch_assoc()){
         $product_names = explode(',', $row['product_name']);
         $colors = explode(',', $row['color']);
@@ -66,42 +76,47 @@ function syncStockFromPayment($conn){
             }
 
             if($qty > 0 && $product_code && $color){
-                // Lấy product_id từ product_code
                 $stmt_id = $conn->prepare("SELECT id FROM products WHERE product_code=? LIMIT 1");
                 $stmt_id->bind_param("s", $product_code);
                 $stmt_id->execute();
                 $res_id = $stmt_id->get_result()->fetch_assoc();
                 $stmt_id->close();
                 if(!$res_id) continue;
+
                 $product_id = $res_id['id'];
 
-                // Trừ tồn kho chính xác theo product_id và color
-                $stmt = $conn->prepare("UPDATE product_inventory SET quantity=GREATEST(quantity-?,0) WHERE product_id=? AND color=?");
+                // Cộng tồn kho
+                $stmt = $conn->prepare("
+                    UPDATE product_inventory
+                    SET quantity = quantity + ?
+                    WHERE product_id=? AND color=?
+                ");
                 $stmt->bind_param("iis", $qty, $product_id, $color);
                 $stmt->execute();
                 $stmt->close();
 
-                // Lưu lịch sử trừ hàng
-                $note = "Trừ tồn kho từ đơn đã giao (Payment ID: {$row['id']})";
-                $stmt_hist = $conn->prepare("INSERT INTO inventory_history(product_id, product_code, color, quantity_change, import_price, type, note)
-                                             VALUES (?, ?, ?, ?, 0, 'Bán hàng', ?)");
+                $note = "Hoàn lại tồn kho từ đơn hủy (Payment ID: {$row['id']})";
+                $stmt_hist = $conn->prepare("
+                    INSERT INTO inventory_history(product_id, product_code, color, quantity_change, import_price, type, note)
+                    VALUES (?, ?, ?, ?, 0, 'Hoàn trả', ?)
+                ");
                 $stmt_hist->bind_param("issis", $product_id, $product_code, $color, $qty, $note);
                 $stmt_hist->execute();
                 $stmt_hist->close();
             }
         }
 
-        // Đánh dấu đã trừ
-        $stmt2 = $conn->prepare("UPDATE payment SET is_deducted=1 WHERE id=?");
+        // Đánh dấu đã xử lý
+        $stmt2 = $conn->prepare("UPDATE payment SET is_restored=1 WHERE id=?");
         $stmt2->bind_param("i", $row['id']);
         $stmt2->execute();
         $stmt2->close();
     }
 }
 
-/* ----------------- Tính tổng số đã bán cho mỗi sản phẩm-color ----------------- */
+/* ----------------- Tính tổng số đã bán ----------------- */
 function calculateSoldQuantity($conn){
-    $soldData = []; // [product_code][color] => total sold
+    $soldData = [];
     $res = $conn->query("SELECT product_name, color, product_code FROM payment WHERE status='Đã giao hàng'");
     while($row = $res->fetch_assoc()){
         $names = explode(',', $row['product_name']);
@@ -125,9 +140,11 @@ function calculateSoldQuantity($conn){
     return $soldData;
 }
 
-// Thực hiện đồng bộ và tính sold
-syncStockFromPayment($conn);
+/* ----------------- Thực hiện đồng bộ và tính sold ----------------- */
+
+restoreStockFromCancelledPayment($conn);
 $soldQuantities = calculateSoldQuantity($conn);
+
 
 /* ----------------- Thêm / Nhập hàng ----------------- */
 if(isset($_POST['add_stock'])){
@@ -177,7 +194,6 @@ if(isset($_POST['update_stock']) && !empty($_POST['adjust_stock'])){
             $color = trim($color);
             $new_qty = max(0, (int)$new_qty);
 
-            // Lấy tồn kho cũ
             $stmt = $conn->prepare("SELECT quantity, import_price, product_code FROM product_inventory WHERE product_id=? AND color=? LIMIT 1");
             $stmt->bind_param("is",$product_id,$color);
             $stmt->execute();
@@ -190,13 +206,11 @@ if(isset($_POST['update_stock']) && !empty($_POST['adjust_stock'])){
             $diff = $new_qty - $old_qty;
 
             if($diff !== 0){
-                // Cập nhật quantity trong product_inventory
                 $stmt = $conn->prepare("UPDATE product_inventory SET quantity=? WHERE product_id=? AND color=?");
                 $stmt->bind_param("iis",$new_qty,$product_id,$color);
                 $stmt->execute();
                 $stmt->close();
 
-                // Lưu lịch sử điều chỉnh
                 $note = $diff>0 ? "Tăng tồn kho +$diff" : "Giảm tồn kho $diff";
                 $stmt_hist = $conn->prepare("INSERT INTO inventory_history(product_id, product_code, color, quantity_change, import_price, type, note)
                                              VALUES (?, ?, ?, ?, ?, 'Điều chỉnh', ?)");
@@ -218,7 +232,6 @@ if(isset($_POST['delete_stock'])){
     $color = trim($_POST['delete_color'] ?? '');
 
     if($product_id && $color !== ''){
-        // Lấy thông tin trước khi xóa để lưu lịch sử
         $stmt = $conn->prepare("SELECT quantity, import_price, product_code FROM product_inventory WHERE product_id=? AND color=? LIMIT 1");
         $stmt->bind_param("is",$product_id,$color);
         $stmt->execute();
@@ -226,13 +239,11 @@ if(isset($_POST['delete_stock'])){
         $stmt->close();
 
         if($row){
-            // Xóa bản ghi
             $stmt = $conn->prepare("DELETE FROM product_inventory WHERE product_id=? AND color=?");
             $stmt->bind_param("is",$product_id,$color);
             $stmt->execute();
             $stmt->close();
 
-            // Lưu lịch sử xóa
             $note = "Xóa toàn bộ màu này";
             $stmt_hist = $conn->prepare("INSERT INTO inventory_history(product_id, product_code, color, quantity_change, import_price, type, note)
                                          VALUES (?, ?, ?, ?, ?, 'Xóa hàng', ?)");
@@ -266,12 +277,24 @@ while($row = $resInv->fetch_assoc()){
     $row['product_name'] = $p['name'];
     $row['sale_price'] = $p['price'];
     $row['actual_stock'] = (int)$row['quantity'];
-
-    // Lấy tổng đã bán
     $row['sold'] = $soldQuantities[$row['product_code']][$row['color']] ?? 0;
     $row['profit'] = ($row['sale_price']*$row['sold']) - ($row['import_price']*$row['sold']);
 
+    $row['_row_id'] = "row_" . $row['product_id'] . "_" . preg_replace('/[^a-zA-Z0-9]/','',$row['color']); // ID để scroll
     $inventoryData[$row['product_name']][]=$row;
+}
+
+/* ----------------- Kiểm tra tồn kho thấp ----------------- */
+$lowStockWarnings = [];
+foreach($inventoryData as $productName => $items){
+    foreach($items as $item){
+        if($item['actual_stock'] < 10){
+            $lowStockWarnings[] = [
+                'text' => $productName . " (Màu: " . $item['color'] . ") - Tồn: " . $item['actual_stock'],
+                'row_id' => $item['_row_id']
+            ];
+        }
+    }
 }
 
 /* ----------------- Lấy lịch sử tồn kho ----------------- */
@@ -284,8 +307,6 @@ $resH=$stmt_hist->get_result();
 while($r=$resH->fetch_assoc()) $history[]=$r;
 $stmt_hist->close();
 ?>
-
-
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -311,6 +332,24 @@ $stmt_hist->close();
 </head>
 <body>
 <div class="container mt-4 mb-5">
+
+<!-- Cảnh báo tồn kho thấp -->
+<?php if(!empty($lowStockWarnings)): ?>
+<div class="alert alert-warning">
+    <strong>Cảnh báo tồn kho thấp!</strong>
+    <ul>
+        <?php foreach($lowStockWarnings as $warn): ?>
+            <li>
+                <a href="#" class="low-stock-link" data-target="#<?= $warn['row_id'] ?>">
+                    <?= htmlspecialchars($warn['text']) ?>
+                </a>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</div>
+<?php endif; ?>
+
+
 <div class="d-flex justify-content-between align-items-center mb-3">
 <h3><i class="fa-solid fa-boxes-stacked"></i> Quản lý tồn kho</h3>
 <a href="admin_interface.php" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left"></i> Quay lại</a>
@@ -457,6 +496,7 @@ $stmt_hist->close();
             </form>
         </div>
     </div>
+
     <div class="table-responsive">
         <table class="table table-striped table-hover align-middle table-fixed text-center">
             <thead class="table-secondary">
@@ -525,6 +565,31 @@ function updateHidden(productId,color){
     document.getElementById(`hidden_${productId}_${color}`).value = val;
 }
 </script>
+
+<script>
+document.querySelectorAll('.low-stock-link').forEach(link => {
+    link.addEventListener('click', function(e){
+        e.preventDefault();
+        const targetId = this.dataset.target;
+        const targetRow = document.querySelector(targetId);
+        if(targetRow){
+            // Mở collapse parent nếu đang ẩn
+            const collapseEl = bootstrap.Collapse.getOrCreateInstance(targetRow);
+            collapseEl.show();
+
+            // Scroll tới dòng
+            targetRow.scrollIntoView({behavior: "smooth", block: "center"});
+
+            // Highlight nhẹ để dễ nhận biết
+            targetRow.style.transition = "background-color 0.5s";
+            const originalBg = targetRow.style.backgroundColor;
+            targetRow.style.backgroundColor = "#fff3cd"; // màu vàng nhạt
+            setTimeout(()=>{ targetRow.style.backgroundColor = originalBg; }, 1500);
+        }
+    });
+});
+</script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

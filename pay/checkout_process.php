@@ -37,9 +37,10 @@ $cart = $_SESSION['cart'];
 $totalPrice = 0;
 $itemCount = 0;
 
-// Chuẩn hóa và gộp giỏ hàng theo product_code + color
+// Bước 1: Chuẩn hóa và gộp giỏ hàng theo product_code + color
 $itemsGrouped = [];
 foreach ($cart as $item) {
+    // Lấy product_code nếu chưa có
     if (empty($item['product_code'])) {
         $stmtProd = $conn->prepare("SELECT product_code, category FROM products WHERE name = ?");
         $stmtProd->bind_param("s", $item['name']);
@@ -67,6 +68,7 @@ foreach ($cart as $item) {
             'quantity' => (int)$item['quantity']
         ];
     } else {
+        // Cộng dồn số lượng nếu cùng product + color
         $itemsGrouped[$key]['quantity'] += (int)$item['quantity'];
     }
 
@@ -87,66 +89,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Bắt đầu transaction
     $conn->begin_transaction();
     try {
-        // **Step 1: Kiểm tra tồn kho và khóa dòng**
-        foreach ($itemsGrouped as $item) {
-            $stmtStock = $conn->prepare("
-                SELECT quantity 
-                FROM product_inventory 
-                WHERE product_code = ? AND color = ? FOR UPDATE
-            ");
-            $stmtStock->bind_param("ss", $item['product_code'], $item['color']);
-            $stmtStock->execute();
-            $stmtStock->bind_result($stock);
-            if (!$stmtStock->fetch()) {
-                throw new Exception("Sản phẩm " . htmlspecialchars($item['name']) . " màu " . htmlspecialchars($item['color']) . " không tồn tại trong kho.");
-            }
-            $stmtStock->close();
-
-            if ($stock < $item['quantity']) {
-                throw new Exception("Sản phẩm " . htmlspecialchars($item['name']) . " màu " . htmlspecialchars($item['color']) . " chỉ còn " . $stock . " sản phẩm khả dụng.");
-            }
-        }
-
-      // **Step 2: Trừ kho + Ghi lịch sử tồn kho**
+      // Bước 2: Kiểm tra tồn kho + update reserved_quantity an toàn
 foreach ($itemsGrouped as $item) {
+    $productCode = $item['product_code'];
+    $color = $item['color'];
+    $quantityNeeded = (int)$item['quantity'];
 
-    // Trừ kho
+    // Lấy tồn kho và reserved_quantity, dùng IFNULL để tránh NULL
+    $stmtStock = $conn->prepare("
+        SELECT quantity, IFNULL(reserved_quantity,0) as reserved 
+        FROM product_inventory 
+        WHERE product_code = ? AND LOWER(color) = LOWER(?) FOR UPDATE
+    ");
+    $stmtStock->bind_param("ss", $productCode, $color);
+    $stmtStock->execute();
+    $stmtStock->bind_result($stock, $reserved);
+
+    if (!$stmtStock->fetch()) {
+        $stmtStock->close();
+        throw new Exception("Sản phẩm " . htmlspecialchars($item['name']) . " màu " . htmlspecialchars($color) . " không tồn tại trong kho.");
+    }
+    $stmtStock->close();
+
+    // Ép kiểu int
+    $stock = (int)$stock;
+    $reserved = (int)$reserved;
+
+    // Kiểm tra số lượng khả dụng
+    $available = $stock - $reserved;
+    if ($available < $quantityNeeded) {
+        throw new Exception("Sản phẩm " . htmlspecialchars($item['name']) . " màu " . htmlspecialchars($color) . " chỉ còn $available sản phẩm khả dụng.");
+    }
+
+    // Cập nhật reserved_quantity, đảm bảo không NULL
     $stmtUpdate = $conn->prepare("
         UPDATE product_inventory 
-        SET quantity = quantity - ? 
-        WHERE product_code = ? AND color = ?
+        SET reserved_quantity = IFNULL(reserved_quantity,0) + ? 
+        WHERE product_code = ? AND LOWER(color) = LOWER(?)
     ");
-    $stmtUpdate->bind_param("iss", $item['quantity'], $item['product_code'], $item['color']);
+    $stmtUpdate->bind_param("iss", $quantityNeeded, $productCode, $color);
     $stmtUpdate->execute();
     $stmtUpdate->close();
-
-    // Lấy product_id từ products
-    $stmtProdId = $conn->prepare("SELECT id FROM products WHERE product_code = ? LIMIT 1");
-    $stmtProdId->bind_param("s", $item['product_code']);
-    $stmtProdId->execute();
-    $resProd = $stmtProdId->get_result()->fetch_assoc();
-    $stmtProdId->close();
-
-    if ($resProd) {
-        $product_id = $resProd['id'];
-
-        // Ghi lịch sử
-        $note = "Trừ tồn kho khi đặt hàng (User: {$user_code})";
-        $stmtHist = $conn->prepare("
-            INSERT INTO inventory_history (product_id, product_code, color, quantity_change, import_price, type, note)
-            VALUES (?, ?, ?, ?, 0, 'Bán hàng', ?)
-        ");
-        $stmtHist->bind_param("issis", $product_id, $item['product_code'], $item['color'], $item['quantity'], $note);
-        $stmtHist->execute();
-        $stmtHist->close();
-    }
 }
 
 
-        // **Step 3: Lưu đơn hàng**
+        // Bước 3: Lưu đơn hàng
         $productCodesString = implode(', ', array_map(fn($i) => $i['product_code'], $itemsGrouped));
         $productDetailsString = implode(', ', array_map(fn($i) => $i['name'] . " (x" . $i['quantity'] . ")", $itemsGrouped));
         $productCategoriesString = implode(', ', array_unique(array_map(fn($i) => $i['category'], $itemsGrouped)));
@@ -165,14 +154,12 @@ foreach ($itemsGrouped as $item) {
         }
         $stmt->close();
 
-        // **Step 4: Gửi email xác nhận**
+        // Bước 4: Gửi email xác nhận
         sendConfirmationEmail($name_post, $email_post, $totalPrice, $itemsGrouped, $address_post, $user_code);
 
         $conn->commit();
         $isPaymentConfirmed = true;
         unset($_SESSION['cart']);
-        echo "Đặt hàng thành công!";
-
     } catch (Exception $e) {
         $conn->rollback();
         echo "Đặt hàng thất bại: " . $e->getMessage();
@@ -233,79 +220,3 @@ function generateEmailBody($name, $totalPrice, $itemsGrouped, $address, $user_co
 
 $conn->close();
 ?>
-
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Thanh Toán</title>
-<style>
-body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
-.container { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 700px; margin: auto; }
-h1,h2,h3 { color: #333; }
-form label { display: block; margin-bottom: 8px; font-weight: bold; }
-form input[type="text"],form input[type="email"],form input[type="tel"] { width: calc(100% - 22px); padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-form input[readonly] { background-color: #eee; cursor: not-allowed; }
-form button { background-color: #5cb85c; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease; }
-form button:hover { background-color: #4cae4c; }
-.cart-summary { margin-top: 30px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9; }
-.cart-summary ul { list-style: none; padding: 0; }
-.cart-summary li { margin-bottom: 10px; border-bottom: 1px dotted #ccc; padding-bottom: 5px; }
-#qr-code { margin: 30px 0; text-align: center; display: <?php echo $isPaymentConfirmed ? 'block' : 'none'; ?>; background: #e9f5e9; padding: 20px; border-radius: 5px; border: 1px solid #c8e6c9; }
-#qr-code img { width: 150px; height: auto; margin-bottom: 10px; }
-.back-button { display: inline-block; margin-top: 20px; padding: 10px 15px; background-color: #f0ad4e; color: white; text-decoration: none; border-radius: 4px; transition: background-color 0.3s ease; }
-.back-button:hover { background-color: #ec971f; }
-</style>
-</head>
-<body>
-<div class="container">
-<h1>Thông Tin Đặt Hàng</h1>
-
-<?php if (!$isPaymentConfirmed): ?>
-<form method="POST" action="">
-<label for="name">Tên người nhận:</label>
-<input type="text" id="name" name="name" value="<?php echo htmlspecialchars($name); ?>" required>
-<label for="user_code">Mã Khách Hàng:</label>
-<input type="text" id="user_code" name="user_code" value="<?php echo htmlspecialchars($user_code); ?>" readonly>
-<label for="email">Email:</label>
-<input type="email" id="email" name="email" value="<?php echo htmlspecialchars($email); ?>" required>
-<label for="phone">Số Điện Thoại:</label>
-<input type="tel" id="phone" name="phone" value="<?php echo htmlspecialchars($phone); ?>" required pattern="[0-9]{10,11}" title="Số điện thoại gồm 10-11 chữ số">
-<label for="address">Địa Chỉ Nhận Hàng:</label>
-<input type="text" id="address" name="address" value="<?php echo htmlspecialchars($address); ?>" required>
-<button type="submit">Xác Nhận Đặt Hàng</button>
-</form>
-
-<div class="cart-summary">
-<h2>Xem Lại Giỏ Hàng</h2>
-<p><strong>Tổng Số Lượng Sản Phẩm:</strong> <?php echo $itemCount; ?></p>
-<p><strong>Tổng Tiền:</strong> <?php echo number_format($totalPrice, 0, ',', '.'); ?> VNĐ</p>
-<h3>Chi Tiết Sản Phẩm:</h3>
-<ul>
-<?php foreach ($itemsGrouped as $item): ?>
-<li>
-<?php
-$itemTotal = $item['price'] * $item['quantity'];
-echo "<strong>Mã:</strong> " . htmlspecialchars($item['product_code']) . "<br>";
-echo "<strong>Tên:</strong> " . htmlspecialchars($item['name']) . " (x" . htmlspecialchars($item['quantity']) . ")<br>";
-echo "<strong>Màu:</strong> " . htmlspecialchars($item['color']) . "<br>";
-echo "<strong>Loại:</strong> " . htmlspecialchars($item['category']) . "<br>";
-echo "<strong>Giá:</strong> " . number_format($itemTotal, 0, ',', '.') . " VNĐ";
-?>
-</li>
-<?php endforeach; ?>
-</ul>
-</div>
-<?php endif; ?>
-
-<div id="qr-code">
-<h3>Quét Mã QR Để Thanh Toán</h3>
-<img src="qr.png" alt="Mã QR Thanh Toán" style="width: 100%; max-width: 300px;">
-<p>Cảm ơn bạn đã đặt hàng! Vui lòng kiểm tra email xác nhận. Khi thanh toán bằng chuyển khoản, ghi rõ Mã Khách Hàng (<?php echo htmlspecialchars($user_code); ?>) trong nội dung chuyển khoản.</p>
-</div>
-
-<a href="../user_logout.html" class="back-button">Quay lại trang chủ</a>
-</div>
-</body>
-</html>
