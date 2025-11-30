@@ -171,7 +171,7 @@ foreach ($itemsGrouped as $item) {
         $conn->commit();
         $isPaymentConfirmed = true;
         unset($_SESSION['cart']);
-        echo "Đặt hàng thành công!";
+    
 
     } catch (Exception $e) {
         $conn->rollback();
@@ -240,23 +240,7 @@ $conn->close();
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Thanh Toán</title>
-<style>
-body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f4f4; }
-.container { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 700px; margin: auto; }
-h1,h2,h3 { color: #333; }
-form label { display: block; margin-bottom: 8px; font-weight: bold; }
-form input[type="text"],form input[type="email"],form input[type="tel"] { width: calc(100% - 22px); padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-form input[readonly] { background-color: #eee; cursor: not-allowed; }
-form button { background-color: #5cb85c; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background-color 0.3s ease; }
-form button:hover { background-color: #4cae4c; }
-.cart-summary { margin-top: 30px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background-color: #f9f9f9; }
-.cart-summary ul { list-style: none; padding: 0; }
-.cart-summary li { margin-bottom: 10px; border-bottom: 1px dotted #ccc; padding-bottom: 5px; }
-#qr-code { margin: 30px 0; text-align: center; display: <?php echo $isPaymentConfirmed ? 'block' : 'none'; ?>; background: #e9f5e9; padding: 20px; border-radius: 5px; border: 1px solid #c8e6c9; }
-#qr-code img { width: 150px; height: auto; margin-bottom: 10px; }
-.back-button { display: inline-block; margin-top: 20px; padding: 10px 15px; background-color: #f0ad4e; color: white; text-decoration: none; border-radius: 4px; transition: background-color 0.3s ease; }
-.back-button:hover { background-color: #ec971f; }
-</style>
+<link rel="stylesheet" href="css/user_pay.css">
 </head>
 <body>
 <div class="container">
