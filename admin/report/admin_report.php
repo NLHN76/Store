@@ -70,10 +70,10 @@ while ($row = $result->fetch_assoc()) {
 
 <body>
     <h1>Thống Kê Doanh Thu Theo Ngày</h1>
-    <li><a href="report.php"><i class="fas fa-chart-bar"></i> Thống kê chi tiêu Khách hàng</a></li>
+    <li><a href="report_client.php"><i class="fas fa-chart-bar"></i> Thống kê chi tiêu Khách hàng</a></li>
     <li><a href="report_year.php"><i class="fas fa-chart-bar"></i> Thống kê doanh thu năm  </a></li>
-    <a href="admin_interface.php" class="back-button" title="Quay lại trang quản trị">
-            <img src="uploads/exit.jpg" alt="Quay lại"> 
+    <a href="../admin_interface.php" class="back-button" title="Quay lại trang quản trị">
+            <img src="../uploads/exit.jpg" alt="Quay lại"> 
         </a>
     <form method="GET" class="filter-form">
         <label for="start_date">Từ ngày:</label>

@@ -64,20 +64,7 @@ $conn->close();
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Chat - Mobile Gear</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-body { background:#f0f2f5; height:100vh; display:flex; justify-content:center; align-items:center; }
-.chat-container { width:95%; max-width:1000px; height:80vh; display:flex; border-radius:12px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
-.user-list { width:30%; border-end:1px solid #dee2e6; background:#fff; display:flex; flex-direction:column; }
-.user-list h5 { background:#198754; color:#fff; padding:12px; text-align:center; margin:0; }
-.user-item { cursor:pointer; padding:10px 12px; border-bottom:1px solid #eee; transition:background 0.2s; }
-.user-item.active { background:#e2f0e8; }
-.chat-box { flex:1; display:flex; flex-direction:column; background:#f8f9fa; }
-.chat-header { padding:12px; background:#fff; border-bottom:1px solid #dee2e6; font-weight:bold; font-size:16px; }
-.chat-messages { flex:1; padding:12px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; }
-.chat-input { padding:10px; border-top:1px solid #dee2e6; background:#fff; }
-.chat-input .form-control { border-radius:50px; }
-.chat-input button { border-radius:50px; }
-</style>
+    <link rel="stylesheet" href="css/chat.css">
 </head>
 <body>
 

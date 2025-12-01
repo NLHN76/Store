@@ -68,33 +68,13 @@ if ($result && $result->num_rows > 0) {
     <link rel="icon" href="uploads/favicon.ico">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
-        .container { max-width: 900px; margin: 30px auto; padding: 25px; background-color: #fff; box-shadow: 0 2px 15px rgba(0,0,0,0.1); border-radius: 8px; }
-        h1 { text-align: center; color: #333; margin-bottom: 20px; }
-        h2 { text-align: center; color: #555; margin-top: 30px; margin-bottom: 15px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 12px; }
-        th { background-color: #4CAF50; color: white; text-align: center; }
-        td:last-child { text-align: right; font-weight: bold; }
-        tr:nth-child(even) td { background-color: #f9f9f9; }
-        tr:hover td { background-color: #f1f1f1; }
-        .chart-container { width: 100%; max-width: 850px; height: 400px; margin: 30px auto; padding: 15px; background: #fff; border: 1px solid #eee; border-radius: 5px; }
-        .back-button { position: absolute; top: 15px; left: 15px; }
-        .back-button img { width: 40px; height: 40px; cursor: pointer; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: 0.2s; }
-        .back-button img:hover { transform: scale(1.1); }
-        .no-data { text-align: center; padding: 30px; font-size: 1.1em; color: #555; background: #fff; border: 1px dashed #ccc; margin-top: 20px; }
-        form { text-align: center; margin-bottom: 20px; }
-        input[type="number"] { padding: 5px 10px; font-size: 1em; width: 100px; }
-        button { padding: 6px 12px; font-size: 1em; cursor: pointer; }
-        .clear-filter { margin-left: 10px; text-decoration: none; color: red; }
-    </style>
+      <link rel="stylesheet" href="css/report_year.css">
+ 
 </head>
 
 <body>
     <a class="back-button" href="admin_report.php" title="Quay lại trang quản trị">
-        <img src="uploads/exit.jpg" alt="Quay lại"> </a>
+        <img src="../uploads/exit.jpg" alt="Quay lại"> </a>
 
 
     <div class="container">

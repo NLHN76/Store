@@ -57,58 +57,13 @@ if ($result && $result->num_rows > 0) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thống Kê Chi Tiêu Khách Hàng</title>
    
-    <a class="back-button" href="admin_report.php" title="Quay lại trang quản trị">
-        <img src="uploads/exit.jpg" alt="Quay lại">
+   <a class="back-button" href="admin_report.php" title="Quay lại trang quản trị">
+        <img src="../uploads/exit.jpg" alt="Quay lại">
     </a>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f4f4f4;
-        }
-        h1, h2 {
-            text-align: center;
-            color: #333;
-        }
-        table {
-            width: 90%; 
-            margin: 30px auto; 
-            border-collapse: collapse;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            background-color: #fff;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #4CAF50;
-            color: white;
-            font-weight: bold;
-        }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-        tr:hover { background-color: #f1f1f1; }
-        .back-button { display: block; width: 40px; height: 40px; margin-bottom: 20px; }
-        .back-button img { width: 100%; height: 100%; cursor: pointer; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .no-data { text-align: center; margin-top: 30px; font-size: 1.1em; color: #555; }
-        .highlight { font-weight: bold; background-color: #fffacd; }
-       
-        .chart-container {
-            width: 90%;
-            max-width: 1000px; 
-            height: 450px; 
-            margin: 30px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            border-radius: 5px;
-            position: relative; 
-        }
-    </style>
-  
+   
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+        <link rel="stylesheet" href="css/report_client.css">
 </head>
 <body>
 

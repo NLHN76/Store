@@ -315,16 +315,6 @@ document.getElementById('login-form').onsubmit = e => {
     }
 };
 
-// ================= LIÊN HỆ =================
-document.getElementById('contact-form').onsubmit = e => {
-    e.preventDefault();
-    const [name,email,phone,message] = ['name','email','phone','message'].map(id => document.getElementById(id).value);
-    const xhr = new XMLHttpRequest();
-    xhr.open("POST","user_contact.php",true);
-    xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-    xhr.onload = () => xhr.status===200 ? (alert('Cảm ơn bạn đã liên hệ!'), document.getElementById('contact-form').reset()) : alert('Lỗi gửi liên hệ: '+xhr.responseText);
-    xhr.send(`name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&message=${encodeURIComponent(message)}`);
-};
 
 // ================= CHECKOUT =================
 document.getElementById("checkout").onclick = () => {

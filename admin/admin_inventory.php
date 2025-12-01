@@ -316,19 +316,7 @@ $stmt_hist->close();
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-<style>
-.table-fixed { table-layout:auto; width:100%; word-wrap:break-word; }
-.parent-row { cursor:pointer; background-color:#f7fbff; font-weight:600; }
-.child-row td { padding-left:40px; }
-.table-fixed td.number, .table-fixed th.number { text-align:right; white-space:nowrap; }
-.table-fixed td.text-start { white-space:normal; }
-.table-fixed input[type=number]{ text-align:right; padding-right:4px; }
-.badge-in{background:#0d6efd;color:#fff;padding:.35em .6em;border-radius:.35rem;}
-.badge-adjust{background:#ffc107;color:#000;padding:.35em .6em;border-radius:.35rem;}
-.badge-delete{background:#dc3545;color:#fff;padding:.35em .6em;border-radius:.35rem;}
-.badge-sell{background:#198754;color:#fff;padding:.35em .6em;border-radius:.35rem;}
-@media (max-width:768px){.child-row td{padding-left:20px;font-size:0.9rem;}.table-fixed th,.table-fixed td{font-size:0.9rem;}}
-</style>
+        <link rel="stylesheet" href="css/inventory.css">
 </head>
 <body>
 <div class="container mt-4 mb-5">

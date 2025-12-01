@@ -277,11 +277,12 @@ document.addEventListener('DOMContentLoaded', () => {
     showSection('home');
     fetchJSON('get_products.php').then(data => { allProducts=data; renderProducts(allProducts); });
     loadHome();
-    fetchJSON('auto/auto.php').then(user=>{
+    fetchJSON('auto/auto.php').then(user=>{       // Tự lấy name và email liên hệ
         document.getElementById('name').value = user.name||'';
         document.getElementById('email').value = user.email||'';
     }).catch(console.error);
 });
+
 
 // Đăng xuất
 function logout() { cart=[]; totalPrice=0; updateCartDisplay(); alert('Đăng xuất thành công'); window.location.href='user.html'; }

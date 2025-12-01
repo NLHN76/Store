@@ -1,39 +1,34 @@
 <?php
-// Kết nối với cơ sở dữ liệu MySQL
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "store";
+session_start();
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+// Kết nối MySQL
+$conn = new mysqli("localhost", "root", "", "store");
+if ($conn->connect_error) die("Kết nối thất bại: " . $conn->connect_error);
 
-// Kiểm tra kết nối
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
+// Kiểm tra đăng nhập (nếu muốn bắt buộc)
+$userId = $_SESSION['user_id'] ?? null;
 
-// Xử lý biểu mẫu khi người dùng gửi
+// Khi gửi form
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['name'];
     $email = $_POST['email'];
     $phone = $_POST['phone'];
     $message = $_POST['message'];
 
-    // Chuẩn bị câu lệnh SQL để chèn dữ liệu vào bảng contact
-    $stmt = $conn->prepare("INSERT INTO contact (name, email, phone, message) VALUES (?, ?, ?, ?)");
-    $stmt->bind_param("ssss", $name, $email, $phone, $message);
+    $stmt = $conn->prepare("
+        INSERT INTO contact (user_id, name, email, phone, message) 
+        VALUES (?, ?, ?, ?, ?)
+    ");
+    $stmt->bind_param("issss", $userId, $name, $email, $phone, $message);
 
-    // Thực hiện câu lệnh và kiểm tra xem có thành công không
     if ($stmt->execute()) {
-        echo "Thông tin đã được gửi thành công!";
+        http_response_code(200);
     } else {
+        http_response_code(500);
         echo "Lỗi: " . $stmt->error;
     }
 
-    // Đóng câu lệnh
     $stmt->close();
 }
-
-// Đóng kết nối
 $conn->close();
 ?>
