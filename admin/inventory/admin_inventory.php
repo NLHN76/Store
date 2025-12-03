@@ -1,40 +1,21 @@
 <?php
-session_start();
-
-/* ----------------- Kết nối database ----------------- */
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "store";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) die("Kết nối thất bại: " . $conn->connect_error);
-$conn->set_charset("utf8mb4");
-
-/* ----------------- Tiện ích ----------------- */
-function getProductCode($conn, $product_id) {
-    $stmt = $conn->prepare("SELECT product_code FROM products WHERE id=? LIMIT 1");
-    $stmt->bind_param("i", $product_id);
-    $stmt->execute();
-    $res = $stmt->get_result()->fetch_assoc();
-    $stmt->close();
-    return $res['product_code'] ?? '';
-}
+require_once "db.php";
+require_once "inventory_functions.php";
 
 /* ----------------- Nhận tham số lọc lịch sử ----------------- */
 $tab_active = $_GET['tab'] ?? 'stock'; 
-$today = date('Y-m-d'); // Ngày hiện tại server
+$today = date('Y-m-d'); 
 
-if($tab_active == 'history') {
+if($tab_active == 'history'){
     $from_date = $_GET['from_date'] ?? $today;
     $to_date   = $_GET['to_date']   ?? $today;
 } else {
     $from_date = $_GET['from_date'] ?? '';
     $to_date   = $_GET['to_date']   ?? '';
 }
-
 $product_code_filter = $_GET['product_code'] ?? '';
 
+// Build where condition
 $history_where = "";
 $params = [];
 $types = "";
@@ -55,130 +36,45 @@ if($product_code_filter){
     $types .= "s";
 }
 
-
-
-/* ----------------- Hoàn lại tồn kho khi hủy đơn ----------------- */
-function restoreStockFromCancelledPayment($conn){
-    $res = $conn->query("SELECT * FROM payment WHERE status='Đã hủy' AND is_restored IS NULL");
-    while($row = $res->fetch_assoc()){
-        $product_names = explode(',', $row['product_name']);
-        $colors = explode(',', $row['color']);
-        $product_codes = explode(',', $row['product_code']);
-
-        foreach($product_codes as $i => $product_code){
-            $product_code = trim($product_code);
-            $color = trim($colors[$i] ?? '');
-            $qty = 0;
-
-            if(isset($product_names[$i])){
-                preg_match('/\(x(\d+)\)/', $product_names[$i], $matches);
-                $qty = isset($matches[1]) ? (int)$matches[1] : 1;
-            }
-
-            if($qty > 0 && $product_code && $color){
-                $stmt_id = $conn->prepare("SELECT id FROM products WHERE product_code=? LIMIT 1");
-                $stmt_id->bind_param("s", $product_code);
-                $stmt_id->execute();
-                $res_id = $stmt_id->get_result()->fetch_assoc();
-                $stmt_id->close();
-                if(!$res_id) continue;
-
-                $product_id = $res_id['id'];
-
-                // Cộng tồn kho
-                $stmt = $conn->prepare("
-                    UPDATE product_inventory
-                    SET quantity = quantity + ?
-                    WHERE product_id=? AND color=?
-                ");
-                $stmt->bind_param("iis", $qty, $product_id, $color);
-                $stmt->execute();
-                $stmt->close();
-
-                $note = "Hoàn lại tồn kho từ đơn hủy (Payment ID: {$row['id']})";
-                $stmt_hist = $conn->prepare("
-                    INSERT INTO inventory_history(product_id, product_code, color, quantity_change, import_price, type, note)
-                    VALUES (?, ?, ?, ?, 0, 'Hoàn trả', ?)
-                ");
-                $stmt_hist->bind_param("issis", $product_id, $product_code, $color, $qty, $note);
-                $stmt_hist->execute();
-                $stmt_hist->close();
-            }
-        }
-
-        // Đánh dấu đã xử lý
-        $stmt2 = $conn->prepare("UPDATE payment SET is_restored=1 WHERE id=?");
-        $stmt2->bind_param("i", $row['id']);
-        $stmt2->execute();
-        $stmt2->close();
-    }
-}
-
-/* ----------------- Tính tổng số đã bán ----------------- */
-function calculateSoldQuantity($conn){
-    $soldData = [];
-    $res = $conn->query("SELECT product_name, color, product_code FROM payment WHERE status='Đã giao hàng'");
-    while($row = $res->fetch_assoc()){
-        $names = explode(',', $row['product_name']);
-        $colors = explode(',', $row['color']);
-        $codes = explode(',', $row['product_code']);
-
-        foreach($codes as $i => $code){
-            $code = trim($code);
-            $color = trim($colors[$i] ?? '');
-            $qty = 0;
-            if(isset($names[$i])) preg_match('/\(x(\d+)\)/', $names[$i], $matches);
-            $qty = isset($matches[1]) ? (int)$matches[1] : 1;
-
-            if($code && $color && $qty > 0){
-                if(!isset($soldData[$code])) $soldData[$code] = [];
-                if(!isset($soldData[$code][$color])) $soldData[$code][$color] = 0;
-                $soldData[$code][$color] += $qty;
-            }
-        }
-    }
-    return $soldData;
-}
-
-/* ----------------- Thực hiện đồng bộ và tính sold ----------------- */
-
+/* ----------------- Đồng bộ tồn kho ----------------- */
 restoreStockFromCancelledPayment($conn);
 $soldQuantities = calculateSoldQuantity($conn);
 
-
-/* ----------------- Thêm / Nhập hàng ----------------- */
+/* ----------------- Xử lý thêm hàng ----------------- */
 if(isset($_POST['add_stock'])){
     $product_id = (int)($_POST['product_id'] ?? 0);
     $color = trim($_POST['color'] ?? '');
     $quantity = (int)($_POST['quantity'] ?? 0);
     $import_price = (float)($_POST['import_price'] ?? 0);
 
-    if($product_id && $color !== '' && $quantity > 0){
-        $product_code = getProductCode($conn, $product_id);
+    if($product_id && $color!=='' && $quantity>0){
+        $product_code = getProductCode($conn,$product_id);
 
         $stmt = $conn->prepare("SELECT id, quantity, import_price FROM product_inventory WHERE product_id=? AND color=? LIMIT 1");
-        $stmt->bind_param("is", $product_id, $color);
+        $stmt->bind_param("is",$product_id,$color);
         $stmt->execute();
         $existing = $stmt->get_result()->fetch_assoc();
         $stmt->close();
 
         if($existing){
-            $new_quantity = $existing['quantity'] + $quantity;
-            $new_import_price = $new_quantity>0 ? (($existing['quantity']*$existing['import_price'] + $quantity*$import_price)/$new_quantity) : $import_price;
+            $new_qty = $existing['quantity'] + $quantity;
+            $new_price = $new_qty>0 ? (($existing['quantity']*$existing['import_price']+$quantity*$import_price)/$new_qty) : $import_price;
+
             $stmt = $conn->prepare("UPDATE product_inventory SET quantity=?, import_price=? WHERE product_id=? AND color=?");
-            $stmt->bind_param("idis",$new_quantity,$new_import_price,$product_id,$color);
+            $stmt->bind_param("idis",$new_qty,$new_price,$product_id,$color);
             $stmt->execute(); $stmt->close();
+
             $note = "Cập nhật tồn kho: Thêm $quantity SL";
         } else {
             $stmt = $conn->prepare("INSERT INTO product_inventory(product_id, product_code, color, quantity, import_price) VALUES(?,?,?,?,?)");
             $stmt->bind_param("issid",$product_id,$product_code,$color,$quantity,$import_price);
             $stmt->execute(); $stmt->close();
+
             $note = "Thêm màu mới";
         }
 
         $stmt_hist = $conn->prepare("INSERT INTO inventory_history(product_id, product_code, color, quantity_change, import_price, type, note) VALUES(?,?,?,?,?,'Nhập hàng',?)");
-        $quantity_change = $quantity;
-        $stmt_hist->bind_param("issids",$product_id,$product_code,$color,$quantity_change,$import_price,$note);
+        $stmt_hist->bind_param("issids",$product_id,$product_code,$color,$quantity,$import_price,$note);
         $stmt_hist->execute(); $stmt_hist->close();
 
         header("Location: admin_inventory.php");
@@ -188,11 +84,11 @@ if(isset($_POST['add_stock'])){
 
 /* ----------------- Xử lý cập nhật tồn kho theo dòng ----------------- */
 if(isset($_POST['update_stock']) && !empty($_POST['adjust_stock'])){
-    foreach($_POST['adjust_stock'] as $product_id => $colors){
-        foreach($colors as $color => $new_qty){
+    foreach($_POST['adjust_stock'] as $product_id=>$colors){
+        foreach($colors as $color=>$new_qty){
             $product_id = (int)$product_id;
             $color = trim($color);
-            $new_qty = max(0, (int)$new_qty);
+            $new_qty = max(0,(int)$new_qty);
 
             $stmt = $conn->prepare("SELECT quantity, import_price, product_code FROM product_inventory WHERE product_id=? AND color=? LIMIT 1");
             $stmt->bind_param("is",$product_id,$color);
@@ -204,22 +100,16 @@ if(isset($_POST['update_stock']) && !empty($_POST['adjust_stock'])){
 
             $old_qty = (int)$row['quantity'];
             $diff = $new_qty - $old_qty;
+            if($diff===0) continue;
 
-            if($diff !== 0){
-                $stmt = $conn->prepare("UPDATE product_inventory SET quantity=? WHERE product_id=? AND color=?");
-                $stmt->bind_param("iis",$new_qty,$product_id,$color);
-                $stmt->execute();
-                $stmt->close();
+            $stmt = $conn->prepare("UPDATE product_inventory SET quantity=? WHERE product_id=? AND color=?");
+            $stmt->bind_param("iis",$new_qty,$product_id,$color);
+            $stmt->execute(); $stmt->close();
 
-                $note = $diff>0 ? "Tăng tồn kho +$diff" : "Giảm tồn kho $diff";
-                $stmt_hist = $conn->prepare("INSERT INTO inventory_history(product_id, product_code, color, quantity_change, import_price, type, note)
-                                             VALUES (?, ?, ?, ?, ?, 'Điều chỉnh', ?)");
-                $quantity_change = $diff;
-                $import_price = (float)$row['import_price'];
-                $stmt_hist->bind_param("issids",$product_id,$row['product_code'],$color,$quantity_change,$import_price,$note);
-                $stmt_hist->execute();
-                $stmt_hist->close();
-            }
+            $note = $diff>0 ? "Tăng tồn kho +$diff" : "Giảm tồn kho $diff";
+            $stmt_hist = $conn->prepare("INSERT INTO inventory_history(product_id, product_code, color, quantity_change, import_price, type, note) VALUES(?,?,?,?,?, 'Điều chỉnh', ?)");
+            $stmt_hist->bind_param("issids",$product_id,$row['product_code'],$color,$diff,(float)$row['import_price'],$note);
+            $stmt_hist->execute(); $stmt_hist->close();
         }
     }
     header("Location: admin_inventory.php?tab=stock");
@@ -231,7 +121,7 @@ if(isset($_POST['delete_stock'])){
     $product_id = (int)($_POST['delete_product_id'] ?? 0);
     $color = trim($_POST['delete_color'] ?? '');
 
-    if($product_id && $color !== ''){
+    if($product_id && $color!==''){
         $stmt = $conn->prepare("SELECT quantity, import_price, product_code FROM product_inventory WHERE product_id=? AND color=? LIMIT 1");
         $stmt->bind_param("is",$product_id,$color);
         $stmt->execute();
@@ -241,17 +131,13 @@ if(isset($_POST['delete_stock'])){
         if($row){
             $stmt = $conn->prepare("DELETE FROM product_inventory WHERE product_id=? AND color=?");
             $stmt->bind_param("is",$product_id,$color);
-            $stmt->execute();
-            $stmt->close();
+            $stmt->execute(); $stmt->close();
 
             $note = "Xóa toàn bộ màu này";
-            $stmt_hist = $conn->prepare("INSERT INTO inventory_history(product_id, product_code, color, quantity_change, import_price, type, note)
-                                         VALUES (?, ?, ?, ?, ?, 'Xóa hàng', ?)");
-            $quantity_change = -(int)$row['quantity'];
-            $import_price = (float)$row['import_price'];
-            $stmt_hist->bind_param("issids",$product_id,$row['product_code'],$color,$quantity_change,$import_price,$note);
-            $stmt_hist->execute();
-            $stmt_hist->close();
+            $stmt_hist = $conn->prepare("INSERT INTO inventory_history(product_id, product_code, color, quantity_change, import_price, type, note) VALUES(?,?,?,?,?, 'Xóa hàng', ?)");
+            $qty_change = -(int)$row['quantity'];
+            $stmt_hist->bind_param("issids",$product_id,$row['product_code'],$color,$qty_change,(float)$row['import_price'],$note);
+            $stmt_hist->execute(); $stmt_hist->close();
         }
     }
     header("Location: admin_inventory.php?tab=stock");
@@ -259,39 +145,39 @@ if(isset($_POST['delete_stock'])){
 }
 
 /* ----------------- Lấy danh sách sản phẩm ----------------- */
-$productOptions = [];
-$resP = $conn->query("SELECT id,name,color,product_code FROM products ORDER BY name ASC");
-while($r = $resP->fetch_assoc()) $productOptions[]=$r;
+$productOptions=[];
+$resP=$conn->query("SELECT id,name,color,product_code FROM products ORDER BY name ASC");
+while($r=$resP->fetch_assoc()) $productOptions[]=$r;
 $resP->close();
 
 /* ----------------- Lấy tồn kho thực tế và số đã bán ----------------- */
-$inventoryData = [];
+$inventoryData=[];
 $resInv = $conn->query("SELECT * FROM product_inventory ORDER BY product_code ASC,color ASC");
-while($row = $resInv->fetch_assoc()){
-    $stmt3 = $conn->prepare("SELECT name,price FROM products WHERE id=? LIMIT 1");
-    $stmt3->bind_param("i",$row['product_id']);
-    $stmt3->execute();
-    $p = $stmt3->get_result()->fetch_assoc()??['name'=>'N/A','price'=>0];
-    $stmt3->close();
+while($row=$resInv->fetch_assoc()){
+    $stmt = $conn->prepare("SELECT name,price FROM products WHERE id=? LIMIT 1");
+    $stmt->bind_param("i",$row['product_id']);
+    $stmt->execute();
+    $p = $stmt->get_result()->fetch_assoc()??['name'=>'N/A','price'=>0];
+    $stmt->close();
 
     $row['product_name'] = $p['name'];
     $row['sale_price'] = $p['price'];
     $row['actual_stock'] = (int)$row['quantity'];
     $row['sold'] = $soldQuantities[$row['product_code']][$row['color']] ?? 0;
     $row['profit'] = ($row['sale_price']*$row['sold']) - ($row['import_price']*$row['sold']);
+    $row['_row_id'] = "row_" . $row['product_id'] . "_" . preg_replace('/[^a-zA-Z0-9]/','',$row['color']);
 
-    $row['_row_id'] = "row_" . $row['product_id'] . "_" . preg_replace('/[^a-zA-Z0-9]/','',$row['color']); // ID để scroll
     $inventoryData[$row['product_name']][]=$row;
 }
 
-/* ----------------- Kiểm tra tồn kho thấp ----------------- */
-$lowStockWarnings = [];
-foreach($inventoryData as $productName => $items){
+/* ----------------- Cảnh báo tồn kho thấp ----------------- */
+$lowStockWarnings=[];
+foreach($inventoryData as $productName=>$items){
     foreach($items as $item){
-        if($item['actual_stock'] < 10){
-            $lowStockWarnings[] = [
-                'text' => $productName . " (Màu: " . $item['color'] . ") - Tồn: " . $item['actual_stock'],
-                'row_id' => $item['_row_id']
+        if($item['actual_stock']<10){
+            $lowStockWarnings[]=[
+                'text'=>$productName." (Màu: ".$item['color'].") - Tồn: ".$item['actual_stock'],
+                'row_id'=>$item['_row_id']
             ];
         }
     }
@@ -307,6 +193,7 @@ $resH=$stmt_hist->get_result();
 while($r=$resH->fetch_assoc()) $history[]=$r;
 $stmt_hist->close();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -340,7 +227,7 @@ $stmt_hist->close();
 
 <div class="d-flex justify-content-between align-items-center mb-3">
 <h3><i class="fa-solid fa-boxes-stacked"></i> Quản lý tồn kho</h3>
-<a href="admin_interface.php" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left"></i> Quay lại</a>
+<a href="../admin_interface.php" class="btn btn-outline-secondary"><i class="fa-solid fa-arrow-left"></i> Quay lại</a>
 </div>
 
 <ul class="nav nav-tabs" id="tabMenu" role="tablist">

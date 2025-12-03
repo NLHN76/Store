@@ -76,7 +76,6 @@ form button:hover {
 #qr-code { 
     margin: 30px 0; 
     text-align: center; 
-    display: none; /* Hiển thị qua PHP */
     background: #e9f5e9; 
     padding: 20px; 
     border-radius: 5px; 
