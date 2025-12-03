@@ -69,11 +69,34 @@ $related_products = $stmt_suggested->get_result();
 $stmt_suggested->close();
 
 // ====== Lấy danh sách đánh giá ======
-$stmt_fb = $conn->prepare("SELECT f.*, u.name AS user_name FROM feedback f JOIN users u ON f.user_id = u.id WHERE f.product_code = ? ORDER BY f.created_at DESC");
-$stmt_fb->bind_param("s", $product['product_code']);
+// ====== Phân trang đánh giá ======
+$limit = 6; // Số đánh giá mỗi trang
+$page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
+$offset = ($page - 1) * $limit;
+
+// Tổng số đánh giá
+$stmt_count = $conn->prepare("SELECT COUNT(*) AS total FROM feedback WHERE product_code = ?");
+$stmt_count->bind_param("s", $product['product_code']);
+$stmt_count->execute();
+$total_feedback = $stmt_count->get_result()->fetch_assoc()['total'];
+$stmt_count->close();
+
+$total_pages = ceil($total_feedback / $limit);
+
+// Lấy đánh giá cho từng trang
+$stmt_fb = $conn->prepare("
+    SELECT f.*, u.name AS user_name
+    FROM feedback f 
+    JOIN users u ON f.user_id = u.id
+    WHERE f.product_code = ?
+    ORDER BY f.created_at DESC
+    LIMIT ?, ?
+");
+$stmt_fb->bind_param("sii", $product['product_code'], $offset, $limit);
 $stmt_fb->execute();
 $feedbacks = $stmt_fb->get_result();
 $stmt_fb->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -82,13 +105,7 @@ $stmt_fb->close();
 <meta charset="UTF-8">
 <link rel="stylesheet" href="css/product_detail.css">
 <title>Chi tiết sản phẩm - <?= htmlspecialchars($product['name']) ?></title>
-<style>
-    .related-products { display:flex; gap:15px; flex-wrap:wrap; }
-    .related-item { border:1px solid #ccc; padding:10px; width:200px; text-align:center; }
-    .feedback-item { border-bottom:1px solid #ccc; padding:10px 0; }
-    .btn-submit { padding:5px 10px; cursor:pointer; background:green; color:white; border:none; }
-    .btn-back { padding:5px 10px; background:#888; color:white; text-decoration:none; display:inline-block; text-align:center; }
-</style>
+
 </head>
 <body>
 
@@ -125,8 +142,8 @@ $stmt_fb->close();
 
 <!-- Đánh giá sản phẩm -->
 <div class="product-detail" style="margin-top:30px;">
+  <a id="reviews"></a>
   <h2>Đánh giá sản phẩm</h2>
-
   <?php if ($is_logged_in): ?>
     <p><strong>Người dùng:</strong> <?= htmlspecialchars($user_name) ?></p>
     <form method="POST" style="display:flex; gap:20px; align-items:flex-start;">
@@ -164,6 +181,20 @@ $stmt_fb->close();
         <?php endif; ?>
       </div>
     <?php endwhile; ?>
+    <!-- PHÂN TRANG -->
+<?php if ($total_pages > 1): ?>
+<div class="pagination" style="margin-top:20px; text-align:center;">
+    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+        <a href="?code=<?= urlencode($product['product_code']) ?>&page=<?= $i ?>#reviews"
+           style="padding:8px 12px; margin:4px; border:1px solid #ccc; text-decoration:none;
+                  <?= ($i == $page) ? 'background:#333; color:white;' : 'background:white; color:black;' ?>">
+            <?= $i ?>
+        </a>
+    <?php endfor; ?>
+</div>
+
+<?php endif; ?>
+
   <?php else: ?>
     <p>Chưa có đánh giá nào cho sản phẩm này.</p>
   <?php endif; ?>
