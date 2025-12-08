@@ -23,6 +23,7 @@
 <main>
     <section id="home"></section>
 
+    
     <section id="products">
         <div class="filter-bar">
             <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm theo loại, tên hoặc mã...">
@@ -45,6 +46,7 @@
         <div id="products-container"></div>
     </section>
 
+
     <section id="cart">
         <h2>Giỏ Hàng</h2>
         <div id="cart-items"></div>
@@ -52,6 +54,7 @@
         <div id="total-price">Tổng giá trị: 0 VNĐ</div>
         <button id="checkout" style="display:none;" onclick="checkout()">Đặt hàng</button>
     </section>
+
 
     <div id="login-section" class="container" style="display:none;">
         <h1>Đăng Nhập</h1>
@@ -95,6 +98,7 @@
         </form>
     </div>
 
+
     <section id="contact" style="display:none;">
         <h2>Liên Hệ</h2>
         <form id="contact-form">
@@ -108,6 +112,8 @@
 
     <div id="notification"></div>
 </main>
+
+
 
 <footer>
     <div class="footer-container">
@@ -147,26 +153,7 @@
 <a href="#" id="zalo-float"><img src="admin/uploads/download.png" alt="Chat Zalo" class="zalo-icon"></a>
 <a href="#" id="messenger-float"><img src="admin/uploads/mess.jpg" alt="Chat Messenger" class="messenger-icon"></a>
 
-<script>
-const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
-document.getElementById('zalo-float').addEventListener('click', e => {
-    e.preventDefault();
-    isLoggedIn ? window.open('https://zalo.me/0587911287', '_blank') : alert('Vui lòng đăng nhập !');
-});
-
-document.getElementById('messenger-float').addEventListener('click', e => {
-    e.preventDefault();
-    isLoggedIn ? window.open('https://www.facebook.com/nam.nguyen.133454?mibextid=ZbWKwL', '_blank') : alert('Vui lòng đăng nhập!');
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-    if(window.location.hash === "#cart") {
-        showSection("cart");
-        updateCartDisplay();
-    }
-});
-</script>
 
 <script src="js/new.js"></script>
 </body>

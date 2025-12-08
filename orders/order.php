@@ -1,19 +1,5 @@
 <?php
-session_start();
-header('Content-Type: application/json');
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "store";
-
-// Kết nối DB
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    echo json_encode(['status'=>'error','message'=>'Kết nối CSDL thất bại']);
-    exit;
-}
-
+require_once "../db.php" ;
 // Kiểm tra khách hàng đã đăng nhập chưa
 if(!isset($_SESSION['user_code'])){
     echo json_encode(['status'=>'error','message'=>'Chưa đăng nhập']);

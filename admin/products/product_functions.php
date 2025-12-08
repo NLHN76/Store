@@ -1,16 +1,5 @@
 <?php
-// ================= KẾT NỐI DATABASE ==================
-$dsn = 'mysql:host=localhost;dbname=store;charset=utf8';
-$username = 'root';
-$password = '';
-
-try {
-    $pdo = new PDO($dsn, $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Lỗi kết nối CSDL: " . $e->getMessage());
-}
-
+require_once "../db.php" ;
 // ================== HÀM DÙNG CHUNG ====================
 function clean_price($price_string) {
     $cleaned = str_replace('.', '', $price_string);

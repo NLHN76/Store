@@ -1,18 +1,5 @@
 <?php
-session_start();
-
-// Kết nối đến cơ sở dữ liệu MySQL
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "store";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Kiểm tra kết nối
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
+require_once "../db.php";
 
 // Xử lý xóa dữ liệu trước (để load lại danh sách)
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {

@@ -3,17 +3,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "store";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    error_log("Database Connection Error: " . $conn->connect_error);
-    die("Lỗi kết nối đến cơ sở dữ liệu.");
-}
-$conn->set_charset("utf8mb4");
+require_once "../../db.php" ;
 
 // --- 2. Xử lý truy vấn theo năm ---
 $selected_year = isset($_GET['year']) ? (int)$_GET['year'] : null;

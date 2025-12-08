@@ -1,22 +1,5 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "store";
-
-// Kết nối tới cơ sở dữ liệu
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Kiểm tra kết nối
-if ($conn->connect_error) {
-    error_log("Database Connection Failed: " . $conn->connect_error);
-    header('Content-Type: application/json');
-    http_response_code(500);
-    echo json_encode(['error' => 'Kết nối cơ sở dữ liệu thất bại.']);
-    exit;
-}
-
-$conn->set_charset("utf8");
+require_once "db.php";
 
 // ✅ Truy vấn: lấy sản phẩm + màu sắc + điểm trung bình + số lượt đánh giá
 $sql = "

@@ -53,15 +53,17 @@ if (isset($_POST['action']) && $_POST['action'] === "add") {
     }
 
     $colors = implode(",", $_POST['product_colors'] ?? []);
-    $code = generate_product_code($category, $pdo);
+    $code = generate_product_code($category, $conn); // đổi sang mysqli
 
-    $stmt = $pdo->prepare("INSERT INTO products(name, price, color, category, image, product_code)
-                           VALUES(?,?,?,?,?,?)");
-    $stmt->execute([$name, $price, $colors, $category, $image_name, $code]);
+    $stmt = $conn->prepare("INSERT INTO products(name, price, color, category, image, product_code) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("sdssss", $name, $price, $colors, $category, $image_name, $code);
+    $stmt->execute();
+    $stmt->close();
 
     header("Location: admin_products.php?status=added");
     exit;
 }
+
 // ====================== SỬA SẢN PHẨM =====================
 if (isset($_POST['action']) && $_POST['action'] === "edit") {
 
@@ -79,9 +81,12 @@ if (isset($_POST['action']) && $_POST['action'] === "edit") {
     }
 
     // Lấy sản phẩm cũ
-    $stmt = $pdo->prepare("SELECT image FROM products WHERE id = ?");
-    $stmt->execute([$id]);
-    $old = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $conn->prepare("SELECT image FROM products WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $old = $result->fetch_assoc();
+    $stmt->close();
 
     if (!$old) {
         $edit_error = "Không tìm thấy sản phẩm.";
@@ -89,51 +94,43 @@ if (isset($_POST['action']) && $_POST['action'] === "edit") {
     }
 
     // ========== Xử lý upload ảnh mới ==========
-    $image_name = $old['image'];  // mặc định giữ nguyên ảnh cũ
+    $image_name = $old['image'];  // giữ ảnh cũ
 
     if (!empty($_FILES['product_image']['name'])) {
-        // Xóa ảnh cũ nếu có
         if ($old['image'] && file_exists("uploads/" . $old['image'])) {
             unlink("uploads/" . $old['image']);
         }
 
-        // Upload ảnh mới
         $image_name = uniqid("prod_") . "." . strtolower(pathinfo($_FILES['product_image']['name'], PATHINFO_EXTENSION));
         move_uploaded_file($_FILES['product_image']['tmp_name'], "uploads/" . $image_name);
     }
 
     // ========== Update DB ==========
-    $stmt = $pdo->prepare("UPDATE products
-                           SET name=?, price=?, color=?, category=?, image=?
-                           WHERE id=?");
-
-    $stmt->execute([
-        $name,
-        $price,
-        $colors,
-        $category,
-        $image_name,
-        $id
-    ]);
+    $stmt = $conn->prepare("UPDATE products SET name=?, price=?, color=?, category=?, image=? WHERE id=?");
+    $stmt->bind_param("sdsssi", $name, $price, $colors, $category, $image_name, $id);
+    $stmt->execute();
+    $stmt->close();
 
     header("Location: admin_products.php?status=edited");
     exit;
 }
 
-
 // ====================== XÓA =====================
 if (isset($_POST['action']) && $_POST['action'] === "delete") {
     $id = intval($_POST['product_id']);
-    $stmt = $pdo->prepare("DELETE FROM products WHERE id=?");
-    $stmt->execute([$id]);
+    $stmt = $conn->prepare("DELETE FROM products WHERE id=?");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
+
     header("Location: admin_products.php?status=deleted");
     exit;
 }
 
-// ====================== BẬT TẮT =====================
+// ====================== BẬT/TẮT =====================
 if (isset($_POST['action']) && $_POST['action'] === "toggle_status") {
     $id = intval($_POST['product_id']);
-    $pdo->query("UPDATE products SET is_active = 1 - is_active WHERE id = $id");
+    $conn->query("UPDATE products SET is_active = 1 - is_active WHERE id = $id");
     header("Location: admin_products.php?status=toggled");
     exit;
 }
@@ -144,11 +141,15 @@ $sql = "SELECT * FROM products";
 $params = [];
 
 if ($search !== "") {
-    $sql .= " WHERE name LIKE :s OR product_code LIKE :s OR category LIKE :s";
-    $params['s'] = "%$search%";
+    $sql .= " WHERE name LIKE ? OR product_code LIKE ? OR category LIKE ?";
+    $search_param = "%$search%";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sss", $search_param, $search_param, $search_param);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $products = $result->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+} else {
+    $result = $conn->query($sql);
+    $products = $result->fetch_all(MYSQLI_ASSOC);
 }
-$sql .= " ORDER BY is_active DESC, id DESC";
-
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$products = $stmt->fetchAll(PDO::FETCH_ASSOC);

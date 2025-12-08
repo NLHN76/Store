@@ -1,10 +1,5 @@
 <?php
-session_start();
-
-// ====== Kết nối CSDL ======
-$conn = new mysqli("localhost", "root", "", "store");
-if ($conn->connect_error) die("Kết nối thất bại: " . $conn->connect_error);
-
+require_once "db.php";
 // ====== Lấy mã sản phẩm từ URL ======
 $code = $_GET['code'] ?? '';
 

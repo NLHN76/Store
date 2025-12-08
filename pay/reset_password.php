@@ -1,12 +1,5 @@
 <?php
-// Kết nối đến cơ sở dữ liệu
-$conn = new mysqli('localhost', 'root', '', 'store');
-
-// Kiểm tra kết nối
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
-
+require_once "../db.php";
 // Kiểm tra xem token có được truyền vào không
 if (isset($_GET['token'])) {
     $token = $_GET['token'];

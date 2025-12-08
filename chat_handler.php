@@ -1,10 +1,5 @@
 <?php
-session_start();
-header("Content-Type: text/html; charset=UTF-8");
-
-$conn = new mysqli("localhost", "root", "", "store");
-if ($conn->connect_error) die("Kết nối thất bại: ".$conn->connect_error);
-$conn->set_charset("utf8mb4");
+require_once "db.php";
 
 // ===== Xóa tin nhắn cũ sau n ngày =====
 $daysToKeep = 1;

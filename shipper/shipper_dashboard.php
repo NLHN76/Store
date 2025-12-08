@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once "../db.php";
 if(!isset($_SESSION['shipper_id'])){
     header("Location: shipper_login.php"); exit;
 }
@@ -7,9 +7,6 @@ if(!isset($_SESSION['shipper_id'])){
 $shipper_id = $_SESSION['shipper_id'];
 $shipper_name = $_SESSION['shipper_name'];
 
-$conn = new mysqli("localhost","root","","store");
-if($conn->connect_error) die("Kết nối thất bại: ".$conn->connect_error);
-$conn->set_charset("utf8mb4");
 
 // --- Lấy thông tin shipper ---
 $shipper = $conn->query("SELECT * FROM shipper WHERE id=$shipper_id")->fetch_assoc();

@@ -1,10 +1,7 @@
 <?php
-session_start();
+require_once "../db.php";
 header("Content-Type: text/html; charset=UTF-8");
 
-$conn = new mysqli("localhost", "root", "", "store");
-if ($conn->connect_error) die("Kết nối thất bại: " . $conn->connect_error);
-$conn->set_charset("utf8mb4");
 
 $daysToKeep = 1; 
 $conn->query("DELETE FROM message WHERE created_at < NOW() - INTERVAL $daysToKeep DAY");
@@ -64,7 +61,7 @@ $conn->close();
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Chat - Mobile Gear</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/chat.css">
+<link rel="stylesheet" href="css/chat.css">
 </head>
 <body>
 

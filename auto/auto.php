@@ -1,5 +1,5 @@
 <?php
-session_start();
+require_once "../db.php";
 
 // Kiểm tra xem người dùng đã đăng nhập chưa
 if (!isset($_SESSION['user_id'])) {
@@ -7,13 +7,6 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-// Kết nối đến cơ sở dữ liệu
-$conn = new mysqli("localhost", "root", "", "store");
-
-// Kiểm tra kết nối
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
 
 // Lấy ID người dùng từ session
 $userId = $_SESSION['user_id'];

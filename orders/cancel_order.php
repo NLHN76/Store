@@ -1,4 +1,5 @@
 <?php
+require_once "../db.php";
 header('Content-Type: application/json');
 
 // Lấy dữ liệu POST JSON
@@ -11,12 +12,6 @@ if (!isset($data['id'])) {
 
 $id = intval($data['id']);
 
-// Kết nối cơ sở dữ liệu
-$conn = new mysqli("localhost", "root", "", "store");
-if ($conn->connect_error) {
-    echo json_encode(['status' => 'error', 'message' => 'Kết nối thất bại: ' . $conn->connect_error]);
-    exit;
-}
 
 // Kiểm tra trạng thái hiện tại của đơn
 $sql_check = "SELECT status FROM payment WHERE id = $id";

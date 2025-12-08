@@ -1,9 +1,5 @@
 <?php
-session_start();
-
-// Kết nối MySQL
-$conn = new mysqli("localhost", "root", "", "store");
-if ($conn->connect_error) die("Kết nối thất bại: " . $conn->connect_error);
+require_once "db.php";
 
 // Kiểm tra đăng nhập (nếu muốn bắt buộc)
 $userId = $_SESSION['user_id'] ?? null;

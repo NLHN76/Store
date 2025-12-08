@@ -1,16 +1,5 @@
 <?php
-// Kết nối đến cơ sở dữ liệu 
-$dsn = 'mysql:host=localhost;dbname=store;charset=utf8';
-$username = 'root';
-$password = '';
-
-try {
-    $pdo = new PDO($dsn, $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    error_log('Kết nối không thành công: ' . $e->getMessage());
-    die('Lỗi kết nối cơ sở dữ liệu. Vui lòng thử lại sau.');
-}
+require_once "../../db.php" ;
 
 // Lấy sản phẩm từ CSDL
 $sql = "SELECT product_code, name, category, price FROM products ORDER BY id DESC";

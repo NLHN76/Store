@@ -1,16 +1,5 @@
 <?php
-// Kết nối CSDL
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "store";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Kiểm tra kết nối
-if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
-}
+require_once "db.php";
 
 // Xử lý form POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

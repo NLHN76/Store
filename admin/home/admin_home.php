@@ -1,16 +1,7 @@
 <?php
-$dsn = 'mysql:host=localhost;dbname=store;charset=utf8';
-$username = 'root';
-$password = '';
+require_once "../../db.php"; 
 
-try {
-    $pdo = new PDO($dsn,$username,$password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e){
-    die("Kết nối thất bại: " . $e->getMessage());
-}
-
-// Banner xử lý
+// ================= BANNER =================
 if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['banner_action'])){
     $title = $_POST['banner_title'];
     $description = $_POST['banner_description'];
@@ -25,29 +16,35 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['banner_action'])){
         }
     }
 
-    $stmtCheck = $pdo->query("SELECT COUNT(*) FROM home WHERE id=1");
-    $exists = $stmtCheck->fetchColumn();
+    $res = $conn->query("SELECT COUNT(*) as cnt FROM home WHERE id=1");
+    $exists = $res->fetch_assoc()['cnt'];
 
     if($exists){
         if($image){
-            $stmt = $pdo->prepare("UPDATE home SET title=:title, description=:description, image=:image WHERE id=1");
-            $stmt->execute(['title'=>$title,'description'=>$description,'image'=>$image]);
+            $stmt = $conn->prepare("UPDATE home SET title=?, description=?, image=? WHERE id=1");
+            $stmt->bind_param("sss", $title, $description, $image);
         } else {
-            $stmt = $pdo->prepare("UPDATE home SET title=:title, description=:description WHERE id=1");
-            $stmt->execute(['title'=>$title,'description'=>$description]);
+            $stmt = $conn->prepare("UPDATE home SET title=?, description=? WHERE id=1");
+            $stmt->bind_param("ss", $title, $description);
         }
+        $stmt->execute();
+        $stmt->close();
     } else {
-        $stmt = $pdo->prepare("INSERT INTO home (id,title,description,image) VALUES (1,:title,:description,:image)");
-        $stmt->execute(['title'=>$title,'description'=>$description,'image'=>$image]);
+        $stmt = $conn->prepare("INSERT INTO home (id, title, description, image) VALUES (1, ?, ?, ?)");
+        $stmt->bind_param("sss", $title, $description, $image);
+        $stmt->execute();
+        $stmt->close();
     }
+
     echo "<script>alert('Banner cập nhật thành công!'); window.location='admin_home.php';</script>";
+    exit;
 }
 
 // Lấy banner
-$stmt = $pdo->query("SELECT * FROM home WHERE id=1");
-$banner = $stmt->fetch(PDO::FETCH_ASSOC);
+$res = $conn->query("SELECT * FROM home WHERE id=1");
+$banner = $res->fetch_assoc();
 
-// Khuyến mãi xử lý
+// ================= KHUYẾN MÃI =================
 if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['promo_action'])){
     $action = $_POST['promo_action'];
     $id = $_POST['promo_id'] ?? null;
@@ -61,30 +58,44 @@ if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['promo_action'])){
             $target = 'uploads/' . basename($image);
             if(strtolower(pathinfo($target, PATHINFO_EXTENSION)) != 'jpg') die("Chỉ hỗ trợ .jpg");
             if(!move_uploaded_file($_FILES['promo_image']['tmp_name'], $target)) die("Tải ảnh thất bại.");
-            $stmt = $pdo->prepare("INSERT INTO promotions (title,description,image,link) VALUES (:title,:description,:image,:link)");
-            $stmt->execute(['title'=>$title,'description'=>$description,'image'=>$image,'link'=>$link]);
+
+            $stmt = $conn->prepare("INSERT INTO promotions (title, description, image, link) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssss", $title, $description, $image, $link);
+            $stmt->execute();
+            $stmt->close();
         } else die("Vui lòng chọn ảnh khuyến mãi.");
-    } elseif($action==='edit' && $id){
+    }
+    elseif($action === 'edit' && $id){
         if(!empty($_FILES['promo_image']['name'])){
             $image = $_FILES['promo_image']['name'];
             $target = 'uploads/' . basename($image);
             move_uploaded_file($_FILES['promo_image']['tmp_name'], $target);
-            $stmt = $pdo->prepare("UPDATE promotions SET title=:title, description=:description, link=:link, image=:image WHERE id=:id");
-            $stmt->execute(['title'=>$title,'description'=>$description,'link'=>$link,'image'=>$image,'id'=>$id]);
+
+            $stmt = $conn->prepare("UPDATE promotions SET title=?, description=?, link=?, image=? WHERE id=?");
+            $stmt->bind_param("ssssi", $title, $description, $link, $image, $id);
+            $stmt->execute();
+            $stmt->close();
         } else {
-            $stmt = $pdo->prepare("UPDATE promotions SET title=:title, description=:description, link=:link WHERE id=:id");
-            $stmt->execute(['title'=>$title,'description'=>$description,'link'=>$link,'id'=>$id]);
+            $stmt = $conn->prepare("UPDATE promotions SET title=?, description=?, link=? WHERE id=?");
+            $stmt->bind_param("sssi", $title, $description, $link, $id);
+            $stmt->execute();
+            $stmt->close();
         }
-    } elseif($action==='delete' && $id){
-        $stmt = $pdo->prepare("DELETE FROM promotions WHERE id=:id");
-        $stmt->execute(['id'=>$id]);
     }
+    elseif($action === 'delete' && $id){
+        $stmt = $conn->prepare("DELETE FROM promotions WHERE id=?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $stmt->close();
+    }
+
     echo "<script>window.location='admin_home.php';</script>";
+    exit;
 }
 
 // Lấy tất cả khuyến mãi
-$stmt = $pdo->query("SELECT * FROM promotions ORDER BY id DESC");
-$promotions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$res = $conn->query("SELECT * FROM promotions ORDER BY id DESC");
+$promotions = $res->fetch_all(MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
