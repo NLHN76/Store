@@ -1,9 +1,7 @@
 <?php
 require_once "../db.php" ;
 
-/* ============================
-   🟩 THÊM CHI TIẾT SẢN PHẨM
-   ============================ */
+/* THÊM CHI TIẾT SẢN PHẨM */
 if (isset($_POST['add'])) {
 
     $product_id    = intval($_POST['product_id']);
@@ -35,9 +33,7 @@ if (isset($_POST['add'])) {
     $stmt->close();
 }
 
-/* ============================
-   🟦 SỬA CHI TIẾT SẢN PHẨM
-   ============================ */
+/*  SỬA CHI TIẾT SẢN PHẨM */
 if (isset($_POST['update'])) {
 
     $id            = intval($_POST['detail_id']);
@@ -69,12 +65,10 @@ if (isset($_POST['update'])) {
     $stmt->close();
 }
 
-/* ============================
-   🟥 XÓA CHI TIẾT SẢN PHẨM
-   ============================ */
+/* XÓA CHI TIẾT SẢN PHẨM*/
 if (isset($_GET['delete'])) {
 
-    $id = intval($_GET['delete']);  // tránh rỗng → lỗi SQL
+    $id = intval($_GET['delete']); 
 
     if ($id > 0) {
         $stmt = $conn->prepare("DELETE FROM product_details WHERE detail_id=?");
@@ -84,9 +78,7 @@ if (isset($_GET['delete'])) {
     }
 }
 
-/* ============================
-   🟨 LẤY DỮ LIỆU
-   ============================ */
+/*  LẤY DỮ LIỆU*/
 $sql = "SELECT p.id AS product_id, p.name, d.* 
         FROM products p 
         LEFT JOIN product_details d ON p.id = d.product_id";

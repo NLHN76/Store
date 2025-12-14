@@ -1,26 +1,61 @@
 <?php
-$dsn = 'mysql:host=localhost;dbname=store;charset=utf8';
-$username = 'root';
-$password = '';
+require_once "db.php";
 
-$pdo = new PDO($dsn,$username,$password);
-$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+/* ================== BANNER ================== */
+$sqlBanner = "SELECT * FROM home WHERE id = 1";
+$resultBanner = $conn->query($sqlBanner);
+$banner = $resultBanner ? $resultBanner->fetch_assoc() : null;
 
-// Lấy banner
-$stmt = $pdo->query("SELECT * FROM home WHERE id=1");
-$banner = $stmt->fetch(PDO::FETCH_ASSOC);
-
-// Lấy khuyến mãi
-$stmt = $pdo->query("SELECT * FROM promotions ORDER BY id DESC");
-$promotions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Thêm đường dẫn ảnh
-if(!empty($banner['image'])) $banner['image'] = 'admin/home/uploads/'.$banner['image'];
-foreach($promotions as &$p){
-    if(!empty($p['image'])) $p['image'] = 'admin/home/uploads/'.$p['image'];
+if (!empty($banner['image'])) {
+    $banner['image'] = 'admin/home/uploads/' . $banner['image'];
 }
 
-// Trả JSON
-header('Content-Type: application/json');
-echo json_encode(['banner'=>$banner,'promotions'=>$promotions]);
-?>
+/* ================== KHUYẾN MÃI ================== */
+$sqlPromo = "SELECT * FROM promotions ORDER BY id DESC";
+$resultPromo = $conn->query($sqlPromo);
+
+$promotions = [];
+if ($resultPromo) {
+    while ($row = $resultPromo->fetch_assoc()) {
+        if (!empty($row['image'])) {
+            $row['image'] = 'admin/home/uploads/' . $row['image'];
+        }
+        $promotions[] = $row;
+    }
+}
+
+/* ================== SẢN PHẨM NỔI BẬT ================== */
+$sqlFeatured = "
+    SELECT 
+        p.id,
+        p.product_code,  
+        p.name,
+        p.price,
+        p.image
+    FROM featured_products f
+    JOIN products p ON f.product_id = p.id
+    WHERE p.is_active = 1
+    ORDER BY f.id DESC
+";
+
+$resultFeatured = $conn->query($sqlFeatured);
+
+$featured_products = [];
+if ($resultFeatured) {
+    while ($row = $resultFeatured->fetch_assoc()) {
+        if (!empty($row['image'])) {
+            $row['image'] = 'admin/uploads/' . $row['image'];
+        }
+        $featured_products[] = $row;
+    }
+}
+
+
+/* ================== TRẢ JSON ================== */
+header('Content-Type: application/json; charset=utf-8');
+
+echo json_encode([
+    'banner' => $banner,
+    'promotions' => $promotions,
+    'featured_products' => $featured_products
+], JSON_UNESCAPED_UNICODE);
