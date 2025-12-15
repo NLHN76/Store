@@ -167,7 +167,7 @@ function renderProducts(products) {
         // ===== CLICK ẢNH → CHI TIẾT =====
         productDiv.querySelector('.product-image').onclick = () => {
             window.location.href =
-                `products/no_feedback.php?code=${product.product_code}`;
+                `../products/no_feedback.php?code=${product.product_code}`;
         };
 
         // ===== LOAD TỒN KHO =====
@@ -408,7 +408,7 @@ document.getElementById('register-form').onsubmit = e => {
           email = document.getElementById('register-email').value,
           pass = document.getElementById('register-password').value;
     const xhr = new XMLHttpRequest();
-    xhr.open("POST","user_register.php",true);
+    xhr.open("POST","user/user_register.php",true);
     xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
     xhr.onload = () => xhr.status===200 ? 
         (xhr.responseText.startsWith("Đăng ký thành công") ? (alert(xhr.responseText), showSection('login-section')) : alert(xhr.responseText)) 

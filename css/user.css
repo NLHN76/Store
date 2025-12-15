@@ -67,35 +67,147 @@ section {
     margin-bottom: 30px;
 }
 
-/* Dropdown menu cho tài khoản */
+/* Container menu tài khoản */
 .account-menu {
-  position: relative;
+  position: relative;        /* dropdown căn theo parent */
+  display: inline-block;     /* tránh chiếm toàn bộ width */
+  cursor: pointer;
 }
 
+/* Dropdown */
 .account-dropdown {
-  display: none;
+  display: none;             /* ẩn mặc định */
   position: absolute;
-  top: 100%;
-  left: 0;
-  background: white;
+  top: 100%;                 /* nằm dưới nút */
+  right: 0;                  /* căn phải */
+  background-color: white;
   border: 1px solid #ccc;
-  min-width: 150px;
-  list-style: none;
+  border-radius: 6px;
+  min-width: 160px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
   padding: 0;
-  margin: 0;
-  z-index: 100;
+  margin: 4px 0 0 0;         /* cách nút một khoảng */
+  list-style: none;
+  z-index: 1000;             /* ưu tiên hiển thị */
 }
 
+/* Item trong dropdown */
 .account-dropdown li a {
   display: block;
-  padding: 10px;
+  padding: 10px 16px;
   text-decoration: none;
   color: #333;
+  white-space: nowrap;       /* tránh xuống dòng */
 }
 
 .account-dropdown li a:hover {
   background-color: #f0f0f0;
 }
+
+/* Khi hover */
+.account-menu:hover .account-dropdown {
+  display: block;
+}
+
+/* Khi JS show */
+.account-menu.show-dropdown .account-dropdown {
+  display: block;
+}
+
+/* Modal nền mờ fullscreen */
+#profile-section {
+    display: none; /* ẩn mặc định */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+
+    /* căn giữa bằng absolute + transform */
+    display: block;
+}
+
+#profile-section .modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* căn giữa chính xác */
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Tiêu đề */
+#profile-section .modal-content h2 {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Inputs */
+#profile-section .modal-content input {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Buttons */
+#profile-section .modal-content button {
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#profile-section .modal-content button[type="submit"] {
+    background-color: #007BFF;
+    color: #fff;
+}
+
+#profile-section .modal-content button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+#profile-section .modal-content button[type="button"] {
+    background-color: #6c757d;
+    color: #fff;
+}
+
+#profile-section .modal-content button[type="button"]:hover {
+    background-color: #5a6268;
+}
+
+/* Hoàn toàn không cho tương tác */
+.disabled-input {
+    background-color: #f5f5f5;  /* nền nhạt */
+    border: 1px solid #ccc;
+    color: #555;
+    cursor: not-allowed;
+    pointer-events: none;       /* chặn mọi tương tác chuột */
+}
+
+/* Chặn focus highlight */
+.disabled-input:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+
 
 /*Product */
 /* Container sản phẩm */
@@ -268,7 +380,9 @@ button:hover {
 
 
 
-/*Order ListList*/
+
+
+/*Order List*/
 .order-list {
   display: flex;
   flex-direction: column;

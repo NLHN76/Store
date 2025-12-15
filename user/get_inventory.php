@@ -1,5 +1,5 @@
 <?php
-require_once "db.php";
+require_once "../db.php";
 
 $product_code = $_GET['product_code'] ?? '';
 $color = $_GET['color'] ?? '';

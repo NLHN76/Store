@@ -1,5 +1,5 @@
 <?php
-require_once "db.php";
+require_once "../db.php";
 
 // ===== Xóa tin nhắn cũ sau n ngày =====
 $daysToKeep = 1;

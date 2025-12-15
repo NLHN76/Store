@@ -1,5 +1,5 @@
 <?php
-require_once "db.php";
+require_once "../db.php";
 
 // ✅ Truy vấn: lấy sản phẩm + màu sắc + điểm trung bình + số lượt đánh giá
 $sql = "
@@ -36,7 +36,7 @@ if ($result === false) {
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $row['price'] = number_format((float)$row['price'], 0, ',', '.');
-        $row['image'] = !empty($row['image']) ? 'admin/uploads/' . $row['image'] : '';
+        $row['image'] = !empty($row['image']) ? '../admin/uploads/' . $row['image'] : '';
         $row['color'] = $row['color'] ?? ''; // ✅ tránh null
         $row['avg_rating'] = floatval($row['avg_rating']);
         $row['total_reviews'] = intval($row['total_reviews']);

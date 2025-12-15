@@ -9,7 +9,6 @@ require_once "function.php";
 <meta charset="UTF-8">
 <link rel="stylesheet" href="../css/product_detail.css">
 <title>Chi tiết sản phẩm - <?= htmlspecialchars($product['name']) ?></title>
-
 </head>
 <body>
 
@@ -63,9 +62,10 @@ require_once "function.php";
       </div>
       <div style="display:flex; flex-direction:column; gap:10px;">
         <button type="submit" class="btn-submit">Gửi đánh giá</button>
-        <a href="../user_logout.html" class="btn-back">⬅ Quay về</a>
+        <a href="../user/user_logout.html" class="btn-back">⬅ Quay về</a>
       </div>
     </form>
+    
   <?php else: ?>
     <p style="color:red;">Bạn cần đăng nhập để gửi đánh giá.</p>
   <?php endif; ?>
@@ -85,6 +85,7 @@ require_once "function.php";
         <?php endif; ?>
       </div>
     <?php endwhile; ?>
+
     <!-- PHÂN TRANG -->
 <?php if ($total_pages > 1): ?>
 <div class="pagination" style="margin-top:20px; text-align:center;">
@@ -102,6 +103,7 @@ require_once "function.php";
   <?php else: ?>
     <p>Chưa có đánh giá nào cho sản phẩm này.</p>
   <?php endif; ?>
+
 </div>
 
 </body>

@@ -49,7 +49,7 @@ require_once "function.php";
   <h2>Đánh giá sản phẩm</h2>
 
   <!-- Nút quay về -->
-  <a href="../user.html" class="btn-back">⬅ Quay về</a>
+  <a href="../user/user.html" class="btn-back">⬅ Quay về</a>
 
   <h3 style="margin-top:20px;">Đánh giá gần đây</h3>
   <?php if ($feedbacks->num_rows > 0): ?>
@@ -77,6 +77,7 @@ require_once "function.php";
   <?php else: ?>
     <p>Chưa có đánh giá nào cho sản phẩm này.</p>
   <?php endif; ?>
+  
 </div>
 
 

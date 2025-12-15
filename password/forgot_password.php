@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = "INSERT INTO password_resets (email, token) VALUES ('$email', '$token')";
         if ($conn->query($sql) === TRUE) {
             // Gửi email đặt lại mật khẩu
-            $reset_link = "http://localhost/store/pay/reset_password.php?token=" . $token;
+            $reset_link = "http://localhost/store/password/reset_password.php?token=" . $token;
 
             $mail = new PHPMailer(true);
             try {

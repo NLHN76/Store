@@ -1,5 +1,5 @@
 <?php
-require_once "db.php";
+require_once "../db.php";
 
 // Xử lý form POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

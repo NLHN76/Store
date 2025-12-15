@@ -1,6 +1,6 @@
 <?php
 
-require_once "db.php";
+require_once "../db.php";
 
 // Hàm tạo mã user_code ngẫu nhiên
 function generateUserCode($length = 8) {

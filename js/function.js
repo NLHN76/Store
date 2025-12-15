@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchJSON('get_home.php').then(renderHome);
 
     // 4️⃣ AUTO: tự điền tên + email nếu đã đăng nhập
-    fetchJSON('auto/auto.php')
+    fetchJSON('../auto/auto.php')
         .then(user => {
             if (!user) return;
 
@@ -180,7 +180,7 @@ function renderProducts(products) {
         // ===== CLICK ẢNH → CHI TIẾT =====
         productDiv.querySelector('.product-image').onclick = () => {
             window.location.href =
-                `products/product_detail.php?code=${product.product_code}`;
+                `../products/product_detail.php?code=${product.product_code}`;
         };
 
         // ===== LOAD TỒN KHO =====
@@ -309,13 +309,13 @@ function updateCartDisplay() {
 // Thanh toán 
 async function checkout() {
     try {
-        const res = await fetch('pay/save_cart.php', {
+        const res = await fetch('../pay/save_cart.php', {
             method:'POST',
             headers:{'Content-Type':'application/json'},
             credentials: 'same-origin', // ← gửi cookie PHP session
             body: JSON.stringify(cart)
         });
-        if (res.ok) window.location.href = 'pay/user_pay.php';
+        if (res.ok) window.location.href = '../pay/user_pay.php';
         else res.text().then(t => alert(t)); // hiện thông báo lỗi nếu cần
     } catch(err) { console.error(err); }
 }
@@ -433,25 +433,6 @@ function goToProduct(productCode) {
 
 
 
-// Bật/tắt dropdown khi bấm vào tài khoản
-const accountBtn = document.getElementById('account-btn');
-const accountDropdown = document.getElementById('account-dropdown');
-
-accountBtn.addEventListener('click', function(e) {
-  e.preventDefault(); // tránh scroll lên đầu trang
-  accountDropdown.style.display = accountDropdown.style.display === 'block' ? 'none' : 'block';
-});
-
-// Ẩn dropdown khi click ra ngoài
-document.addEventListener('click', function(e) {
-  if (!accountBtn.contains(e.target) && !accountDropdown.contains(e.target)) {
-    accountDropdown.style.display = 'none';
-  }
-});
-
-
-
-
 
 
 // Chat
@@ -482,6 +463,75 @@ document.getElementById("messenger-input").addEventListener("keypress", e=>{ if(
 setInterval(()=>fetch("chat_handler.php?action=fetch").then(res=>res.text()).then(html=>{ const chatBox=document.getElementById("messenger-messages"); chatBox.innerHTML=html; chatBox.scrollTop=chatBox.scrollHeight; }),2000);
 
 
+
+
+
+// Lấy các element
+const profileBtn = document.getElementById("profile-btn");
+const profileSection = document.getElementById("profile-section");
+const profileForm = document.getElementById("profile-form");
+
+// Hàm mở modal
+function openProfile(){
+    profileSection.style.display = "block";
+}
+
+// Hàm đóng modal
+function closeProfile(){
+    profileSection.style.display = "none";
+}
+
+// Khi bấm nút "Thông tin cá nhân"
+profileBtn.addEventListener("click", function(e){
+    e.preventDefault();
+    openProfile();
+
+    // Lấy dữ liệu từ server
+    fetch("../auto/get_profile.php")
+    .then(res => res.json())
+    .then(data => {
+        if(data.error){
+            alert(data.error);
+            closeProfile();
+        } else {
+            // Điền dữ liệu vào form
+            profileForm.name.value = data.name || '';
+            profileForm.email.value = data.email || '';
+            profileForm.phone.value = data.phone || '';
+            profileForm.address.value = data.address || '';
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Lỗi khi tải thông tin");
+        closeProfile();
+    });
+});
+
+// Xử lý submit form (chỉ cập nhật phone và address)
+profileForm.addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append("phone", profileForm.phone.value);
+    formData.append("address", profileForm.address.value);
+
+    fetch("../auto/update_profile.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message);
+        if(data.success){
+            closeProfile();
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Cập nhật thất bại");
+    });
+});
 
 
 

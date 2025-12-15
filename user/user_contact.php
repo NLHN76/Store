@@ -1,5 +1,5 @@
 <?php
-require_once "db.php";
+require_once "../db.php";
 
 // Kiểm tra đăng nhập (nếu muốn bắt buộc)
 $userId = $_SESSION['user_id'] ?? null;

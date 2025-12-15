@@ -60,7 +60,7 @@ $conn->close();
             <input type="password" id="new_password" name="new_password" required>
         </div>
         <button type="submit">Cập nhật thông tin</button>
-        <button onclick="window.location.href='http://localhost/store/user.html';">Quay lại Trang Chủ</button>
+        <button onclick="window.location.href='http://localhost/store/user/user.html';">Quay lại Trang Chủ</button>
     </form>
 </body>
 

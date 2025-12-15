@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mobile Gear</title>
-  <link rel="stylesheet" href="css/user.css">
+  <link rel="stylesheet" href="../css/user.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -18,15 +18,15 @@
       <li><a href="#cart" onclick="showSection('cart')"><i class="fas fa-shopping-cart"></i> Giỏ Hàng (<span id="cart-quantity">0</span>)</a></li>
       <li><a href="#contact" onclick="showSection('contact')"><i class="fas fa-phone"></i> Liên Hệ</a></li>
       
-      <!-- Menu tài khoản -->
-      <li class="account-menu">
-        <a href="#" id="account-btn"><i class="fas fa-user"></i> Tài Khoản</a>
-        <ul class="account-dropdown" id="account-dropdown">
-          <li><a href="orders/orders.html">Đơn Hàng</a></li>
-          <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
-        </ul>
-      </li>
-    </ul>
+     <!-- Menu tài khoản -->
+       <li class="account-menu">
+             <a href="#" id="account-btn"><i class="fas fa-user"></i> Tài Khoản</a>
+               <ul class="account-dropdown" id="account-dropdown">
+                <li><a href="#" id="profile-btn">Thông tin cá nhân</a></li>
+             <li><a href="../orders/orders.html">Đơn Hàng</a></li>
+            <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
+               </ul>
+       </li>
   </nav>
 </header>
 
@@ -80,6 +80,33 @@
 </section>
 
   <div id="notification"></div>
+
+<section id="profile-section">
+    <div class="modal-content">
+        <form id="profile-form">
+            <h2>Thông tin cá nhân</h2>
+
+            <label for="profile-name">Tên:</label>
+             <input type="text" id="profile-name" name="name" readonly class="disabled-input">
+
+             <label for="profile-email">Email:</label>
+             <input type="email" id="profile-email" name="email" readonly class="disabled-input">
+
+
+            <label for="profile-phone">Số điện thoại:</label>
+            <input type="tel" id="profile-phone" name="phone">
+
+            <label for="profile-address">Địa chỉ:</label>
+            <input type="text" id="profile-address" name="address">
+
+            <button type="submit">Cập nhật</button>
+            <button type="button" onclick="closeProfile()">Đóng</button>
+        </form>
+    </div>
+</section>
+
+
+
   
 </main>
 
@@ -115,8 +142,8 @@
 </footer>
 
 <!-- Chat Zalo & Messenger -->
-<a href="https://zalo.me/0587911287" target="_blank" id="zalo-float"><img src="admin/uploads/download.png" alt="Chat Zalo" class="zalo-icon"></a>
-<a href="javascript:void(0);" id="messenger-float" onclick="toggleChatBox()"><img src="admin/uploads/mess.jpg" alt="Chat Messenger" class="messenger-icon"></a>
+<a href="https://zalo.me/0587911287" target="_blank" id="zalo-float"><img src="../admin/uploads/download.png" alt="Chat Zalo" class="zalo-icon"></a>
+<a href="javascript:void(0);" id="messenger-float" onclick="toggleChatBox()"><img src="../admin/uploads/mess.jpg" alt="Chat Messenger" class="messenger-icon"></a>
 
 <div id="messenger-box">
   <div id="messenger-header"><span>Hỗ trợ khách hàng</span><button id="close-messenger">&times;</button></div>
@@ -128,7 +155,7 @@
 </div>
 
 
-<script src="js/function.js"></script>
+<script src="../js/function.js"></script>
 
 </body>
 </html>

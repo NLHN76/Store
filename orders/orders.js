@@ -1,0 +1,117 @@
+let allOrders = []; // Lưu tất cả đơn hàng
+
+// Map trạng thái → icon + màu
+const statusMap = {
+    "Chờ xử lý":        {icon: "🕒", class: "text-gray-500 font-semibold"},
+    "Chờ thanh toán":   {icon: "🕓", class: "text-orange-500 font-semibold"},
+    "Đã thanh toán":    {icon: "✔️", class: "text-green-600 font-semibold"},
+    "Đang xử lý":       {icon: "⚠️", class: "text-yellow-500 font-semibold"},
+    "Đang giao hàng":   {icon: "🚚", class: "text-blue-500 font-semibold"},
+    "Đã giao hàng":     {icon: "✅", class: "text-green-700 font-semibold"},
+    "Đã hủy":           {icon: "❌", class: "text-red-500 font-semibold"}
+};
+
+// Fetch danh sách đơn hàng
+async function fetchOrders() {
+    try {
+        const response = await fetch('order.php');
+        const data = await response.json();
+        if(data.status === 'error'){
+            document.getElementById('order-list').innerHTML = `<p class="col-span-full text-red-500 text-center">${data.message}</p>`;
+            return;
+        }
+        allOrders = data;
+        renderStatusFilters();
+        renderOrders(allOrders);
+    } catch(error) {
+        console.error(error);
+        document.getElementById('order-list').innerHTML = `<p class="col-span-full text-red-500 text-center">Không thể tải thông tin đơn hàng.</p>`;
+    }
+}
+
+// Tạo nút lọc trạng thái
+function renderStatusFilters() {
+    const filterContainer = document.getElementById('status-filters');
+    filterContainer.innerHTML = '';
+
+    const statuses = Object.keys(statusMap);
+    statuses.unshift('Tất cả');
+
+    statuses.forEach(status => {
+        const btn = document.createElement('button');
+        btn.textContent = status;
+        btn.className = 'px-4 py-2 rounded-md border hover:bg-gray-200 transition-all';
+        btn.addEventListener('click', () => {
+            // Xóa active của tất cả nút
+            filterContainer.querySelectorAll('button').forEach(b => b.classList.remove('border-b-2','border-blue-500','font-bold'));
+            // Thêm active cho nút được click
+            btn.classList.add('border-b-2','border-blue-500','font-bold');
+
+            if(status === 'Tất cả') renderOrders(allOrders);
+            else renderOrders(allOrders.filter(order => order.status === status));
+        });
+        filterContainer.appendChild(btn);
+    });
+
+    // Mặc định chọn Tất cả
+    filterContainer.querySelector('button').classList.add('border-b-2','border-blue-500','font-bold');
+}
+
+// Render danh sách đơn hàng
+function renderOrders(orders) {
+    const orderList = document.getElementById('order-list');
+    orderList.innerHTML = '';
+    if(orders.length === 0){
+        orderList.innerHTML = `<p class="col-span-full text-center text-gray-500">Không có đơn hàng nào</p>`;
+        return;
+    }
+
+    orders.forEach(order => {
+        const formattedPrice = parseFloat(order.total_price).toLocaleString('de-DE');
+        const colors = order.color || 'Không có màu';
+        const status = statusMap[order.status] || {icon: "❓", class: "text-gray-500"};
+
+        const orderCard = document.createElement('div');
+        orderCard.className = 'bg-white shadow-md rounded-lg p-6 flex flex-col';
+
+        orderCard.innerHTML = `
+            <h3 class="text-xl font-bold mb-2">Mã Đơn Hàng: ${order.id}</h3>
+            <div class="flex-1">
+                <p><strong>Số Điện Thoại:</strong> ${order.customer_phone}</p>
+                <p><strong>Địa Chỉ:</strong> ${order.customer_address}</p>
+                <p><strong>Sản Phẩm:</strong> ${order.product_name}</p>
+                <p><strong>Loại Sản Phẩm:</strong> ${order.category}</p>
+                <p><strong>Màu Sắc:</strong> ${colors}</p>
+                <p><strong>Số Lượng:</strong> ${order.product_quantity}</p>
+                <p><strong>Tổng Tiền:</strong> ${formattedPrice} VNĐ</p>
+                <p><strong>Ngày Thanh Toán:</strong> ${order.order_date}</p>
+                <p><strong>Trạng Thái:</strong> <span class="${status.class}">${status.icon} ${order.status}</span></p>
+                ${order.status === "Chờ xử lý" ? `<button class="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600" onclick="cancelOrder(${order.id})">Hủy đơn</button>` : ''}
+            </div>
+        `;
+        orderList.appendChild(orderCard);
+    });
+}
+
+// Hủy đơn
+function cancelOrder(orderId) {
+    if(!confirm("Bạn có chắc muốn hủy đơn hàng này?")) return;
+
+    fetch('cancel_order.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({id: orderId})
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === 'success'){
+            alert("Đơn hàng đã được hủy!");
+            fetchOrders();
+        } else {
+            alert("Hủy đơn thất bại: " + data.message);
+        }
+    })
+    .catch(err => {console.error(err); alert("Có lỗi xảy ra.");});
+}
+
+document.addEventListener('DOMContentLoaded', fetchOrders);

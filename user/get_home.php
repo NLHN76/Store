@@ -1,5 +1,5 @@
 <?php
-require_once "db.php";
+require_once "../db.php";
 
 /* ================== BANNER ================== */
 $sqlBanner = "SELECT * FROM home WHERE id = 1";
@@ -7,7 +7,7 @@ $resultBanner = $conn->query($sqlBanner);
 $banner = $resultBanner ? $resultBanner->fetch_assoc() : null;
 
 if (!empty($banner['image'])) {
-    $banner['image'] = 'admin/home/uploads/' . $banner['image'];
+    $banner['image'] = '../admin/home/uploads/' . $banner['image'];
 }
 
 /* ================== KHUYẾN MÃI ================== */
@@ -18,7 +18,7 @@ $promotions = [];
 if ($resultPromo) {
     while ($row = $resultPromo->fetch_assoc()) {
         if (!empty($row['image'])) {
-            $row['image'] = 'admin/home/uploads/' . $row['image'];
+            $row['image'] = '../admin/home/uploads/' . $row['image'];
         }
         $promotions[] = $row;
     }
@@ -44,7 +44,7 @@ $featured_products = [];
 if ($resultFeatured) {
     while ($row = $resultFeatured->fetch_assoc()) {
         if (!empty($row['image'])) {
-            $row['image'] = 'admin/uploads/' . $row['image'];
+            $row['image'] = '../admin/uploads/' . $row['image'];
         }
         $featured_products[] = $row;
     }
