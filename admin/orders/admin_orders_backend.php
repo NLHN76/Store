@@ -5,7 +5,6 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 
-
 // --- Xử lý AJAX cập nhật trạng thái ---
 if(isset($_POST['action']) && $_POST['action']=="update_status"){
     $order_id = intval($_POST['order_id']);
@@ -58,6 +57,7 @@ if($keyword!==''){
 }
 $sql .= " ORDER BY p.order_date DESC";
 $result = $conn->query($sql);
+
 
 // --- Định nghĩa màu sắc trạng thái ---
 $status_colors = [
