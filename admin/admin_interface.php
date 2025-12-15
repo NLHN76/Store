@@ -25,12 +25,12 @@
         <aside class="sidebar">
             <ul>
                 <li class="active"><a href="home/admin_home.php"><i class="fas fa-home"></i> Quản lý Trang chủ</a></li>
-                <li><a href="admin_users.php"><i class="fas fa-users"></i> Quản lý Khách hàng</a></li>
-                <li><a href="admin_products.php"><i class="fas fa-boxes"></i> Quản lý sản phẩm</a></li>
+                <li><a href="user_management/admin_users.php"><i class="fas fa-users"></i> Quản lý Khách hàng</a></li>
+                <li><a href="products/admin_products.php"><i class="fas fa-boxes"></i> Quản lý sản phẩm</a></li>
                 <li><a href="orders/admin_orders.php"><i class="fas fa-shopping-cart"></i> Đơn hàng online</a></li>
-                <li><a href="admin_contact.php"><i class="fas fa-envelope"></i> Liên hệ</a></li>
+                <li><a href="contact/admin_contact.php"><i class="fas fa-envelope"></i> Liên hệ</a></li>
                 <li><a href="report/admin_report.php"><i class="fas fa-chart-bar"></i> Thống kê</a></li>
-               <li> <a href="admin_chat.php"> <i class="fas fa-comments"></i> Hỗ trợ khách hàng </a></li>
+               <li> <a href="chat/admin_chat.php"> <i class="fas fa-comments"></i> Hỗ trợ khách hàng </a></li>
                 <li> <a href="inventory/admin_inventory.php"> <i class="fas fa-warehouse"></i> Quản lý Kho </a></li>
             </ul>
         </aside>

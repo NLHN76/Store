@@ -1,7 +1,7 @@
 <!-- Nút thêm chi tiết sản phẩm -->
 <ul class="center-button">
     <li>
-        <a href="admin_products-detail.php" class="btn-add">
+        <a href="../products_detail/admin_products-detail.php" class="btn-add">
             <i class="fas fa-list-ul" style="margin-right:6px;"></i>
             Thêm chi tiết sản phẩm
         </a>

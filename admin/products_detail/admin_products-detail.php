@@ -1,90 +1,7 @@
 <?php
-require_once "../db.php" ;
+require_once "../../db.php" ;
+require_once "function.php";
 
-/* THÊM CHI TIẾT SẢN PHẨM */
-if (isset($_POST['add'])) {
-
-    $product_id    = intval($_POST['product_id']);
-    $description   = $_POST['description'] ?? '';
-    $material      = $_POST['material'] ?? '';
-    $compatibility = $_POST['compatibility'] ?? '';
-    $warranty      = $_POST['warranty'] ?? '';
-    $origin        = $_POST['origin'] ?? '';
-    $features      = $_POST['features'] ?? '';
-
-    $stmt = $conn->prepare("
-        INSERT INTO product_details 
-        (product_id, description, material, compatibility, warranty, origin, features) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ");
-
-    $stmt->bind_param(
-        "issssss",
-        $product_id,
-        $description,
-        $material,
-        $compatibility,
-        $warranty,
-        $origin,
-        $features
-    );
-
-    $stmt->execute();
-    $stmt->close();
-}
-
-/*  SỬA CHI TIẾT SẢN PHẨM */
-if (isset($_POST['update'])) {
-
-    $id            = intval($_POST['detail_id']);
-    $description   = $_POST['description'] ?? '';
-    $material      = $_POST['material'] ?? '';
-    $compatibility = $_POST['compatibility'] ?? '';
-    $warranty      = $_POST['warranty'] ?? '';
-    $origin        = $_POST['origin'] ?? '';
-    $features      = $_POST['features'] ?? '';
-
-    $stmt = $conn->prepare("
-        UPDATE product_details
-        SET description=?, material=?, compatibility=?, warranty=?, origin=?, features=?
-        WHERE detail_id=?
-    ");
-
-    $stmt->bind_param(
-        "ssssssi",
-        $description,
-        $material,
-        $compatibility,
-        $warranty,
-        $origin,
-        $features,
-        $id
-    );
-
-    $stmt->execute();
-    $stmt->close();
-}
-
-/* XÓA CHI TIẾT SẢN PHẨM*/
-if (isset($_GET['delete'])) {
-
-    $id = intval($_GET['delete']); 
-
-    if ($id > 0) {
-        $stmt = $conn->prepare("DELETE FROM product_details WHERE detail_id=?");
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
-        $stmt->close();
-    }
-}
-
-/*  LẤY DỮ LIỆU*/
-$sql = "SELECT p.id AS product_id, p.name, d.* 
-        FROM products p 
-        LEFT JOIN product_details d ON p.id = d.product_id";
-
-$result = $conn->query($sql);
-$products = $conn->query("SELECT id, name FROM products");
 ?>
 
 
@@ -94,51 +11,7 @@ $products = $conn->query("SELECT id, name FROM products");
 <meta charset="UTF-8">
 <title>Quản lý chi tiết sản phẩm</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>
-  body {
-    background-color: #f8f9fa;
-    font-size: 14px;
-  }
-  .page-header {
-    background-color: #0d6efd;
-    color: white;
-    padding: 10px 16px;
-    border-radius: 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .page-header h5 {
-    margin: 0;
-    font-size: 18px;
-  }
-  .card {
-    border: none;
-    box-shadow: 0 0 6px rgba(0,0,0,0.05);
-  }
-  .btn-primary, .btn-success {
-    background-color: #0d6efd;
-    border: none;
-  }
-  .btn-primary:hover, .btn-success:hover {
-    background-color: #0b5ed7;
-  }
-  textarea {
-    resize: none;
-    font-size: 13px;
-  }
-  .table-wrapper {
-    max-height: 500px;
-    overflow-y: auto;
-  }
-  .table thead th {
-    position: sticky;
-    top: 0;
-    background-color: #0d6efd;
-    color: white;
-    z-index: 2;
-  }
-</style>
+ <link rel="stylesheet" href="product_detail.css">
 </head>
 <body>
 
@@ -146,8 +19,8 @@ $products = $conn->query("SELECT id, name FROM products");
   <!-- Header -->
   <div class="page-header mb-3">
     <h5>Quản lý chi tiết sản phẩm</h5>
-    <a href="admin_interface.php" class="btn btn-light btn-sm">
-      <img src="uploads/exit.jpg" alt="Quay lại" style="width:20px; height:20px; border-radius:4px;">
+    <a href="../admin_interface.php" class="btn btn-light btn-sm">
+      <img src="../uploads/exit.jpg" alt="Quay lại" style="width:20px; height:20px; border-radius:4px;">
       <span class="ms-1">Quay lại</span>
     </a>
   </div>

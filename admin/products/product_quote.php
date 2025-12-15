@@ -1,15 +1,21 @@
 <?php
-require_once "../../db.php" ;
+require_once "../../db.php"; // $mysqli có sẵn từ db.php
 
 // Lấy sản phẩm từ CSDL
 $sql = "SELECT product_code, name, category, price FROM products ORDER BY id DESC";
-$stmt = $pdo->prepare($sql);
-$stmt->execute();
-$products_db = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$result = $conn->query($sql);
+
+$products_db = [];
+if ($result) {
+    while ($row = $result->fetch_assoc()) {
+        $products_db[] = $row;
+    }
+}
 
 function format_price($price) {
     return number_format($price, 0, ',', '.') . " VNĐ";
 }
+
 
 // Xử lý form submit để trả về file HTML báo giá download
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['products'])) {
@@ -96,6 +102,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['products'])) {
     exit;
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="vi">

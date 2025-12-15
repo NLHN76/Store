@@ -1,5 +1,5 @@
 <?php
-require_once "../db.php" ;
+require_once "../../db.php" ;
 // ================== HÀM DÙNG CHUNG ====================
 function clean_price($price_string) {
     $cleaned = str_replace('.', '', $price_string);

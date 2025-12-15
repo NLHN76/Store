@@ -7,7 +7,7 @@ require_once "function.php";
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="../css/product_detail.css">
+<link rel="stylesheet" href="product_detail.css">
 <title>Chi tiết sản phẩm - <?= htmlspecialchars($product['name']) ?></title>
 </head>
 <body>
@@ -108,5 +108,6 @@ require_once "function.php";
 
 </body>
 </html>
+
 
 <?php $conn->close(); ?>

@@ -7,7 +7,7 @@
     <?php foreach ($products as $product): 
         $is_active = $product['is_active'] == 1;
         $product_colors = explode(',', $product['color'] ?? '');
-        $img = 'uploads/' . ($product['image'] ?? '');
+        $img = '../uploads/' . ($product['image'] ?? '');
     ?>
         <div class="product-box <?= !$is_active ? 'inactive' : '' ?>">
             <?php if (!$is_active): ?><div class="inactive-overlay">ĐÃ TẮT</div><?php endif; ?>
