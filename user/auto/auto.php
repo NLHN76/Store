@@ -1,5 +1,5 @@
 <?php
-require_once "../db.php";
+require_once "../../db.php";
 
 // Kiểm tra xem người dùng đã đăng nhập chưa
 if (!isset($_SESSION['user_id'])) {

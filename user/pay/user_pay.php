@@ -1,5 +1,5 @@
 <?php
-require_once "../db.php";
+require_once "../../db.php";
 require_once "function.php";
 
 ?>
@@ -68,7 +68,7 @@ echo "<strong>Giá:</strong> " . number_format($itemTotal, 0, ',', '.') . " VNĐ
 <?php endif; ?>
 
 
-<a href="../user/user_logout.html" class="back-button">Quay lại trang chủ</a>
+<a href="../user_logout.html" class="back-button">Quay lại trang chủ</a>
 </div>
 </body>
 </html>         

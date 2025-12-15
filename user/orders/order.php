@@ -1,5 +1,5 @@
 <?php
-require_once "../db.php" ;
+require_once "../../db.php" ;
 // Kiểm tra khách hàng đã đăng nhập chưa
 if(!isset($_SESSION['user_code'])){
     echo json_encode(['status'=>'error','message'=>'Chưa đăng nhập']);

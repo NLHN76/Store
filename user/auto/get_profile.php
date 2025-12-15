@@ -1,6 +1,5 @@
 <?php
-require_once '../db.php'; // Kết nối database và session
-
+require_once '../../db.php';
 header('Content-Type: application/json');
 
 // Kiểm tra user đã đăng nhập

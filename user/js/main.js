@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchJSON('../user/get_home.php').then(renderHome);
 
     // 4️⃣ AUTO: tự điền tên + email nếu đã đăng nhập
-    fetchJSON('../auto/auto.php')
+    fetchJSON('auto/auto.php')
         .then(user => {
             if (!user) return;
 

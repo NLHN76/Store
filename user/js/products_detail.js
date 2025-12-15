@@ -61,7 +61,7 @@ function renderProducts(products) {
         // ===== CLICK ẢNH → CHI TIẾT =====
         productDiv.querySelector('.product-image').onclick = () => {
             window.location.href =
-                `../products/product_detail.php?code=${product.product_code}`;
+                `products/product_detail.php?code=${product.product_code}`;
         };
 
         // ===== LOAD TỒN KHO =====

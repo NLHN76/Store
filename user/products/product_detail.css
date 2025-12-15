@@ -42,33 +42,41 @@ body {
 
 /* ==== SẢN PHẨM LIÊN QUAN ==== */
 .related-products {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    display: flex;
     gap: 15px;
-    margin-top: 15px;
+    flex-wrap: wrap;
 }
 
 .related-item {
     border: 1px solid #ddd;
-    border-radius: 8px;
     padding: 10px;
+    width: 180px;
     text-align: center;
-    transition: 0.2s;
-    background: #fff;
+    border-radius: 6px;
+    transition: box-shadow 0.3s;
 }
 
 .related-item:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 0 8px rgba(0,0,0,0.15);
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
 .related-item img {
-    width: 120px;
-    height: 120px;
-    object-fit: cover;      /* Cắt ảnh cho đẹp */
-    margin-bottom: 10px;
-    border-radius: 6px;
+    max-width: 100%;
+    height: auto;
 }
+
+.related-item p {
+    margin: 5px 0;
+}
+
+/* CSS cho giá sản phẩm */
+.related-item .price {
+    color: #e53935; /* đỏ tươi */
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+
 
 
 /* ==== ĐÁNH GIÁ ==== */

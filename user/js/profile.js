@@ -19,7 +19,7 @@ profileBtn.addEventListener("click", function(e){
     openProfile();
 
     // Lấy dữ liệu từ server
-    fetch("../auto/get_profile.php")
+    fetch("auto/get_profile.php")
     .then(res => res.json())
     .then(data => {
         if(data.error){
@@ -48,7 +48,7 @@ profileForm.addEventListener("submit", function(e){
     formData.append("phone", profileForm.phone.value);
     formData.append("address", profileForm.address.value);
 
-    fetch("../auto/update_profile.php", {
+    fetch("auto/update_profile.php", {
         method: "POST",
         body: formData
     })

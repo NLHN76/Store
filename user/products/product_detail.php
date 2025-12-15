@@ -1,5 +1,5 @@
 <?php
-require_once "../db.php";
+require_once "../../db.php";
 require_once "function.php";
 ?>
 
@@ -14,7 +14,7 @@ require_once "function.php";
 
 <div class="product-detail">
     <h1><?= htmlspecialchars($product['name']) ?></h1>
-    <img src="../admin/uploads/<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" style="max-width:300px;">
+    <img src="../../admin/uploads/<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" style="max-width:300px;">
     <p><strong>Mã sản phẩm:</strong> <?= htmlspecialchars($product['product_code']) ?></p>
     <p><strong>Loại sản phẩm:</strong> <?= htmlspecialchars($product['category']) ?></p>
     <p><strong>Giá:</strong> <?= number_format($product['price'],0,',','.') ?> VNĐ</p>
@@ -33,7 +33,7 @@ require_once "function.php";
         <?php while($rel = $related_products->fetch_assoc()): ?>
             <div class="related-item">
                 <a href="product_detail.php?code=<?= htmlspecialchars($rel['product_code']) ?>">
-                    <img src="../admin/uploads/<?= htmlspecialchars($rel['image']) ?>" alt="<?= htmlspecialchars($rel['name']) ?>" style="width:100%; height:auto;">
+                    <img src="../../admin/uploads/<?= htmlspecialchars($rel['image']) ?>" alt="<?= htmlspecialchars($rel['name']) ?>" style="width:100%; height:auto;">
                     <p><?= htmlspecialchars($rel['name']) ?></p>
                     <p><?= number_format($rel['price'],0,',','.') ?> VNĐ</p>
                 </a>
@@ -62,7 +62,7 @@ require_once "function.php";
       </div>
       <div style="display:flex; flex-direction:column; gap:10px;">
         <button type="submit" class="btn-submit">Gửi đánh giá</button>
-        <a href="../user/user_logout.html" class="btn-back">⬅ Quay về</a>
+        <a href="../../user/user_logout.html" class="btn-back">⬅ Quay về</a>
       </div>
     </form>
     

@@ -1,5 +1,5 @@
 <?php
-require_once "../db.php";
+require_once "../../db.php";
 require_once "function.php";
 ?>
 
@@ -7,14 +7,14 @@ require_once "function.php";
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="../css/product_detail.css">
+<link rel="stylesheet" href="product_detail.css">
 <title>Chi tiết sản phẩm - <?= htmlspecialchars($product['name']) ?></title>
 </head>
 <body>
 
 <div class="product-detail">
     <h1><?= htmlspecialchars($product['name']) ?></h1>
-    <img src="../admin/uploads/<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" style="max-width:300px;">
+    <img src="../../admin/uploads/<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" style="max-width:300px;">
     <p><strong>Mã sản phẩm:</strong> <?= htmlspecialchars($product['product_code']) ?></p>
     <p><strong>Loại sản phẩm:</strong> <?= htmlspecialchars($product['category']) ?></p>
     <p><strong>Giá:</strong> <?= number_format($product['price'],0,',','.') ?> VNĐ</p>
@@ -33,7 +33,7 @@ require_once "function.php";
         <?php while($rel = $related_products->fetch_assoc()): ?>
             <div class="related-item">
                 <a href="no_feedback.php?code=<?= htmlspecialchars($rel['product_code']) ?>">
-                    <img src="../admin/uploads/<?= htmlspecialchars($rel['image']) ?>" alt="<?= htmlspecialchars($rel['name']) ?>" style="width:100%; height:auto;">
+                    <img src="../../admin/uploads/<?= htmlspecialchars($rel['image']) ?>" alt="<?= htmlspecialchars($rel['name']) ?>" style="width:100%; height:auto;">
                     <p><?= htmlspecialchars($rel['name']) ?></p>
                     <p><?= number_format($rel['price'],0,',','.') ?> VNĐ</p>
                 </a>
@@ -49,7 +49,7 @@ require_once "function.php";
   <h2>Đánh giá sản phẩm</h2>
 
   <!-- Nút quay về -->
-  <a href="../user/user.html" class="btn-back">⬅ Quay về</a>
+  <a href="../../user/user.html" class="btn-back">⬅ Quay về</a>
 
   <h3 style="margin-top:20px;">Đánh giá gần đây</h3>
   <?php if ($feedbacks->num_rows > 0): ?>

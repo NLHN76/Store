@@ -1,5 +1,5 @@
 <?php
-require_once "../db.php";
+require_once "../../db.php";
 // Kiểm tra xem token có được truyền vào không
 if (isset($_GET['token'])) {
     $token = $_GET['token'];

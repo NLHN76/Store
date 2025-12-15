@@ -20,10 +20,10 @@ function generateUserCode($length = 8) {
 // Hàm gửi email xác nhận đăng ký
 function sendConfirmationEmail($name, $email) {
 
-   require '../password/vendor/phpmailer/phpmailer/src/PHPMailer.php';
-   require '../password/vendor/phpmailer/phpmailer/src/SMTP.php';
-   require '../password/vendor/phpmailer/phpmailer/src/Exception.php';
-   require '../password/vendor/autoload.php';
+   require 'password/vendor/phpmailer/phpmailer/src/PHPMailer.php';
+   require 'password/vendor/phpmailer/phpmailer/src/SMTP.php';
+   require 'password/vendor/phpmailer/phpmailer/src/Exception.php';
+   require 'password/vendor/autoload.php';
 
     
     $mail = new PHPMailer\PHPMailer\PHPMailer();
