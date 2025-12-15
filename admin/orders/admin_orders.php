@@ -1,11 +1,20 @@
 <?php
-session_start();
+
+require_once "../../db.php";
+
+
 ?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
 <title>Quản Lý Đơn Hàng</title>
+<a href="../admin_interface.php" class="btn-back">
+  <img src="../uploads/exit.jpg" alt="Quay lại">
+  <span>Quay lại</span>
+</a>
+
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <link rel="stylesheet" href="css/online.css">
 <script>
@@ -38,7 +47,12 @@ $(document).ready(function(){
 </script>
 </head>
 <body>
+
+
+
 <h1>Quản Lý Đơn Hàng</h1>
+
+
 <form method="GET" style="margin-bottom:10px;">
     <input type="text" name="keyword" placeholder="Tìm theo Mã đơn">
     <button type="submit" onclick="loadOrders(); return false;">Tìm kiếm</button>
@@ -56,5 +70,7 @@ $(document).ready(function(){
 <tr><td colspan="16" style="text-align:center;">Đang tải...</td></tr>
 </tbody>
 </table>
+
+
 </body>
 </html>

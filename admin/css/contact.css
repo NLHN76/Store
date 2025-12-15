@@ -1,120 +1,120 @@
-   body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8f9fa;
-            color: #495057;
-            margin: 0;
-            padding: 0;
-        }
+body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 20px;
+    }
 
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
-        }
+    .container {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        max-width: 1000px;
+        margin: auto;
+    }
 
-        h1 {
-            color: #343a40;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 2rem;
-        }
+    h1 {
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
 
-        .search-form {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
+    .back-button img {
+        width: 30px;
+        height: 30px;
+        margin-bottom: 10px;
+        cursor: pointer;
+    }
 
-        .search-form input[type="text"] {
-            padding: 10px;
-            border: 1px solid #ced4da;
-            border-radius: 4px;
-            width: 70%;
-            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        }
+    /* Form tìm kiếm */
+    .search-form {
+        margin-bottom: 15px;
+    }
+    .search-form input[type="text"] {
+        padding: 6px 10px;
+        width: 250px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        margin-right: 5px;
+    }
+    .search-form button {
+        padding: 6px 12px;
+        border-radius: 4px;
+        border: none;
+        background-color: #3498db;
+        color: #fff;
+        cursor: pointer;
+    }
+    .search-form button:hover {
+        background-color: #2980b9;
+    }
 
-        .search-form input[type="text"]:focus {
-            border-color: #80bdff;
-            outline: 0;
-            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-        }
+    /* Bảng liên hệ */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        text-align: left;
+    }
+    th {
+        background-color: #f0f0f0;
+    }
 
-        .search-form button {
-            padding: 10px 15px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.2s ease-in-out;
-        }
+    /* Dòng liên hệ mới */
+    .new-contact {
+        background-color: #d4edda; /* xanh nhạt nổi bật */
+    }
 
-        .search-form button:hover {
-            background-color: #0056b3;
-        }
+    /* Dòng liên hệ cũ */
+    .old-contact {
+        background-color: #fff;
+    }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
+    /* Nút xóa */
+    .delete-button {
+        background-color: #e74c3c;
+        color: #fff;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    .delete-button:hover {
+        background-color: #c0392b;
+    }
 
-        th,
-        td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #dee2e6;
-            font-size: 1rem;
-        }
 
-        th {
-            background-color: #343a40;
-            color: white;
-            font-weight: 500;
-        }
+/* Banner thông báo liên hệ mới */
+.new-contact-banner {
+    background-color: #1f1e1e;      
+    color: #e8bf46;                 
+    border: 1px solid #ffeeba;      
+    padding: 12px 20px;             
+    border-radius: 8px;            
+    font-weight: 600;               
+    display: flex;                  
+    align-items: center;          
+    gap: 10px;                    
+    margin-bottom: 20px;           
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    animation: slideDown 0.5s ease; 
+}
 
-        tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
+/* Icon thông báo */
+.new-contact-banner i {
+    font-size: 18px;
+}
 
-        tr:hover {
-            background-color: #e9ecef;
-            transition: background-color 0.2s ease-in-out;
-        }
-
-        .delete-form {
-            display: inline;
-        }
-
-        .delete-button {
-            background-color: #dc3545;
-            color: white;
-            padding: 8px 12px;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.2s ease-in-out;
-        }
-
-        .delete-button:hover {
-            background-color: #c82333;
-        }
-
-        .back-button {
-            display: block;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .back-button img {
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-        }
+/* Hiệu ứng xuất hiện */
+@keyframes slideDown {
+    0% {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

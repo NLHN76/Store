@@ -1,0 +1,72 @@
+
+/* Contact Form */
+#contact {
+  background-color: #ffffff;
+  padding: 20px 15px;
+  border-radius: 10px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+  max-width: 450px;
+  margin: 30px auto;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 0.9rem;
+}
+
+#contact h2 {
+  text-align: center;
+  font-size:1.66rem;
+  color: #0a0a0a;
+  margin-bottom: 20px;
+}
+
+#contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#contact-form label {
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 3px;
+  font-size: 0.9rem;
+}
+
+#contact-form input,
+#contact-form textarea {
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  resize: vertical;
+}
+
+#contact-form input:focus,
+#contact-form textarea:focus {
+  border-color: #66afe9;
+  box-shadow: 0 0 0 0.15rem rgba(102, 175, 233, 0.3);
+  outline: none;
+}
+
+#contact-form textarea {
+  min-height: 100px;
+}
+
+#contact-form button {
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+#contact-form button:hover {
+  background-color: #0056b3;
+  transform: scale(1.01);
+}
+
+

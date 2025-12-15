@@ -73,9 +73,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const nameInput = document.getElementById('name');
             const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
 
             if (nameInput && user.name) nameInput.value = user.name;
             if (emailInput && user.email) emailInput.value = user.email;
+            if (phoneInput && user.phone) phoneInput.value = user.phone;
         })
         .catch(err => console.warn('Auto user error:', err));
 

@@ -1,0 +1,56 @@
+/* Cart Styles */
+
+#cart {
+  background-color: #fefefe;
+  padding: 35px 30px;
+  max-width: 700px;
+  margin: 50px auto;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  transition: all 0.3s ease;
+}
+
+#cart h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 25px;
+  font-size: 24px;
+}
+
+#cart-items {
+  border-top: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  padding: 15px 0;
+  margin-bottom: 20px;
+  min-height: 50px;
+  font-size: 16px;
+  color: #333;
+}
+
+#total-quantity,
+#total-price {
+  font-size: 17px;
+  margin-bottom: 10px;
+  color: #444;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 5px;
+}
+
+  #checkout {
+    display: block;
+    width: 100%;
+    padding: 12px 24px;
+    background-color: #2e832e;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  #checkout:hover {
+    background-color: #258f35;
+  }

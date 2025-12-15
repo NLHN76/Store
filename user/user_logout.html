@@ -5,6 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mobile Gear</title>
   <link rel="stylesheet" href="css/user.css">
+  <link rel="stylesheet" href="css/chat.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/products.css">
+  <link rel="stylesheet" href="css/menu.css">
+  <link rel="stylesheet" href="css/cart.css">
+  <link rel="stylesheet" href="css/features_products.css">
+  <link rel="stylesheet" href="css/search.css">
+    <link rel="stylesheet" href="css/contact.css">
+    
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -143,7 +153,11 @@
 
 <!-- Chat Zalo & Messenger -->
 <a href="https://zalo.me/0587911287" target="_blank" id="zalo-float"><img src="../admin/uploads/download.png" alt="Chat Zalo" class="zalo-icon"></a>
-<a href="javascript:void(0);" id="messenger-float" onclick="toggleChatBox()"><img src="../admin/uploads/mess.jpg" alt="Chat Messenger" class="messenger-icon"></a>
+<a href="javascript:void(0);" id="messenger-float" onclick="toggleChatBox()">
+    <img src="../admin/uploads/mess.jpg" alt="Chat Messenger" class="messenger-icon">
+    <span id="messenger-badge" style="display:none;">0</span>
+</a>
+
 
 <div id="messenger-box">
   <div id="messenger-header"><span>Hỗ trợ khách hàng</span><button id="close-messenger">&times;</button></div>

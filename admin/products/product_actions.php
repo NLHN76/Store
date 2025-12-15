@@ -49,7 +49,7 @@ if (isset($_POST['action']) && $_POST['action'] === "add") {
     $image_name = null;
     if (!empty($_FILES['product_image']['name'])) {
         $image_name = uniqid("prod_") . "." . strtolower(pathinfo($_FILES['product_image']['name'], PATHINFO_EXTENSION));
-        move_uploaded_file($_FILES['product_image']['tmp_name'], "uploads/" . $image_name);
+        move_uploaded_file($_FILES['product_image']['tmp_name'], "../uploads/" . $image_name);
     }
 
     $colors = implode(",", $_POST['product_colors'] ?? []);
@@ -97,12 +97,12 @@ if (isset($_POST['action']) && $_POST['action'] === "edit") {
     $image_name = $old['image'];  // giữ ảnh cũ
 
     if (!empty($_FILES['product_image']['name'])) {
-        if ($old['image'] && file_exists("uploads/" . $old['image'])) {
-            unlink("uploads/" . $old['image']);
+        if ($old['image'] && file_exists("../uploads/" . $old['image'])) {
+            unlink("../uploads/" . $old['image']);
         }
 
         $image_name = uniqid("prod_") . "." . strtolower(pathinfo($_FILES['product_image']['name'], PATHINFO_EXTENSION));
-        move_uploaded_file($_FILES['product_image']['tmp_name'], "uploads/" . $image_name);
+        move_uploaded_file($_FILES['product_image']['tmp_name'], "../uploads/" . $image_name);
     }
 
     // ========== Update DB ==========

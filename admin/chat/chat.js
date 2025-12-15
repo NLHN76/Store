@@ -1,49 +1,100 @@
-let selectedUserId = null;
+let selectedUserId = 0;
 
-function loadUsers(){
-    fetch('?action=users').then(res=>res.json()).then(users=>{
-        const usersDiv = document.getElementById('users');
-        usersDiv.innerHTML='';
-        users.forEach(u=>{
+// Load danh sách user
+function loadUsers() {
+    fetch('function.php?action=users')
+    .then(res => res.json())
+    .then(users => {
+        const container = document.getElementById('users');
+        container.innerHTML = '';
+        users.forEach(user => {
             const div = document.createElement('div');
-            div.className='user-item';
-            div.innerHTML = `<strong>${u.user_name}</strong>`;
-            div.onclick = ()=>{
-                selectedUserId = u.user_id;
-                document.getElementById('chat-header').textContent = u.user_name;
-                document.querySelectorAll('.user-item').forEach(d=>d.classList.remove('active'));
+            div.className = 'user-item';
+            div.dataset.userid = user.user_id;
+
+            // Nếu là user đang chọn → highlight
+            if(user.user_id == selectedUserId){
                 div.classList.add('active');
-                loadMessages();
-            };
-            usersDiv.appendChild(div);
+            }
+
+            div.innerHTML = `
+                <span>${user.user_name}</span>
+                <span class="badge-new badge bg-warning text-dark">Mới</span>
+            `;
+
+            div.onclick = () => selectUser(user.user_id, user.user_name, div);
+            container.appendChild(div);
+        });
+        checkNewMessages(); // kiểm tra tin nhắn mới
+    });
+}
+
+// Chọn user để chat
+function selectUser(user_id, user_name, div) {
+    selectedUserId = user_id;
+    document.getElementById('chat-header').innerText = user_name;
+    loadMessages(user_id);
+
+    // Bỏ dấu “Mới”
+    div.classList.remove('new-message');
+    div.querySelector('.badge-new').style.display = 'none';
+
+    // Highlight user hiện tại
+    document.querySelectorAll('.user-item').forEach(d => d.classList.remove('active'));
+    div.classList.add('active');
+}
+
+// Load tin nhắn của user
+function loadMessages(user_id) {
+    fetch(`function.php?action=fetch&user_id=${user_id}`)
+    .then(res => res.text())
+    .then(html => {
+        const messages = document.getElementById('chat-messages');
+        messages.innerHTML = html;
+        messages.scrollTop = messages.scrollHeight;
+    });
+}
+
+// Gửi tin nhắn
+document.getElementById('send-admin').addEventListener('click', () => {
+    const input = document.getElementById('admin-input');
+    const message = input.value.trim();
+    if(!message || !selectedUserId) return;
+
+    fetch('function.php?action=send', {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: `user_id=${selectedUserId}&message=${encodeURIComponent(message)}`
+    }).then(res => res.text())
+      .then(txt => {
+          if(txt === 'OK') {
+              input.value = '';
+              loadMessages(selectedUserId);
+          }
+      });
+});
+
+// Kiểm tra tin nhắn mới
+function checkNewMessages() {
+    document.querySelectorAll('.user-item').forEach(div => {
+        const user_id = div.dataset.userid;
+        fetch(`function.php?action=check_new&user_id=${user_id}`)
+        .then(res => res.json())
+        .then(data => {
+            const badge = div.querySelector('.badge-new');
+            if(data.new) {
+                div.classList.add('new-message');
+                badge.style.display = 'inline-block';
+            } else {
+                div.classList.remove('new-message');
+                badge.style.display = 'none';
+            }
         });
     });
 }
 
-function loadMessages(){
-    if(!selectedUserId) return;
-    fetch('?action=fetch&user_id='+selectedUserId).then(res=>res.text()).then(html=>{
-        const chatBox = document.getElementById('chat-messages');
-        chatBox.innerHTML = html;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    });
-}
-
-function sendMessage(){
-    const msg = document.getElementById('admin-input').value.trim();
-    if(!msg || !selectedUserId) return;
-    const data = new URLSearchParams();
-    data.append('message', msg);
-    data.append('user_id', selectedUserId);
-    fetch('?action=send',{ method:'POST', body:data }).then(res=>res.text()).then(res=>{
-        if(res==='OK'){ document.getElementById('admin-input').value=''; loadMessages(); }
-        else alert(res);
-    });
-}
-
-document.getElementById('send-admin').addEventListener('click', sendMessage);
-document.getElementById('admin-input').addEventListener('keypress', e=>{ if(e.key==='Enter'){ e.preventDefault(); sendMessage(); } });
-
-setInterval(loadUsers,5000);
-setInterval(loadMessages,2000);
+// Tải user lần đầu
 loadUsers();
+
+// Kiểm tra tin nhắn mới mỗi 5 giây
+setInterval(checkNewMessages, 5000);

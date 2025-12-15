@@ -1,18 +1,18 @@
 <?php
 require_once "../../db.php";
 
+
 // Kiểm tra xem người dùng đã đăng nhập chưa
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['error' => 'Người dùng chưa đăng nhập']);
     exit;
 }
 
-
 // Lấy ID người dùng từ session
 $userId = $_SESSION['user_id'];
 
-// Lấy thông tin người dùng
-$query = "SELECT name, email FROM users WHERE id = ?";
+// Lấy thông tin người dùng từ bảng user_profile
+$query = "SELECT name, email, phone FROM user_profile WHERE user_id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $userId);
 $stmt->execute();

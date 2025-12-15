@@ -41,3 +41,63 @@ button {
 button {
     cursor: pointer;
 }
+
+.order-notification {
+    position: fixed;
+    top: 15px;
+    right: 20px;
+    background: #dc3545;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    z-index: 9999;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+#orderBadge {
+    background: #fff;
+    color: #dc3545;
+    margin-left: 6px;
+    padding: 2px 7px;
+    border-radius: 50%;
+    font-size: 12px;
+}
+
+
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 12px;
+  background: #f8f9fa;
+  color: #333;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+
+  border: 1px solid #ddd;
+  border-radius: 6px;
+
+  transition: all 0.2s ease;
+}
+
+.btn-back img {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+}
+
+.btn-back:hover {
+  background: #e9ecef;
+  color: #000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transform: translateY(-1px);
+}
+
+.btn-back:active {
+  transform: translateY(0);
+  box-shadow: none;
+}

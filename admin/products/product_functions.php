@@ -1,5 +1,6 @@
 <?php
-require_once "../../db.php" ;
+require_once "../../db.php";
+
 // ================== HÀM DÙNG CHUNG ====================
 function clean_price($price_string) {
     $cleaned = str_replace('.', '', $price_string);
@@ -7,17 +8,38 @@ function clean_price($price_string) {
     return is_numeric($cleaned) ? floatval($cleaned) : 0;
 }
 
-function generate_product_code($category, $pdo) {
+/**
+ * Sinh mã sản phẩm KHÔNG TRÙNG (mysqli)
+ */
+function generate_product_code($category, $conn) {
+
+    // Lấy 2 ký tự chữ đầu
     $prefix = strtoupper(substr(preg_replace('/[^a-zA-Z]/', '', $category), 0, 2));
     if (empty($prefix)) $prefix = 'SP';
 
     for ($i = 0; $i < 5; $i++) {
+
         $code = $prefix . rand(1000, 9999);
-        $stmt = $pdo->prepare("SELECT id FROM products WHERE product_code = :code");
-        $stmt->execute(['code' => $code]);
-        if (!$stmt->fetch()) return $code;
+
+        // ⚠️ mysqli dùng ?
+        $sql = "SELECT id FROM products WHERE product_code = ?";
+        $stmt = $conn->prepare($sql);
+
+        if (!$stmt) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $stmt->bind_param("s", $code);
+        $stmt->execute();
+        $stmt->store_result();
+
+        if ($stmt->num_rows === 0) {
+            return $code;
+        }
     }
-    return $prefix . uniqid();
+
+    // fallback nếu trùng liên tục
+    return $prefix . strtoupper(substr(uniqid(), -6));
 }
 
 // =========== XỬ LÝ MÀU – ĐỌC FILE ===============

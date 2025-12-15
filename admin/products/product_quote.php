@@ -1,5 +1,5 @@
 <?php
-require_once "../../db.php"; // $mysqli có sẵn từ db.php
+require_once "../../db.php";
 
 // Lấy sản phẩm từ CSDL
 $sql = "SELECT product_code, name, category, price FROM products ORDER BY id DESC";

@@ -14,24 +14,28 @@ require_once "function.php";
 </head>
 <body>
 
-<div class="chat-container shadow-sm">
+<div class="chat-container">
+    <!-- Danh sách user -->
     <div class="user-list">
         <h5>Người dùng</h5>
-        <div id="users" class="flex-grow-1 overflow-auto"></div>
+        <div id="users"></div>
     </div>
+
+    <!-- Khung chat -->
     <div class="chat-box d-flex flex-column">
         <div class="chat-header" id="chat-header">Chọn người dùng để chat</div>
         <div class="chat-messages" id="chat-messages"></div>
-        <div class="chat-input d-flex">
-            <input type="text" id="admin-input" class="form-control me-2" placeholder="Nhập tin nhắn...">
+        <div class="chat-input">
+            <input type="text" id="admin-input" class="form-control" placeholder="Nhập tin nhắn...">
             <button id="send-admin" class="btn btn-success">Gửi</button>
         </div>
+
+     <a href="../admin_interface.php" class="btn-back">Quay lại trang chính</a>
+
     </div>
 </div>
 
-
-
-<script src= "chat.js"></script>
+<script src="chat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

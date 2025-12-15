@@ -1,6 +1,5 @@
 <?php
 
-
 /* THÊM CHI TIẾT SẢN PHẨM */
 if (isset($_POST['add'])) {
 
