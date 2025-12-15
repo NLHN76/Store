@@ -180,7 +180,7 @@ function renderProducts(products) {
         // ===== CLICK ẢNH → CHI TIẾT =====
         productDiv.querySelector('.product-image').onclick = () => {
             window.location.href =
-                `product_detail.php?code=${product.product_code}`;
+                `products/product_detail.php?code=${product.product_code}`;
         };
 
         // ===== LOAD TỒN KHO =====
@@ -433,6 +433,57 @@ function goToProduct(productCode) {
 
 
 
+// Bật/tắt dropdown khi bấm vào tài khoản
+const accountBtn = document.getElementById('account-btn');
+const accountDropdown = document.getElementById('account-dropdown');
+
+accountBtn.addEventListener('click', function(e) {
+  e.preventDefault(); // tránh scroll lên đầu trang
+  accountDropdown.style.display = accountDropdown.style.display === 'block' ? 'none' : 'block';
+});
+
+// Ẩn dropdown khi click ra ngoài
+document.addEventListener('click', function(e) {
+  if (!accountBtn.contains(e.target) && !accountDropdown.contains(e.target)) {
+    accountDropdown.style.display = 'none';
+  }
+});
+
+
+
+
+
+
+// Chat
+function toggleChatBox() {
+  const box = document.getElementById("messenger-box");
+  box.style.display = (box.style.display==="block")?"none":"block";
+}
+document.getElementById("close-messenger").onclick = () => document.getElementById("messenger-box").style.display="none";
+const sendMessage = () => {
+  const msg = document.getElementById("messenger-input").value.trim();
+  if(!msg) return;
+  const data = new URLSearchParams({action:"send", message:msg});
+  fetch("chat_handler.php",{method:"POST", body:data})
+    .then(res=>res.text()).then(res=>{
+      if(res==="OK"){
+        const chatBox=document.getElementById("messenger-messages");
+        const newMsg=document.createElement("div");
+        newMsg.className="user-message";
+        newMsg.innerHTML=`<strong>Bạn:</strong> ${msg}`;
+        chatBox.appendChild(newMsg);
+        chatBox.scrollTop=chatBox.scrollHeight;
+        document.getElementById("messenger-input").value="";
+      } else alert(res);
+    });
+};
+document.getElementById("send-messenger").onclick = sendMessage;
+document.getElementById("messenger-input").addEventListener("keypress", e=>{ if(e.key==="Enter"){e.preventDefault(); sendMessage();} });
+setInterval(()=>fetch("chat_handler.php?action=fetch").then(res=>res.text()).then(html=>{ const chatBox=document.getElementById("messenger-messages"); chatBox.innerHTML=html; chatBox.scrollTop=chatBox.scrollHeight; }),2000);
+
+
+
+
 
 // Đăng xuất
 function logout() { cart=[]; totalPrice=0; updateCartDisplay(); alert('Đăng xuất thành công'); window.location.href='user.html'; }
@@ -444,5 +495,7 @@ categoryFilter.addEventListener('change', () => {
     applyFilters();
 });
 priceFilter.addEventListener('change', applyFilters);
+
+
 
 

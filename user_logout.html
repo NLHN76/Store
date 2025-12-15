@@ -17,13 +17,21 @@
       <li><a href="#products" onclick="showSection('products')"><i class="fas fa-box"></i> Sản Phẩm</a></li>
       <li><a href="#cart" onclick="showSection('cart')"><i class="fas fa-shopping-cart"></i> Giỏ Hàng (<span id="cart-quantity">0</span>)</a></li>
       <li><a href="#contact" onclick="showSection('contact')"><i class="fas fa-phone"></i> Liên Hệ</a></li>
-      <li><a href="orders/orders.html"><i class="fas fa-receipt"></i> Đơn Hàng</a></li>
-      <li><a href="#" onclick="logout()"><i class="fas fa-user"></i> Đăng Xuất</a></li>
+      
+      <!-- Menu tài khoản -->
+      <li class="account-menu">
+        <a href="#" id="account-btn"><i class="fas fa-user"></i> Tài Khoản</a>
+        <ul class="account-dropdown" id="account-dropdown">
+          <li><a href="orders/orders.html">Đơn Hàng</a></li>
+          <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
+        </ul>
+      </li>
     </ul>
   </nav>
 </header>
 
 <main>
+
   <section id="home"></section>
 
   <section id="products">
@@ -71,8 +79,8 @@
     </form>
 </section>
 
-
   <div id="notification"></div>
+  
 </main>
 
 <footer>
@@ -119,38 +127,6 @@
   </div>
 </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  if(location.hash === "#cart") { showSection("cart"); updateCartDisplay(); }
-});
-
-// Chat
-function toggleChatBox() {
-  const box = document.getElementById("messenger-box");
-  box.style.display = (box.style.display==="block")?"none":"block";
-}
-document.getElementById("close-messenger").onclick = () => document.getElementById("messenger-box").style.display="none";
-const sendMessage = () => {
-  const msg = document.getElementById("messenger-input").value.trim();
-  if(!msg) return;
-  const data = new URLSearchParams({action:"send", message:msg});
-  fetch("chat_handler.php",{method:"POST", body:data})
-    .then(res=>res.text()).then(res=>{
-      if(res==="OK"){
-        const chatBox=document.getElementById("messenger-messages");
-        const newMsg=document.createElement("div");
-        newMsg.className="user-message";
-        newMsg.innerHTML=`<strong>Bạn:</strong> ${msg}`;
-        chatBox.appendChild(newMsg);
-        chatBox.scrollTop=chatBox.scrollHeight;
-        document.getElementById("messenger-input").value="";
-      } else alert(res);
-    });
-};
-document.getElementById("send-messenger").onclick = sendMessage;
-document.getElementById("messenger-input").addEventListener("keypress", e=>{ if(e.key==="Enter"){e.preventDefault(); sendMessage();} });
-setInterval(()=>fetch("chat_handler.php?action=fetch").then(res=>res.text()).then(html=>{ const chatBox=document.getElementById("messenger-messages"); chatBox.innerHTML=html; chatBox.scrollTop=chatBox.scrollHeight; }),2000);
-</script>
 
 <script src="js/function.js"></script>
 
