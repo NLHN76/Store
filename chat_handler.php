@@ -44,7 +44,7 @@ if($action==='fetch'){
         if($row['sender_role']==='user'){
             $html .= '<div class="user-message"><strong>Bạn:</strong> '.$content.'</div>';
         } else {
-            $html .= '<div class="bot-message"><strong>Admin:</strong> '.$content.'</div>';
+            $html .= '<div class="admin-message"><strong>Admin:</strong> '.$content.'</div>';
         }
     }
     echo $html;
