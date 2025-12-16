@@ -1,74 +1,10 @@
 <?php
 require_once "../db.php";
-if(!isset($_SESSION['shipper_id'])){
-    header("Location: shipper_login.php"); exit;
-}
+require_once "function.php";
 
-$shipper_id = $_SESSION['shipper_id'];
-$shipper_name = $_SESSION['shipper_name'];
-
-
-// --- Lấy thông tin shipper ---
-$shipper = $conn->query("SELECT * FROM shipper WHERE id=$shipper_id")->fetch_assoc();
-$avatar_login = $shipper['avatar'] ?? 'https://via.placeholder.com/40';
-
-// --- Xử lý AJAX ---
-if(isset($_POST['action'])){
-    $action = $_POST['action'];
-
-    // Nhận đơn
-    if($action=="receive_order"){
-        $order_id = intval($_POST['order_id']);
-        $stmt = $conn->prepare("UPDATE payment SET shipper_id=?, receive_date=NOW(), status='Đang giao hàng' WHERE id=? AND shipper_id IS NULL AND status='Đang xử lý'");
-        $stmt->bind_param("ii",$shipper_id,$order_id);
-        $stmt->execute();
-        echo $stmt->affected_rows>0?"success":"fail"; exit;
-    }
-
-    // Cập nhật trạng thái
-    if($action=="update_status"){
-        $order_id = intval($_POST['order_id']);
-        $new_status = $_POST['new_status'];
-        $check = $conn->query("SELECT status, shipper_id FROM payment WHERE id=$order_id")->fetch_assoc();
-        if($check && $check['shipper_id']==$shipper_id){
-            $valid_transitions = [
-                'Đang xử lý'=>['Đang xử lý','Đang giao hàng','Đã giao hàng'],
-                'Đang giao hàng'=>['Đang giao hàng','Đã giao hàng']
-            ];
-            if(in_array($new_status,$valid_transitions[$check['status']] ?? [])){
-                $stmt = $conn->prepare("UPDATE payment SET status=? WHERE id=?");
-                $stmt->bind_param("si",$new_status,$order_id);
-                $stmt->execute(); echo "success"; exit;
-            }
-        }
-        echo "fail"; exit;
-    }
-
-    // Cập nhật thông tin shipper
-    if($action=="update_shipper_info"){
-        $id = intval($_POST['shipper_id']);
-        $fields = ['name','email','phone','dob','cmt']; $types='sssss'; $params=[];
-        foreach($fields as $f) $params[] = $_POST[$f] ?? '';
-
-        if(!empty($_POST['password'])){ $fields[]='password'; $types.='s'; $params[]=password_hash($_POST['password'],PASSWORD_DEFAULT); }
-        if(isset($_FILES['avatar']) && $_FILES['avatar']['error']==0){
-            $ext = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
-            if(in_array($ext,['jpg','jpeg','png','gif'])){
-                $avatar_path = "uploads/shipper_".$id.".".$ext;
-                move_uploaded_file($_FILES['avatar']['tmp_name'],$avatar_path);
-                $fields[]='avatar'; $types.='s'; $params[]=$avatar_path;
-            }
-        }
-        $fields_str = implode(', ',array_map(fn($f)=>"$f=?", $fields));
-        $stmt = $conn->prepare("UPDATE shipper SET $fields_str WHERE id=?");
-        $types.='i'; $params[]=$id;
-        $stmt->bind_param($types,...$params);
-        echo $stmt->execute()?"success":$conn->error; exit;
-    }
-}
-
-// --- Lấy danh sách đơn ---
-$orders = $conn->query("SELECT p.*, s.name AS shipper_name, s.avatar AS shipper_avatar FROM payment p LEFT JOIN shipper s ON p.shipper_id=s.id ORDER BY p.order_date ASC");
+// Lấy ID đơn lớn nhất từ bảng payment
+$result_last = $conn->query("SELECT MAX(id) as last_id FROM payment");
+$lastOrderId = ($row = $result_last->fetch_assoc()) ? intval($row['last_id']) : 0;
 ?>
 
 <!DOCTYPE html>
@@ -78,21 +14,17 @@ $orders = $conn->query("SELECT p.*, s.name AS shipper_name, s.avatar AS shipper_
     <title>Shipper Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <style>
-        .avatar-login, .avatar-order {
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        .avatar-login { width: 40px; height: 40px; cursor: pointer; }
-        .avatar-order { width: 30px; height: 30px; }
-        .status-dangxuly { background: #fff3cd; }
-        .status-danggiaohang { background: #cce5ff; }
-        .status-dagiao { background: #d6d8d9; }
-        .collapse-row { background: #f8f9fa; }
-    </style>
+    <link rel="stylesheet" href="shipper.css">
+
 </head>
 <body>
 <div class="container mt-4">
+
+    <div id="newOrderBanner" class="alert alert-success fixed-top text-center d-none" style="z-index:9999;">
+        📦 Có đơn hàng mới!
+    </div>
+
+    <audio id="newOrderSound" src="notification.mp3" preload="auto"></audio>
 
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -128,6 +60,8 @@ $orders = $conn->query("SELECT p.*, s.name AS shipper_name, s.avatar AS shipper_
                         'Đã giao hàng' => 'status-dagiao',
                         default => ''
                     };
+
+                    // Các trạng thái shipper có thể chỉnh
                     $editable_statuses = [];
                     if($row['shipper_id'] == $shipper_id){
                         $editable_statuses = match($row['status']) {
@@ -137,7 +71,8 @@ $orders = $conn->query("SELECT p.*, s.name AS shipper_name, s.avatar AS shipper_
                         };
                     }
                 ?>
-                <tr class="<?= $status_class ?>" data-bs-toggle="collapse" data-bs-target="#order<?= $row['id'] ?>" style="cursor:pointer;">
+                <tr class="<?= $status_class ?>" 
+                    <?= $row['status'] !== 'Đã giao hàng' ? 'data-bs-toggle="collapse" data-bs-target="#order'.$row['id'].'" style="cursor:pointer;"' : '' ?>>
                     <td>#<?= $row['id'] ?></td>
                     <td>
                         <b><?= htmlspecialchars($row['customer_name']) ?></b><br>
@@ -174,6 +109,7 @@ $orders = $conn->query("SELECT p.*, s.name AS shipper_name, s.avatar AS shipper_
                     </td>
                 </tr>
 
+                <?php if($row['status'] !== 'Đã giao hàng'): ?>
                 <!-- Chi tiết đơn hàng -->
                 <tr class="collapse-row">
                     <td colspan="8" class="p-0">
@@ -194,6 +130,7 @@ $orders = $conn->query("SELECT p.*, s.name AS shipper_name, s.avatar AS shipper_
                         </div>
                     </td>
                 </tr>
+                <?php endif; ?>
 
                 <?php endwhile; ?>
             <?php else: ?>
@@ -258,53 +195,6 @@ $orders = $conn->query("SELECT p.*, s.name AS shipper_name, s.avatar AS shipper_
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-$(function(){
-    // Mở modal khi click avatar
-    $(".avatar-login").click(() => {
-        new bootstrap.Modal(document.getElementById('shipperModal')).show();
-    });
-
-    // Submit form thông tin shipper
-    $("#shipperForm").submit(function(e){
-        e.preventDefault();
-        var fd = new FormData(this);
-        $.ajax({
-            url: "shipper_dashboard.php",
-            type: "POST",
-            data: fd,
-            contentType: false,
-            processData: false,
-            success: function(res){
-                if(res=="success"){
-                    alert("Cập nhật thành công!");
-                    location.reload();
-                } else {
-                    alert("Lỗi: "+res);
-                }
-            }
-        });
-    });
-
-    // Nhận đơn
-    $(".receive-btn").click(function(){
-        let id = $(this).data("id");
-        $.post("shipper_dashboard.php", {action:"receive_order", order_id:id}, d => {
-            alert(d=="success"?"Bạn đã nhận đơn!":"Đơn đã có shipper khác nhận!");
-            if(d=="success") location.reload();
-        });
-    });
-
-    // Cập nhật trạng thái
-    $(".status-select").change(function(){
-        let id = $(this).data("id"),
-            s = $(this).val();
-        $.post("shipper_dashboard.php", {action:"update_status", order_id:id, new_status:s}, d => {
-            alert(d=="success"?"Cập nhật trạng thái thành công!":"Chỉ được chỉnh trạng thái hợp lệ!");
-            if(d=="success") location.reload();
-        });
-    });
-});
-</script>
+<script src="shipper.js"></script>
 </body>
 </html>

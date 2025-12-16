@@ -22,12 +22,7 @@ require_once "function.php" ;
         </a>
         <h1><i class="fas fa-envelope"></i> Danh Sách Người Dùng Liên Hệ</h1>
 
-        <!-- Banner thông báo liên hệ mới -->
-        <?php if ($new_count > 0): ?>
-            <div class="new-contact-banner">
-                <i class="fas fa-bell"></i> Có liên hệ mới: <?= implode(', ', $new_ids) ?>
-            </div>
-        <?php endif; ?>
+    
 
         <!-- Form tìm kiếm -->
         <form class="search-form" method="POST">

@@ -1,0 +1,62 @@
+/* ========== AVATAR ========== */
+.avatar-login,
+.avatar-order {
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatar-login {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
+
+.avatar-order {
+    width: 30px;
+    height: 30px;
+}
+
+/* ========== TRẠNG THÁI ĐƠN HÀNG ========== */
+.status-dangxuly {
+    background-color: #fff3cd;
+}
+
+.status-danggiaohang {
+    background-color: #cce5ff;
+}
+
+.status-dagiao {
+    background-color: #d6d8d9;
+}
+
+/* ========== ROW MỞ RỘNG ========== */
+.collapse-row {
+    background-color: #f8f9fa;
+}
+
+
+
+
+
+
+/* Banner thông báo đơn mới */
+#newOrderBanner {
+    position: fixed;
+    top: 20px;             /* cách mép trên 20px */
+    left: 50%;             /* căn giữa màn hình */
+    transform: translateX(-50%);
+    z-index: 9999;         /* luôn hiển thị trên cùng */
+    padding: 15px 25px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #155724;        /* màu chữ xanh lá */
+    background-color: #d4edda; /* màu nền xanh nhạt */
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
