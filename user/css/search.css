@@ -2,7 +2,7 @@
 /* Filter bar */
 .filter-bar {
     display: flex;
-    flex-wrap: wrap; /* Khi màn hình nhỏ xuống dòng */
+    flex-wrap: wrap; 
     align-items: center;
     gap: 10px;
     margin-bottom: 15px;
@@ -36,7 +36,7 @@
 
 /* Khi priceFilter hiện ra */
 #priceFilter {
-    display: none; /* JS sẽ bật khi chọn danh mục != all */
+    display: none; 
 }
 
 /* Responsive */

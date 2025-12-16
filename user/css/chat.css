@@ -7,25 +7,25 @@
 }
 
 #messenger-float {
-  right: 20px; /* Nằm sát phải */
-  margin-bottom: 100px; /* Khoảng cách giữa Messenger và Zalo */
+  right: 20px; 
+  margin-bottom: 100px; 
 }
 
 #zalo-float {
-  right: 20px; /* Nằm sát phải */
+  right: 20px; 
 }
 
 .zalo-icon, .messenger-icon {
   width: 50px;
   height: 50px;
-  border-radius: 50%; /* Bo tròn */
-  object-fit: cover;  /* Giữ tỉ lệ ảnh đẹp */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Bóng đổ */
+  border-radius: 50%;
+  object-fit: cover;  
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
   transition: transform 0.2s ease;
 }
 
 .zalo-icon:hover, .messenger-icon:hover {
-  transform: scale(1.1); /* Hiệu ứng phóng to khi rê chuột */
+  transform: scale(1.1); 
 }
 
 
@@ -36,16 +36,6 @@
   z-index: 1000;
 }
 
-#messenger-badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background: red;
-  color: white;
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 50%;
-}
 
 #messenger-box {
   display: none;
@@ -60,7 +50,7 @@
   z-index: 1000;
 }
 #messenger-header {
-  background: #343a40;
+  background: #4CAF50;
   color: white;
   padding: 10px;
   font-weight: bold;
@@ -118,14 +108,14 @@
 
 /* Tin nhắn người dùng */
 .user-message {
-  background-color: #4caf50; /* màu xanh lá */
+  background-color: #4caf50; 
   color: #fff;
   padding: 8px 12px;
   margin: 5px;
   border-radius: 10px;
   max-width: 70%;
   text-align: right;
-  margin-left: auto; /* đẩy sang phải */
+  margin-left: auto; 
   display: block;
 }
 
