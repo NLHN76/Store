@@ -11,7 +11,7 @@
 /* Product Card */
 .product {
     background: #fff;
-    padding: 12px;
+    padding: 1px 12px;
     border-radius: 12px; 
     box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -45,7 +45,7 @@
 .product h3 {
     font-size: 16px;
     margin: 6px 0;
-    color: #333;
+    color: #B12704;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -53,7 +53,7 @@
 
 .product p {
     font-size: 14px;
-    color: #666;
+    color: #000000;
     margin: 4px 0 10px;
     height: 36px;
     overflow: hidden;
