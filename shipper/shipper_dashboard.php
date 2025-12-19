@@ -71,6 +71,7 @@ $lastOrderId = ($row = $result_last->fetch_assoc()) ? intval($row['last_id']) : 
                         };
                     }
                 ?>
+                
                 <tr class="<?= $status_class ?>" 
                     <?= $row['status'] !== 'Đã giao hàng' ? 'data-bs-toggle="collapse" data-bs-target="#order'.$row['id'].'" style="cursor:pointer;"' : '' ?>>
                     <td>#<?= $row['id'] ?></td>

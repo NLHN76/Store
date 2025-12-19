@@ -39,6 +39,7 @@ require_once "function.php" ;
                     <th>Email</th>
                     <th>Điện thoại</th>
                     <th>Nội dung</th>
+                    <th>Ngày tạo</th>
                     <th>Hành động</th>
                 </tr>
             </thead>
@@ -53,6 +54,7 @@ require_once "function.php" ;
                                 <td>".htmlspecialchars($row['email'])."</td>
                                 <td>".htmlspecialchars($row['phone'])."</td>
                                 <td>".htmlspecialchars($row['message'])."</td>
+                                  <td>".htmlspecialchars($row['created_at'])."</td>
                                 <td>
                                     <form class='delete-form' action='' method='POST' onsubmit='return confirm(\"Bạn có chắc chắn muốn xóa không?\")'>
                                         <input type='hidden' name='id' value='{$row['id']}'>
