@@ -42,22 +42,35 @@ require_once "function.php";
 <p><strong>Tổng Số Lượng Sản Phẩm:</strong> <?php echo $itemCount; ?></p>
 <p><strong>Tổng Tiền:</strong> <?php echo number_format($totalPrice, 0, ',', '.'); ?> VNĐ</p>
 <h3>Chi Tiết Sản Phẩm:</h3>
+
 <ul>
 <?php foreach ($itemsGrouped as $item): ?>
-<li>
-<?php
-$itemTotal = $item['price'] * $item['quantity'];
-echo "<strong>Mã:</strong> " . htmlspecialchars($item['product_code']) . "<br>";
-echo "<strong>Tên:</strong> " . htmlspecialchars($item['name']) . " (x" . htmlspecialchars($item['quantity']) . ")<br>";
-echo "<strong>Màu:</strong> " . htmlspecialchars($item['color']) . "<br>";
-echo "<strong>Loại:</strong> " . htmlspecialchars($item['category']) . "<br>";
-echo "<strong>Giá:</strong> " . number_format($itemTotal, 0, ',', '.') . " VNĐ";
-?>
+<li style="display:flex; gap:12px; margin-bottom:12px; align-items:flex-start;">
+
+    <img 
+        src="<?php echo htmlspecialchars($item['image']); ?>" 
+        alt="<?php echo htmlspecialchars($item['name']); ?>"
+        style="width:80px; height:80px; object-fit:cover; border-radius:6px;"
+    >
+
+   
+    <div>
+        <?php
+        $itemTotal = $item['price'] * $item['quantity'];
+        echo "<strong>Mã:</strong> " . htmlspecialchars($item['product_code']) . "<br>";
+        echo "<strong>Tên:</strong> " . htmlspecialchars($item['name']) . " (x" . htmlspecialchars($item['quantity']) . ")<br>";
+        echo "<strong>Màu:</strong> " . htmlspecialchars($item['color']) . "<br>";
+        echo "<strong>Loại:</strong> " . htmlspecialchars($item['category']) . "<br>";
+        echo "<strong>Giá:</strong> " . number_format($itemTotal, 0, ',', '.') . " VNĐ";
+        ?>
+    </div>
+
 </li>
 <?php endforeach; ?>
 </ul>
 </div>
 <?php endif; ?>
+
 
 <?php if ($isPaymentConfirmed): ?>
 <div id="qr-code">

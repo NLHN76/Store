@@ -9,12 +9,27 @@ if(!isset($_SESSION['user_code'])){
 $user_code = $_SESSION['user_code'];
 
 // Lấy các đơn hàng của khách hàng đang đăng nhập
-$sql = "SELECT id, customer_name, customer_email, customer_phone, customer_address,
-        user_code, product_name, category, color, product_quantity, total_price, 
-        order_date, status
-        FROM payment 
-        WHERE user_code = ? 
-        ORDER BY order_date DESC";
+$sql = "
+SELECT 
+    id,
+    customer_name,
+    customer_email,
+    customer_phone,
+    customer_address,
+    user_code,
+    product_name,
+    image,
+    category,
+    color,
+    product_quantity,
+    total_price,
+    order_date,
+    status
+FROM payment
+WHERE user_code = ?
+ORDER BY order_date DESC
+";
+
 
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $user_code);

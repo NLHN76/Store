@@ -36,13 +36,14 @@ $itemCount = 0;
 $itemsGrouped = [];
 foreach ($cart as $item) {
     if (empty($item['product_code'])) {
-        $stmtProd = $conn->prepare("SELECT product_code, category FROM products WHERE name = ?");
+       $stmtProd = $conn->prepare( "SELECT product_code, category, image FROM products WHERE name = ?");
         $stmtProd->bind_param("s", $item['name']);
         $stmtProd->execute();
-        $stmtProd->bind_result($db_product_code, $db_category);
+       $stmtProd->bind_result($db_product_code, $db_category, $db_image);
         if ($stmtProd->fetch()) {
             $item['product_code'] = $db_product_code;
             $item['category'] = $db_category ?: 'N/A';
+            $item['image'] = '../../admin/uploads/' . $db_image;
         } else {
             throw new Exception("Sản phẩm " . htmlspecialchars($item['name']) . " không tồn tại trong hệ thống.");
         }
@@ -57,6 +58,7 @@ foreach ($cart as $item) {
             'name' => $item['name'],
             'product_code' => $item['product_code'],
             'category' => $item['category'] ?? 'N/A',
+            'image' => $item['image'] ?? '../../admin/uploads/',
             'color' => $color,
             'price' => (float)$item['price'],
             'quantity' => (int)$item['quantity']
@@ -142,23 +144,64 @@ foreach ($itemsGrouped as $item) {
 
 
         // **Step 3: Lưu đơn hàng**
-        $productCodesString = implode(', ', array_map(fn($i) => $i['product_code'], $itemsGrouped));
-        $productDetailsString = implode(', ', array_map(fn($i) => $i['name'] . " (x" . $i['quantity'] . ")", $itemsGrouped));
-        $productCategoriesString = implode(', ', array_unique(array_map(fn($i) => $i['category'], $itemsGrouped)));
-        $colorsString = implode(', ', array_map(fn($i) => $i['color'], $itemsGrouped));
+       // Gom dữ liệu sản phẩm
+$productCodesString = implode(', ', array_map(
+    fn($i) => $i['product_code'],
+    $itemsGrouped
+));
 
-        $stmt = $conn->prepare("INSERT INTO payment 
-            (customer_name, customer_email, customer_phone, customer_address, user_code, product_code, product_name, product_quantity, total_price, category, color) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param(
-            "sssssssiiss",
-            $name_post, $email_post, $phone_post, $address_post, $user_code,
-            $productCodesString, $productDetailsString, $itemCount, $totalPrice, $productCategoriesString, $colorsString
-        );
-        if (!$stmt->execute()) {
-            throw new Exception("Lỗi lưu đơn hàng: " . $stmt->error);
-        }
-        $stmt->close();
+$productDetailsString = implode(', ', array_map(
+    fn($i) => $i['name'] . " (x" . $i['quantity'] . ")",
+    $itemsGrouped
+));
+
+// ⭐ Gom IMAGE (chỉ lấy tên file)
+$productImagesString = implode(', ', array_map(
+    fn($i) => basename($i['image']),
+    $itemsGrouped
+));
+
+$productCategoriesString = implode(', ', array_unique(array_map(
+    fn($i) => $i['category'],
+    $itemsGrouped
+)));
+
+$colorsString = implode(', ', array_map(
+    fn($i) => $i['color'],
+    $itemsGrouped
+));
+
+// Chuẩn bị câu INSERT (CÓ CỘT IMAGE)
+$stmt = $conn->prepare("
+    INSERT INTO payment 
+    (customer_name, customer_email, customer_phone, customer_address, user_code,
+     product_code, product_name, image, product_quantity, total_price, category, color)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+");
+
+// Bind đúng số lượng & đúng thứ tự
+$stmt->bind_param(
+    "ssssssssiiss",
+    $name_post,
+    $email_post,
+    $phone_post,
+    $address_post,
+    $user_code,
+    $productCodesString,
+    $productDetailsString,
+    $productImagesString,   
+    $itemCount,
+    $totalPrice,
+    $productCategoriesString,
+    $colorsString
+);
+
+// Thực thi
+if (!$stmt->execute()) {
+    throw new Exception("Lỗi lưu đơn hàng: " . $stmt->error);
+}
+
+$stmt->close();
 
         // **Step 4: Gửi email xác nhận**
         sendConfirmationEmail($name_post, $email_post, $totalPrice, $itemsGrouped, $address_post, $user_code);
