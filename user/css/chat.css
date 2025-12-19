@@ -94,6 +94,22 @@
   cursor: pointer;
 }
 
+#messenger-badge {
+    display: none;          
+    position: absolute;     
+    top: -5px;
+    right: -5px;
+    background-color: red;  
+    color: white;          
+    font-size: 0.75rem;    
+    font-weight: bold;
+    width: 18px;            
+    height: 18px;          
+    text-align: center;
+    line-height: 18px;      
+    border-radius: 50%;    
+    z-index: 1000;         
+}
 
 /* Tin nhắn admin */
 .admin-message {

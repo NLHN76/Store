@@ -1,10 +1,4 @@
-<?php
 
-require_once "notification/contact.php";
-require_once "notification/chat.php";
-require_once "notification/orders.php";
-
-?>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -59,7 +53,13 @@ require_once "notification/orders.php";
  
                 <li><a href="report/admin_report.php"><i class="fas fa-chart-bar"></i> Thống kê</a></li>
 
-                <li><a href="inventory/admin_inventory.php"><i class="fas fa-warehouse"></i> Quản lý Kho</a></li>
+       <li>
+        <a href="inventory/admin_inventory.php">
+            <i class="fas fa-warehouse"></i>
+            Quản lý Kho
+            <span id="alert-inventory" class="new-alert" style="display:none">!</span>
+        </a>
+    </li>
             </ul>
         </aside>
 
@@ -79,4 +79,4 @@ require_once "notification/orders.php";
 </html>
 
 
-<?php $conn->close(); ?>
+

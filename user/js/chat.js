@@ -14,7 +14,7 @@ function toggleChatBox() {
         box.style.display = "block";
         badge.style.display = "none";
 
-        // Đánh dấu đã đọc tất cả
+        // Đánh dấu đã đọc tất cả tin admin
         const adminCount = document.querySelectorAll(
             '#messenger-messages .admin-message'
         ).length;
@@ -43,6 +43,7 @@ function sendMessage() {
         body: new URLSearchParams({ action: "send", message: msg })
     }).then(() => {
         input.value = "";
+        fetchMessages(); 
     });
 }
 
@@ -54,14 +55,18 @@ function fetchMessages() {
             const chatBox = document.getElementById("messenger-messages");
             chatBox.innerHTML = html;
 
-            const adminCount = chatBox.querySelectorAll('.admin-message').length;
+            const adminMessages = chatBox.querySelectorAll('.admin-message').length;
             const badge = document.getElementById("messenger-badge");
             const box = document.getElementById("messenger-box");
 
-            // Nếu có tin admin mới & chat đang đóng
-            if (adminCount > lastSeenAdminCount && box.style.display !== "block") {
+           
+            const newAdminMessages = adminMessages - lastSeenAdminCount;
+
+            if (newAdminMessages > 0 && box.style.display !== "block") {
                 badge.style.display = "inline-block";
-                badge.textContent = "1";
+                badge.textContent = newAdminMessages; 
+            } else {
+                badge.style.display = "none";
             }
 
             scrollChatToBottom();
