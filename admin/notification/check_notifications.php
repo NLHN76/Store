@@ -11,11 +11,15 @@ $orders = $conn->query("
 ")->fetch_assoc()['c'] ?? 0;
 
 /* ===== LIÊN HỆ MỚI ===== */
-$res = $conn->query("SELECT MAX(id) AS max_id FROM contact");
-$max_contact_id = $res->fetch_assoc()['max_id'] ?? 0;
+$res_new = $conn->query("SELECT id FROM contact WHERE is_new = 1 ORDER BY id ASC");
+$new_ids = [];
+while ($row = $res_new->fetch_assoc()) {
+    $new_ids[] = $row['id'];
+}
 
-$last_seen = $_SESSION['last_seen_contact_id'] ?? 0;
-$contact = ($max_contact_id > $last_seen) ? 1 : 0;
+// Kiểm tra có liên hệ mới
+$contact = !empty($new_ids) ? 1 : 0;
+
 
 /* ===== CHAT ===== */
 $chat = $conn->query("
