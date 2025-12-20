@@ -1,7 +1,3 @@
-// ================= GIỎ HÀNG TOÀN CỤC =================
-let cart = [];
-let totalPrice = 0;
-let allProducts = [];
 
 // ================= DOM ELEMENTS =================
 const productsContainer = document.getElementById('products-container');
@@ -15,11 +11,7 @@ const fetchJSON = url => fetch(url).then(res => res.json()).catch(err => console
 
 const formatPrice = price => parseFloat(price.replace(/\./g, '').replace(',', '.')).toLocaleString('vi-VN');
 
-function showNotification(msg, duration = 1000) {
-    notification.textContent = msg;
-    notification.style.display = 'block';
-    setTimeout(() => notification.style.display = 'none', duration);
-}
+
 
 function togglePassword(id) {
     const f = document.getElementById(id);

@@ -1,13 +1,9 @@
 
-// ================= CHECKOUT =================
-document.getElementById("checkout").onclick = () => {
-    const isLoggedIn = false; // TODO: thay bằng trạng thái thực tế
-    if (!isLoggedIn) showNotification("Bạn cần đăng nhập để tiếp tục mua hàng",3000);
-    else alert("Đặt hàng thành công!");
-};
-
-
 //==================Thông báo===================
+function addToCart(btn) {
+    alert("⚠️ Bạn cần đăng nhập để thực hiện");
+}
+
 const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
 document.getElementById('zalo-float').addEventListener('click', e => {

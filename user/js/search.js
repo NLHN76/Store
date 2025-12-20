@@ -62,6 +62,16 @@ function goToProduct(productCode) {
 
 
 
+searchInput.addEventListener('input', applyFilters);
+categoryFilter.addEventListener('change', () => {
+    priceFilter.style.display = categoryFilter.value==='all'?'none':'inline-block';
+    priceFilter.value='all';
+    applyFilters();
+});
+priceFilter.addEventListener('change', applyFilters);
+
+
+
 
 
 

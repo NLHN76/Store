@@ -10,14 +10,14 @@ footer {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    align-items: flex-start; /* Giúp các cột thẳng hàng trên cùng 1 dòng */
+    align-items: flex-start;
     gap: 20px;
 }
 
 /* --- CỘT TRÁI (Mobile Gear) --- */
 .footer-column:first-child {
     flex: 1;
-    padding-top: 20px; /* Kéo Mobile Gear xuống thấp hơn */
+    padding-top: 20px; 
 }
 
 /* --- CỘT GIỮA (Bản đồ) --- */
@@ -33,9 +33,9 @@ footer {
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;   /* Căn giữa nội dung */
-    text-align: center;    /* Căn chữ giữa */
-    margin-left: auto;     /* Đẩy toàn bộ cột sang phải */
+    align-items: center;  
+    text-align: center;   
+    margin-left: auto;    
 }
 
 .footer-column h3, .footer-column h4 {

@@ -269,6 +269,6 @@ function generateEmailBody($name, $totalPrice, $itemsGrouped, $address, $user_co
     return $body;
 }
 
-$conn->close();
+
 
 ?>
