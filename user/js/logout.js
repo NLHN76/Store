@@ -1,5 +1,10 @@
-
-// Đăng xuất
-function logout() { cart=[]; totalPrice=0; updateCartDisplay(); alert('Đăng xuất thành công'); window.location.href='user.html'; }
-
-
+function logout() {
+    fetch('logout.php')
+        .then(res => res.json())
+        .then(() => {
+            cart = [];
+            totalPrice = 0;
+            updateCartDisplay();
+            window.location.href = 'user.html';
+        });
+}
