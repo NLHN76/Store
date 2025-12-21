@@ -87,6 +87,27 @@ section {
   font-size: 1rem;
 }
 
+/*Cảnh báo đơn hàng*/
+.order-link {
+    position: relative;
+    display: inline-block;
+}
+
+.order-alert {
+    position: absolute;
+    top: 8px;
+    right: 20px;
+    color: #dc2626; 
+    font-weight: bold;
+    font-size: 22px;
+    line-height: 1;
+}
+
+
+.hidden {
+    display: none;
+}
+
 
 
 

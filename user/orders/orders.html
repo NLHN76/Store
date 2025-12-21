@@ -20,6 +20,30 @@
     max-h-[70vh] overflow-y-auto p-2 bg-gray-50 rounded">
 </div>
 
+<!-- PAYMENT MODAL -->
+<div id="payment-modal"
+     class="fixed inset-0 hidden z-50 bg-black bg-opacity-50 flex items-center justify-center"
+     onclick="closePaymentModal()">
+
+    <div class="bg-white rounded-lg p-6 w-full max-w-md relative text-center"
+         onclick="event.stopPropagation()">
+
+        <!-- Close button -->
+        <button onclick="closePaymentModal()"
+                class="absolute top-2 right-2 text-xl text-gray-500 hover:text-red-500">
+            ✖
+        </button>
+
+        <h3 class="font-semibold mb-4 text-lg">Quét Mã QR Để Thanh Toán</h3>
+
+        <img src="../pay/qr.png"
+             alt="QR Thanh Toán"
+             style="max-width:300px;width:100%;margin:auto;">
+
+        <p id="modal-content" class="mt-4 text-sm"></p>
+    </div>
+</div>
+
 
 </main>
 

@@ -19,14 +19,13 @@ function renderOrders(orders) {
         if (order.image) {
             const images = order.image.split(', ');
             images.forEach(img => {
-               imagesHtml += `
+                imagesHtml += `
                     <img 
-                       src="../../admin/uploads/${img}" 
+                        src="../../admin/uploads/${img}" 
                         alt="Ảnh sản phẩm"
                         class="order-image"
-             >
-       `;
-
+                    >
+                `;
             });
         }
 
@@ -36,7 +35,6 @@ function renderOrders(orders) {
         orderCard.innerHTML = `
             <h3 class="text-xl font-bold mb-2">Mã Đơn Hàng: ${order.id}</h3>
 
-            <!-- Ảnh sản phẩm -->
             ${imagesHtml ? `<div class="order-images">${imagesHtml}</div>` : ''}
 
             <div class="flex-1">
@@ -48,6 +46,7 @@ function renderOrders(orders) {
                 <p><strong>Số Lượng:</strong> ${order.product_quantity}</p>
                 <p><strong>Tổng Tiền:</strong> ${formattedPrice} VNĐ</p>
                 <p><strong>Ngày Thanh Toán:</strong> ${order.order_date}</p>
+
                 <p>
                     <strong>Trạng Thái:</strong>
                     <span class="${status.class}">
@@ -57,14 +56,29 @@ function renderOrders(orders) {
 
                 ${
                     order.status === "Chờ xử lý"
-                        ? `<button class="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-                            onclick="cancelOrder(${order.id})">Hủy đơn</button>`
-                        : ''
+                    ? `<button class="mt-2 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+                        onclick="cancelOrder(${order.id})">Hủy đơn</button>`
+                    : ''
                 }
+
+${
+    order.status === "Chờ thanh toán"
+    ? `
+        <button
+            class="mt-3 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            onclick="openPaymentModal(${order.id})">
+            Thanh toán ngay
+        </button>
+    `
+    : ''
+}
+
+
             </div>
         `;
 
         orderList.appendChild(orderCard);
     });
 }
+
 
