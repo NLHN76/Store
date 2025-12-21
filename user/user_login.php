@@ -19,8 +19,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Kiểm tra mật khẩu
         if (password_verify($password, $hashed_password)) {
-            // Đăng nhập thành công
-            session_start();
+         
+     
             $_SESSION['user_id'] = $id;
             $_SESSION['user_name'] = $name;
             $_SESSION['user_code'] = $user_code;

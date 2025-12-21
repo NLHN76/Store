@@ -38,7 +38,7 @@ function sendMessage() {
     const msg = input.value.trim();
     if (!msg) return;
 
-    fetch("../user/chat_handler.php", {
+    fetch("chat/send_message.php", {
         method: "POST",
         body: new URLSearchParams({ action: "send", message: msg })
     }).then(() => {
@@ -49,7 +49,7 @@ function sendMessage() {
 
 // Fetch tin nhắn
 function fetchMessages() {
-    fetch("../user/chat_handler.php?action=fetch")
+    fetch("chat/fetch_message.php?action=fetch")
         .then(res => res.text())
         .then(html => {
             const chatBox = document.getElementById("messenger-messages");
