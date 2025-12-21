@@ -1,6 +1,6 @@
 <?php
 require_once "../../db.php";
-require_once "function.php";
+require_once "config.php";
 ?>
 
 <!DOCTYPE html>
@@ -35,7 +35,7 @@ require_once "function.php";
     </div>
 </div>
 
-<script src="chat.js"></script>
+<script src="js/chat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

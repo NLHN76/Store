@@ -2,7 +2,7 @@ let selectedUserId = 0;
 
 // Load danh sách user
 function loadUsers() {
-    fetch('function.php?action=users')
+    fetch('get_users.php?action=users')
     .then(res => res.json())
     .then(users => {
         const container = document.getElementById('users');
@@ -35,7 +35,7 @@ function selectUser(user_id, user_name, div) {
     document.getElementById('chat-header').innerText = user_name;
     loadMessages(user_id);
 
-    // Bỏ dấu “Mới”
+  
     div.classList.remove('new-message');
     div.querySelector('.badge-new').style.display = 'none';
 
@@ -46,7 +46,7 @@ function selectUser(user_id, user_name, div) {
 
 // Load tin nhắn của user
 function loadMessages(user_id) {
-    fetch(`function.php?action=fetch&user_id=${user_id}`)
+    fetch(`fetch_message.php?action=fetch&user_id=${user_id}`)
     .then(res => res.text())
     .then(html => {
         const messages = document.getElementById('chat-messages');
@@ -61,7 +61,7 @@ document.getElementById('send-admin').addEventListener('click', () => {
     const message = input.value.trim();
     if(!message || !selectedUserId) return;
 
-    fetch('function.php?action=send', {
+    fetch('send_message.php?action=send', {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'},
         body: `user_id=${selectedUserId}&message=${encodeURIComponent(message)}`
@@ -78,7 +78,7 @@ document.getElementById('send-admin').addEventListener('click', () => {
 function checkNewMessages() {
     document.querySelectorAll('.user-item').forEach(div => {
         const user_id = div.dataset.userid;
-        fetch(`function.php?action=check_new&user_id=${user_id}`)
+        fetch(`check_new.php?action=check_new&user_id=${user_id}`)
         .then(res => res.json())
         .then(data => {
             const badge = div.querySelector('.badge-new');
