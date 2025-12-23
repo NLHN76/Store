@@ -70,6 +70,6 @@ require_once "function.php";
 </div>
 
 
-<script src="contact.js"> </script>
+<script src="js/contact.js"> </script>
 </body>
 </html>

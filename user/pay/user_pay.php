@@ -36,7 +36,7 @@ if ($res->num_rows > 0) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Thanh Toán</title>
-<link rel="stylesheet" href="user_pay.css">
+<link rel="stylesheet" href="css/user_pay.css">
 </head>
 <body>
 <div class="container">

@@ -8,9 +8,7 @@ function clean_price($price_string) {
     return is_numeric($cleaned) ? floatval($cleaned) : 0;
 }
 
-/**
- * Sinh mã sản phẩm KHÔNG TRÙNG (mysqli)
- */
+// Sinh mã products tự động
 function generate_product_code($category, $conn) {
 
     // Lấy 2 ký tự chữ đầu

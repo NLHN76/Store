@@ -75,7 +75,7 @@ function renderProducts(products) {
             const color = select.value;
 
             fetchJSON(
-                `../user/get_inventory.php?product_code=${product.product_code}&color=${encodeURIComponent(color)}`
+                `get_inventory.php?product_code=${product.product_code}&color=${encodeURIComponent(color)}`
             ).then(inv => {
                 product.stockByColor[color] = inv.quantity;
                 stockSpan.textContent = inv.quantity;

@@ -44,15 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['products'])) {
     <head>
         <meta charset="UTF-8" />
         <title>Báo giá sản phẩm</title>
-        <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            h1 { text-align: center; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #333; padding: 8px; text-align: center; }
-            th { background-color: #f0f0f0; }
-            p.info { margin: 5px 0; }
-            .note { margin-top: 20px; font-style: italic; }
-        </style>
+         <link rel="stylesheet" href="css/quote.css">
     </head>
     <body>
         <h1>BÁO GIÁ SẢN PHẨM</h1>
@@ -109,22 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['products'])) {
 <head>
     <meta charset="UTF-8" />
     <title>Chỉnh sửa Báo giá sản phẩm</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        h1 { text-align: center; }
-        form { max-width: 800px; margin: auto; }
-        label { display: block; margin: 15px 0 5px; }
-        input[type=text], input[type=date], textarea {
-            width: 100%; padding: 8px; box-sizing: border-box;
-            font-size: 14px;
-        }
-        textarea { resize: vertical; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
-        th { background-color: #eee; }
-        button { padding: 8px 15px; margin-top: 15px; cursor: pointer; }
-        input[type=number] { width: 60px; }
-    </style>
+    <link rel ="stylesheet" href="css/edit_quote.css">
 </head>
 <body>
     <h1>Chỉnh sửa Báo giá sản phẩm</h1>
@@ -171,41 +148,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['products'])) {
     </form>
 
     
-    <script>
-    const form = document.getElementById('quote-form');
-    const productsInput = document.getElementById('products-input');
-    const checkboxes = document.querySelectorAll('.product-checkbox');
-    const qtyInputs = document.querySelectorAll('.product-qty');
-
-    function updateSelectedProducts() {
-        let products = [];
-        checkboxes.forEach((chk, i) => {
-            if (chk.checked) {
-                const qty = parseInt(qtyInputs[i].value) || 1;
-                products.push({
-                    name: chk.dataset.name,
-                    price: parseFloat(chk.dataset.price),
-                    quantity: qty
-                });
-            }
-        });
-        productsInput.value = JSON.stringify(products);
-    }
-
-    checkboxes.forEach((chk, i) => {
-        chk.addEventListener('change', () => {
-            qtyInputs[i].disabled = !chk.checked;
-            if (!chk.checked) qtyInputs[i].value = 1;
-            updateSelectedProducts();
-        });
-    });
-
-    qtyInputs.forEach((qty, i) => {
-        qty.addEventListener('input', updateSelectedProducts);
-    });
-
-    // Cập nhật ban đầu
-    updateSelectedProducts();
-    </script>
+<script src="js/product_quote.js"> </script>
 </body>
 </html>

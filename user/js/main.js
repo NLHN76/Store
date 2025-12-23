@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     showSection('home');
 
     // 2️⃣ Lấy sản phẩm
-    fetchJSON('../user/get_products.php').then(data => {
+    fetchJSON('get_products.php').then(data => {
         allProducts = data;
 
         // Khởi tạo tồn kho theo màu
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 3️⃣ Lấy dữ liệu trang chủ
-    fetchJSON('../user/get_home.php').then(renderHome);
+    fetchJSON('get_home.php').then(renderHome);
 
     // 4️⃣ AUTO: tự điền tên + email nếu đã đăng nhập
     fetchJSON('auto/auto.php')
