@@ -7,7 +7,7 @@ require_once "function.php";
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<link rel="stylesheet" href="product_detail.css">
+<link rel="stylesheet" href="css/product_detail.css">
 <title>Chi tiết sản phẩm - <?= htmlspecialchars($product['name']) ?></title>
 </head>
 <body>
@@ -18,6 +18,31 @@ require_once "function.php";
     <p><strong>Mã sản phẩm:</strong> <?= htmlspecialchars($product['product_code']) ?></p>
     <p><strong>Loại sản phẩm:</strong> <?= htmlspecialchars($product['category']) ?></p>
     <p><strong>Giá:</strong> <?= number_format($product['price'],0,',','.') ?> VNĐ</p>
+    <?php
+$colors = array_filter(array_map('trim', explode(',', $product['color'] ?? '')));
+?>
+
+<?php if (!empty($colors)): ?>
+<div style="margin-top:15px;">
+    <label><strong>Màu sắc:</strong></label>
+    <select id="productColor">
+        <?php foreach ($colors as $c): ?>
+            <option value="<?= htmlspecialchars($c) ?>">
+                <?= htmlspecialchars($c) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</div>
+<?php endif; ?>
+
+    <div style="margin-top:20px; display:flex; gap:15px; align-items:center;">
+    <button onclick="addToCartDetail()"
+            style="padding:10px 16px; background:#28a745; color:white; border:none; cursor:pointer;">
+        🛒 Thêm vào giỏ hàng
+    </button>
+
+</div>
+
     <p><strong>Mô tả:</strong> <?= htmlspecialchars($product['description'] ?: "Chưa có mô tả") ?></p>
     <p><strong>Chất liệu:</strong> <?= htmlspecialchars($product['material'] ?: "Chưa có thông tin") ?></p>
     <p><strong>Tương thích:</strong> <?= htmlspecialchars($product['compatibility'] ?: "Chưa có thông tin") ?></p>
@@ -48,7 +73,6 @@ require_once "function.php";
   <a id="reviews"></a>
   <h2>Đánh giá sản phẩm</h2>
   <?php if ($is_logged_in): ?>
-    <p><strong>Người dùng:</strong> <?= htmlspecialchars($user_name) ?></p>
     <form method="POST" style="display:flex; gap:20px; align-items:flex-start;">
       <div style="flex:1;">
         <label>Chọn số sao:</label>
@@ -86,6 +110,7 @@ require_once "function.php";
       </div>
     <?php endwhile; ?>
 
+    
     <!-- PHÂN TRANG -->
 <?php if ($total_pages > 1): ?>
 <div class="pagination" style="margin-top:20px; text-align:center;">
@@ -105,6 +130,38 @@ require_once "function.php";
   <?php endif; ?>
 
 </div>
+
+
+<script>
+function addToCartDetail() {
+    const colorSelect = document.getElementById('productColor');
+    const color = colorSelect ? colorSelect.value : null;
+
+    fetch('../../user/cart/add_to_cart.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            product_code: "<?= $product['product_code'] ?>",
+            color: color,
+            quantity: 1,
+            price: <?= $product['price'] ?>
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // ✅ chuyển sang giỏ + reload data
+            window.location.href = "../../user/user_logout.html#cart";
+        } else {
+            alert(data.error || '❌ Thêm thất bại');
+        }
+    })
+    .catch(() => alert('❌ Lỗi kết nối'));
+}
+
+
+</script>
+
 
 </body>
 </html>

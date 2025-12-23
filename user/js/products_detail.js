@@ -52,7 +52,7 @@ function renderProducts(products) {
                 ❌ Màu này đã hết hàng!
             </p>
 
-            <button onclick="addToCart(this)">Thêm vào giỏ hàng</button>
+            <button onclick="addToCart(this)">Mua sản phẩm</button>
             <p><strong>Đánh giá:</strong> ⭐ ${product.avg_rating || 0}</p>
         `;
 
