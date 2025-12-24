@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtStock->execute();
             $stmtStock->bind_result($stock);
             if (!$stmtStock->fetch()) {
-                throw new Exception("Sản phẩm " . htmlspecialchars($item['name']) . " màu " . htmlspecialchars($item['color']) . " không tồn tại trong kho.");
+                throw new Exception("Sản phẩm " . htmlspecialchars($item['name']) . " màu " . htmlspecialchars($item['color']) . " không còn trong kho.");
             }
             $stmtStock->close();
 
