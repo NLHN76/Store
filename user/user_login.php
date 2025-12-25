@@ -1,38 +1,50 @@
 <?php
+
 require_once "../db.php";
 
 // Xử lý form POST
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = $_POST['login-email'];
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+    $email = trim($_POST['login-email']);
+    $name = trim($_POST['login-name']);
     $password = $_POST['login-password'];
 
-    // Chuẩn bị truy vấn người dùng theo email
-    $stmt = $conn->prepare("SELECT id, name, password, user_code FROM users WHERE email = ? LIMIT 1");
-    $stmt->bind_param("s", $email);
+    // Chuẩn bị truy vấn người dùng theo email + name
+    $stmt = $conn->prepare("
+        SELECT id, name, password, user_code 
+        FROM users 
+        WHERE email = ? AND name = ? 
+        LIMIT 1
+    ");
+
+    // ✅ FIX: bind đủ 2 biến
+    $stmt->bind_param("ss", $email, $name);
     $stmt->execute();
     $stmt->store_result();
 
     // Nếu tìm thấy user
-    if ($stmt->num_rows > 0) {
-        $stmt->bind_result($id, $name, $hashed_password, $user_code);
+    if ($stmt->num_rows === 1) {
+
+        $stmt->bind_result($id, $db_name, $hashed_password, $user_code);
         $stmt->fetch();
 
         // Kiểm tra mật khẩu
         if (password_verify($password, $hashed_password)) {
-         
-     
-            $_SESSION['user_id'] = $id;
-            $_SESSION['user_name'] = $name;
+
+            $_SESSION['user_id']   = $id;
+            $_SESSION['user_name'] = $db_name;
             $_SESSION['user_code'] = $user_code;
 
-            // Chuyển hướng đến trang khác sau khi login
-            header("Location: user_logout.html"); 
+            // Chuyển hướng sau khi login
+            header("Location: user_logout.html");
             exit();
+
         } else {
             echo "<div style='color:red;'>Sai mật khẩu. Vui lòng thử lại.</div>";
         }
+
     } else {
-        echo "<div style='color:red;'>Email không tồn tại. Vui lòng đăng ký tài khoản trước.</div>";
+        echo "<div style='color:red;'>Email hoặc tên không đúng.</div>";
     }
 
     $stmt->close();
