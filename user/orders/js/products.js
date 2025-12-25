@@ -38,8 +38,6 @@ function renderOrders(orders) {
             ${imagesHtml ? `<div class="order-images">${imagesHtml}</div>` : ''}
 
             <div class="flex-1">
-                <p><strong>Số Điện Thoại:</strong> ${order.customer_phone}</p>
-                <p><strong>Địa Chỉ:</strong> ${order.customer_address}</p>
                 <p><strong>Sản Phẩm:</strong> ${order.product_name}</p>
                 <p><strong>Loại Sản Phẩm:</strong> ${order.category}</p>
                 <p><strong>Màu Sắc:</strong> ${colors}</p>

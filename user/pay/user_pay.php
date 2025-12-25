@@ -1,31 +1,9 @@
 <?php
 
 require_once "../../db.php";
-require_once "function.php";
+require_once "function/checkout_cart.php";
+require_once "function/checkout_process.php";
 
-
-
-$user_id = $_SESSION['user_id'];
-
-/* ===== LẤY CART ===== */
-$stmt = $conn->prepare("SELECT id FROM carts WHERE user_id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$res = $stmt->get_result();
-
-if ($res->num_rows > 0) {
-    $cart_id = $res->fetch_assoc()['id'];
-
-    // XÓA SẢN PHẨM TRONG GIỎ
-    $stmt = $conn->prepare("DELETE FROM cart_items WHERE cart_id = ?");
-    $stmt->bind_param("i", $cart_id);
-    $stmt->execute();
-
-    // XÓA CART
-    $stmt = $conn->prepare("DELETE FROM carts WHERE id = ?");
-    $stmt->bind_param("i", $cart_id);
-    $stmt->execute();
-}
 
 
 ?>

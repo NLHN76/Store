@@ -7,14 +7,20 @@ async function checkUnpaidOrdersForMenu() {
 
         const hasUnpaid = data.some(order => order.status === "Chờ thanh toán");
 
-        const alertIcon = document.getElementById('order-alert');
-        if (!alertIcon) return;
+        // ❗ ở mục Đơn Hàng
+        const orderAlert = document.getElementById('order-alert');
+
+        // ❗ ở chữ Tài Khoản
+        const accountAlert = document.getElementById('account-order-alert');
 
         if (hasUnpaid) {
-            alertIcon.classList.remove('hidden');
+            orderAlert?.classList.remove('hidden');
+            accountAlert?.classList.remove('hidden');
         } else {
-            alertIcon.classList.add('hidden');
+            orderAlert?.classList.add('hidden');
+            accountAlert?.classList.add('hidden');
         }
+
     } catch (err) {
         console.error("Lỗi kiểm tra đơn chưa thanh toán", err);
     }

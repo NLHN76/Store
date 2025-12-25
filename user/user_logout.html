@@ -29,14 +29,17 @@
       <li><a href="#contact" onclick="showSection('contact')"><i class="fas fa-phone"></i> Liên Hệ</a></li>
       
      <!-- Menu tài khoản -->
-       <li class="account-menu">
-             <a href="#" id="account-btn"><i class="fas fa-user"></i> Tài Khoản</a>
-               <ul class="account-dropdown" id="account-dropdown">
-                <li><a href="#" id="profile-btn">Thông tin cá nhân</a></li>
-                <li><a href="orders/orders.html" class="order-link"> Đơn Hàng<span id="order-alert" class="order-alert hidden">❗</span> </a></li>
-               <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
-               </ul>
-       </li>
+     <li class="account-menu"> <a href="#" id="account-btn"> <i class="fas fa-user"></i> Tài Khoản  <span id="account-order-alert" class="order-alert hidden">❗</span> </a>
+
+    <ul class="account-dropdown" id="account-dropdown">
+        <li> <a href="#" id="profile-btn"> Thông tin cá nhân </a></li>
+
+        <li> <a href="orders/orders.html" class="order-link">  Đơn Hàng <span id="order-alert" class="order-alert hidden">❗</span> </a> </li>
+
+        <li><a href="#" onclick="logout()">Đăng Xuất </a></li>
+    </ul>
+</li>
+
   </nav>
 </header>
 
