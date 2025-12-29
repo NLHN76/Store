@@ -115,17 +115,43 @@ if (isset($_POST['action']) && $_POST['action'] === "edit") {
     exit;
 }
 
-// ====================== XÓA =====================
+// ====================== XÓA SẢN PHẨM =====================
 if (isset($_POST['action']) && $_POST['action'] === "delete") {
-    $id = intval($_POST['product_id']);
+    $product_id = intval($_POST['product_id']);
+
+    // 1️⃣ Kiểm tra tổng tồn kho: chỉ xóa nếu tất cả quantity = 0
+    $stmt = $conn->prepare("SELECT SUM(quantity) as total_qty FROM product_inventory WHERE product_id=?");
+    $stmt->bind_param("i", $product_id);
+    $stmt->execute();
+    $res = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    if ($res['total_qty'] > 0) {
+        die("Không thể xóa sản phẩm này vì vẫn còn tồn kho.");
+    }
+
+    // 2️⃣ Xóa tất cả lịch sử tồn kho liên quan
+    $stmt = $conn->prepare("DELETE FROM inventory_history WHERE product_id=?");
+    $stmt->bind_param("i", $product_id);
+    $stmt->execute();
+    $stmt->close();
+
+    // 3️⃣ Xóa tất cả màu trong product_inventory
+    $stmt = $conn->prepare("DELETE FROM product_inventory WHERE product_id=?");
+    $stmt->bind_param("i", $product_id);
+    $stmt->execute();
+    $stmt->close();
+
+    // 4️⃣ Cuối cùng xóa sản phẩm
     $stmt = $conn->prepare("DELETE FROM products WHERE id=?");
-    $stmt->bind_param("i", $id);
+    $stmt->bind_param("i", $product_id);
     $stmt->execute();
     $stmt->close();
 
     header("Location: admin_products.php?status=deleted");
     exit;
 }
+
 
 // ====================== BẬT/TẮT =====================
 if (isset($_POST['action']) && $_POST['action'] === "toggle_status") {

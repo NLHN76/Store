@@ -23,11 +23,12 @@ SELECT
     color,
     product_quantity,
     total_price,
-    order_date,
+    DATE_FORMAT(order_date, '%d/%m/%Y %H:%i:%s') AS order_date,
     status
 FROM payment
 WHERE user_code = ?
 ORDER BY order_date DESC
+
 ";
 
 

@@ -70,3 +70,8 @@
         font-size: 0.9rem;
     }
 }
+
+.table-warning {
+    transition: background-color 0.5s ease;
+}
+

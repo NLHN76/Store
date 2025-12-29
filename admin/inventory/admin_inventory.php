@@ -19,13 +19,15 @@ require_once "inventory_functions.php";
 <div class="container mt-4 mb-5">
 
 <!-- Cảnh báo tồn kho thấp -->
-<?php if(!empty($lowStockWarnings)): ?>
+<?php if (!empty($lowStockWarnings)): ?>
 <div class="alert alert-warning">
     <strong>Cảnh báo tồn kho thấp!</strong>
-    <ul>
-        <?php foreach($lowStockWarnings as $warn): ?>
+    <ul class="mb-0">
+        <?php foreach ($lowStockWarnings as $warn): ?>
             <li>
-                <a href="#" class="low-stock-link" data-target="#<?= $warn['row_id'] ?>">
+                <a href="#"
+                   class="low-stock-link"
+                   data-target="<?= htmlspecialchars($warn['row_id']) ?>">
                     <?= htmlspecialchars($warn['text']) ?>
                 </a>
             </li>
@@ -33,6 +35,7 @@ require_once "inventory_functions.php";
     </ul>
 </div>
 <?php endif; ?>
+
 
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -50,112 +53,136 @@ require_once "inventory_functions.php";
 </ul>
 
 <div class="tab-content mt-3">
+
 <!-- Tab Tồn kho -->
 <div class="tab-pane fade <?= $tab_active=='stock'?'show active':'' ?>" id="stock" role="tabpanel">
     <div class="row">
-        <!-- Form nhập hàng -->
-        <div class="col-lg-4 mb-3">
-            <div class="card">
-                <div class="card-header"><i class="fa-solid fa-cart-plus"></i> Nhập hàng mới</div>
-                <div class="card-body">
-                    <form method="post">
-                        <div class="mb-2">
-                            <label class="form-label">Sản phẩm</label>
-                            <select id="product_id" name="product_id" class="form-select" required onchange="loadColors(this.value)">
-                                <option value="">-- Chọn sản phẩm --</option>
-                                <?php foreach($productOptions as $p): ?>
-                                    <option value="<?= htmlspecialchars($p['id']) ?>" data-colors="<?= htmlspecialchars($p['color']) ?>">
-                                        <?= htmlspecialchars($p['name']) ?> (<?= htmlspecialchars($p['product_code']) ?>)
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Màu sắc</label>
-                            <select id="color" name="color" class="form-select" required>
-                                <option value="">Chọn màu</option>
-                            </select>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Số lượng nhập</label>
-                            <input type="number" name="quantity" class="form-control" min="1" required>
-                        </div>
-                        <div class="mb-2">
-                            <label class="form-label">Giá nhập</label>
-                            <input type="number" name="import_price" class="form-control" min="0" step="1" required>
-                        </div>
-                        <button type="submit" name="add_stock" class="btn btn-success w-100"><i class="fa-solid fa-plus"></i> Thêm / Cập nhật</button>
-                    </form>
-                </div>
-            </div>
-        </div>
 
-        <!-- Bảng tồn kho -->
-        <div class="col-lg-8">
-            <table class="table table-bordered table-hover table-fixed text-center align-middle">
-                <thead class="table-primary">
-                    <tr>
-                        <th style="width:22%;">Sản phẩm</th>
-                        <th style="width:10%;">Màu</th>
-                        <th style="width:10%;" class="number">Mã SP</th>
-                        <th style="width:12%;" class="number">Tồn thực tế</th>
-                        <th style="width:8%;" class="number">Đã bán</th>
-                        <th style="width:10%;" class="number">Giá nhập</th>
-                        <th style="width:10%;" class="number">Giá bán</th>
-                        <th style="width:8%;" class="number">Lợi nhuận</th>
-                        <th style="width:10%;">Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if(empty($inventoryData)): ?>
-                        <tr><td colspan="9">Chưa có dữ liệu tồn kho</td></tr>
-                    <?php else: ?>
-                        <?php foreach($inventoryData as $productName => $items): 
-                            $collapseId = "collapse_" . md5($productName . rand(1,9999)); ?>
-                            <tr class="parent-row" data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>">
-                                <td colspan="9"><i class="fa-solid fa-box"></i> <?= htmlspecialchars($productName) ?> — Nhấn để xem chi tiết</td>
-                            </tr>
-                            <?php foreach($items as $item): ?>
-                                <tr class="collapse child-row" id="<?= $collapseId ?>">
-                                    <td class="text-start"><?= htmlspecialchars($item['product_name']) ?></td>
-                                    <td><?= htmlspecialchars($item['color']) ?></td>
-                                    <td class="fw-bold text-primary"><?= htmlspecialchars($item['product_code']) ?></td>
-                                    <td>
-                                        <input type="number" class="form-control form-control-sm number" min="0"
-                                        id="stock_<?= (int)$item['product_id'] ?>_<?= htmlspecialchars($item['color']) ?>"
-                                        value="<?= (int)$item['actual_stock'] ?>">
-                                    </td>
-                                    <td class="number"><?= (int)$item['sold'] ?></td>
-                                    <td class="number"><?= number_format($item['import_price'],0,',','.') ?></td>
-                                    <td class="number"><?= number_format($item['sale_price'],0,',','.') ?></td>
-                                    <td class="number text-success fw-bold"><?= number_format($item['profit'],0,',','.') ?></td>
-                                    <td>
-                                        <!-- Nút lưu theo dòng -->
-                                        <form method="post" style="display:inline">
-                                            <input type="hidden" name="adjust_stock[<?= (int)$item['product_id'] ?>][<?= htmlspecialchars($item['color']) ?>]" 
-                                                value="<?= (int)$item['actual_stock'] ?>" 
-                                                id="hidden_<?= (int)$item['product_id'] ?>_<?= htmlspecialchars($item['color']) ?>">
-                                            <button type="submit" name="update_stock" class="btn btn-primary btn-sm" 
-                                                onclick="updateHidden(<?= (int)$item['product_id'] ?>,'<?= htmlspecialchars($item['color']) ?>')">
-                                                <i class="fa-solid fa-save"></i>
-                                            </button>
-                                        </form>
-                                        <!-- Nút xóa -->
-                                        <form method="post" style="display:inline" onsubmit="return confirm('Bạn có chắc muốn xóa màu này?');">
-                                            <input type="hidden" name="delete_product_id" value="<?= (int)$item['product_id'] ?>">
-                                            <input type="hidden" name="delete_color" value="<?= htmlspecialchars($item['color']) ?>">
-                                            <button type="submit" name="delete_stock" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
+        <!-- Form nhập hàng -->
+<div class="col-lg-4 mb-3">
+    <div class="card">
+        <div class="card-header">
+            <i class="fa-solid fa-cart-plus"></i> Nhập hàng mới
+        </div>
+        <div class="card-body">
+            <form method="post">
+                <!-- Chọn sản phẩm -->
+                <div class="mb-2">
+                    <label class="form-label">Sản phẩm</label>
+                    <select name="product_id" id="product_id" class="form-select" required onchange="loadColors(this.value)">
+                        <option value="">-- Chọn sản phẩm --</option>
+                        <?php foreach($productOptions as $p): 
+                            // Chuyển mảng màu thành chuỗi, ví dụ "Đỏ,Xanh,Vàng"
+                            $colorsStr = htmlspecialchars($p['color']);
+                        ?>
+                        <option value="<?= (int)$p['id'] ?>" data-colors="<?= $colorsStr ?>">
+                            <?= htmlspecialchars($p['name']) ?> (<?= htmlspecialchars($p['product_code']) ?>)
+                        </option>
                         <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
+                    </select>
+                </div>
+
+                <!-- Chọn màu -->
+                <div class="mb-2">
+                    <label class="form-label">Màu sắc</label>
+                    <select name="color" id="color" class="form-select" required>
+                        <option value="">Chọn màu</option>
+                    </select>
+                </div>
+
+                <!-- Số lượng -->
+                <div class="mb-2">
+                    <label class="form-label">Số lượng nhập</label>
+                    <input type="number" name="quantity" class="form-control" min="1" required>
+                </div>
+
+                <!-- Giá nhập  -->
+                <div class="mb-2">
+                    <label class="form-label">Giá nhập</label>
+                    <input type="number" name="import_price" class="form-control" min="0" required>
+                </div>
+
+                <button type="submit" name="add_stock" class="btn btn-success w-100">
+                    <i class="fa-solid fa-plus"></i> Thêm / Cập nhật
+                </button>
+            </form>
         </div>
     </div>
 </div>
+
+        <!-- Bảng tồn kho -->
+        <div class="col-lg-8">
+        <table class="table table-bordered table-hover text-center align-middle">
+            <thead class="table-primary">
+                <tr>
+                    <th>Sản phẩm</th>
+                    <th>Màu</th>
+                    <th>Mã SP</th>
+                    <th>Tồn kho</th>
+                    <th>Đã bán</th>
+                    <th>Giá nhập trung bình</th>
+                    <th>Giá bán/1 sản phẩm</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            <?php if(empty($inventoryData)): ?>
+                <tr>
+                    <td colspan="8">Chưa có dữ liệu tồn kho</td>
+                </tr>
+            <?php else: ?>
+
+            <?php foreach($inventoryData as $productName => $items):
+                $collapseId = 'collapse_' . md5($productName);
+            ?>
+                <!-- Dòng cha -->
+                <tr class="parent-row" data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>">
+                    <td colspan="8" class="text-start fw-bold">
+                        <i class="fa-solid fa-box"></i>
+                        <?= htmlspecialchars($productName) ?> — Nhấn để xem
+                    </td>
+                </tr>
+
+                <?php foreach($items as $item):
+                    $colorKey = preg_replace('/[^a-zA-Z0-9_-]/','_',$item['color']);
+                ?>
+                <!-- Dòng con -->
+              <tr class="collapse" id="<?= $collapseId ?>">
+    <td class="text-start"><?= htmlspecialchars($item['product_name']) ?></td>
+    <td><?= htmlspecialchars($item['color']) ?></td>
+    <td class="fw-bold text-primary"><?= htmlspecialchars($item['product_code']) ?></td>
+
+    <!-- Tồn kho hiển thị trực tiếp, không cho chỉnh sửa -->
+    <td><?= (int)$item['actual_stock'] ?></td>
+
+    <td><?= (int)$item['sold'] ?></td>
+    <td><?= number_format($item['import_price'],0,',','.') ?></td>
+    <td><?= number_format($item['sale_price'],0,',','.') ?></td>
+
+    <!-- Xóa màu -->
+    <td>
+        <form method="post" onsubmit="return confirm('Bạn có chắc muốn xóa màu này?');">
+            <input type="hidden" name="delete_product_id" value="<?= (int)$item['product_id'] ?>">
+            <input type="hidden" name="delete_color" value="<?= htmlspecialchars($item['color']) ?>">
+            <button type="submit" name="delete_stock" class="btn btn-sm btn-danger">
+                <i class="fa-solid fa-trash"></i> Xóa
+            </button>
+        </form>
+    </td>
+</tr>
+
+                <?php endforeach; ?>
+
+            <?php endforeach; ?>
+            <?php endif; ?>
+
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+
 
 <!-- Tab Lịch sử -->
 <div class="tab-pane fade <?= $tab_active=='history'?'show active':'' ?>" id="history" role="tabpanel">
@@ -175,9 +202,6 @@ require_once "inventory_functions.php";
                 <div class="col-auto">
                     <button type="submit" class="btn btn-secondary">Lọc</button>
                 </div>
-                <div class="col text-end">
-                    <a href="admin_inventory.php?tab=history" class="btn btn-outline-secondary">Reset</a>
-                </div>
             </form>
         </div>
     </div>
@@ -188,30 +212,28 @@ require_once "inventory_functions.php";
                 <tr>
                     <th>Thời gian</th>
                     <th class="text-start">Sản phẩm</th>
-                    <th class="number">Mã SP</th>
+                    <th>Mã SP</th>
                     <th>Màu</th>
-                    <th class="number">SL</th>
-                    <th class="number">Giá nhập</th>
-                    <th class="text-start">Ghi chú</th>
+                    <th>SL</th>
+                    <th>Giá nhập</th>
+                    <th>Giá bán/1 sản phẩm</th>
+                    <th>Ghi chú</th>
                 </tr>
             </thead>
             <tbody>
                 <?php if(empty($history)): ?>
-                    <tr><td colspan="7">Không có bản ghi lịch sử</td></tr>
+                    <tr><td colspan="8">Không có bản ghi lịch sử</td></tr>
                 <?php else: ?>
-                    <?php foreach($history as $h):
-                        $badge = ($h['type'] ?? '') == 'Nhập hàng' ? 'badge-in' 
-                                : (($h['type'] ?? '') == 'Điều chỉnh' ? 'badge-adjust' 
-                                : (($h['type'] ?? '') == 'Xóa hàng' ? 'badge-delete' : 'badge-sell'));
-                    ?>
+                    <?php foreach($history as $h): ?>
                     <tr>
                         <td><?= htmlspecialchars($h['created_at']) ?></td>
-                        <td class="text-start"><?= htmlspecialchars($h['product_name']) ?></td>
-                        <td class="number fw-bold text-primary"><?= htmlspecialchars($h['product_code'] ?? '') ?></td>
+                        <td class="text-start"><?= htmlspecialchars($h['product_name'] ?? '') ?></td>
+                        <td class="fw-bold text-primary"><?= htmlspecialchars($h['product_code'] ?? '') ?></td>
                         <td><?= htmlspecialchars($h['color']) ?></td>
-                        <td class="number"><?= (int)$h['quantity_change'] ?></td>
-                        <td class="number"><?= number_format($h['import_price'] ?? 0,0,',','.') ?></td>
-                        <td class="text-start"><?= htmlspecialchars($h['note']) ?></td>
+                        <td><?= (int)$h['quantity_change'] ?></td>
+                        <td><?= number_format($h['import_price'] ?? 0,0,',','.') ?></td>
+                        <td><?= number_format($h['sale_price'] ?? 0,0,',','.') ?></td>
+                        <td class="text-start"><?= htmlspecialchars($h['note'] ?? '') ?></td>
                     </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
