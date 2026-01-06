@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         LIMIT 1
     ");
 
-    // ✅ FIX: bind đủ 2 biến
+  
     $stmt->bind_param("ss", $email, $name);
     $stmt->execute();
     $stmt->store_result();
@@ -35,9 +35,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION['user_name'] = $db_name;
             $_SESSION['user_code'] = $user_code;
 
-            // Chuyển hướng sau khi login
-            header("Location: user_logout.html");
-            exit();
+            echo "<script>
+            alert('Đăng nhập thành công');
+           window.location.href = 'user_logout.php';
+         </script>";
+
 
         } else {
             echo "<div style='color:red;'>Sai mật khẩu. Vui lòng thử lại.</div>";
