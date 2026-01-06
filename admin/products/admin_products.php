@@ -7,7 +7,7 @@ require_once "product_actions.php";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUẢN LÍ SẢN PHẨM</title>
+    <title>QUẢN LÝ SẢN PHẨM</title>
     <link rel="stylesheet" href="../css/products.css">
 </head>
 <body>
@@ -15,7 +15,7 @@ require_once "product_actions.php";
     <a href="../admin_interface.php" class="back-button" title="Quay lại trang quản trị">
         <img src="../uploads/exit.jpg" alt="Quay lại"> 
     </a>
-    <h2>QUẢN LÍ SẢN PHẨM</h2>
+    <h2>QUẢN LÝ SẢN PHẨM</h2>
 
     <!-- Thông báo trạng thái -->
     <?php if (!empty($status_message)): ?>
