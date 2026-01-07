@@ -85,7 +85,7 @@ require_once "function/checkout_process.php";
 <?php endif; ?>
 
 
-<a href="../user_logout.html" class="back-button">Quay lại trang chủ</a>
+<a href="../user_logout.php" class="back-button">Quay lại trang chủ</a>
 </div>
 </body>
 </html>         

@@ -86,7 +86,7 @@ $colors = array_filter(array_map('trim', explode(',', $product['color'] ?? '')))
       </div>
       <div style="display:flex; flex-direction:column; gap:10px;">
         <button type="submit" class="btn-submit">Gửi đánh giá</button>
-        <a href="../../user/user_logout.html" class="btn-back">⬅ Quay về</a>
+        <a href="../user_logout.php" class="btn-back">⬅ Quay về</a>
       </div>
     </form>
     
@@ -137,7 +137,7 @@ function addToCartDetail() {
     const colorSelect = document.getElementById('productColor');
     const color = colorSelect ? colorSelect.value : null;
 
-    fetch('../../user/cart/add_to_cart.php', {
+    fetch('../cart/add_to_cart.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -151,7 +151,7 @@ function addToCartDetail() {
     .then(data => {
         if (data.success) {
             // ✅ chuyển sang giỏ + reload data
-            window.location.href = "../../user/user_logout.html#cart";
+            window.location.href = "../user_logout.php#cart";
         } else {
             alert(data.error || '❌ Thêm thất bại');
         }

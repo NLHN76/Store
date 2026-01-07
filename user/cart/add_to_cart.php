@@ -1,7 +1,7 @@
 <?php
 
 header('Content-Type: application/json');
-require '../../db.php';
+require_once '../../db.php';
 
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'error' => 'Chưa đăng nhập']);
