@@ -9,7 +9,9 @@ function renderOrders(orders) {
         return;
     }
 
-    [...orders].reverse().forEach(order => {
+[...orders]
+    .sort((a, b) => b.id - a.id)
+    .forEach(order => {
         const formattedPrice = parseFloat(order.total_price).toLocaleString('de-DE');
         const colors = order.color || 'Không có màu';
         const status = statusMap[order.status] || { icon: "❓", class: "text-gray-500" };
