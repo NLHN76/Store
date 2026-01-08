@@ -1,51 +1,8 @@
 <?php
-// --- 1. Kết nối CSDL ---
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 require_once "../../db.php" ;
+require_once "function/report_year.php";
 
-// --- 2. Xử lý truy vấn theo năm ---
-$selected_year = isset($_GET['year']) ? (int)$_GET['year'] : null;
-
-if ($selected_year) {
-    $sql = "SELECT
-                YEAR(order_date) AS revenue_year,
-                SUM(total_price) AS total_revenue
-            FROM
-                payment
-            WHERE
-                YEAR(order_date) = $selected_year
-            GROUP BY
-                revenue_year";
-} else {
-    $sql = "SELECT
-                YEAR(order_date) AS revenue_year,
-                SUM(total_price) AS total_revenue
-            FROM
-                payment
-            WHERE
-                order_date IS NOT NULL
-            GROUP BY
-                revenue_year
-            ORDER BY
-                revenue_year ASC";
-}
-
-$result = $conn->query($sql);
-$revenue_data = [];
-$chart_labels = [];
-$chart_values = [];
-
-if ($result && $result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $revenue_data[] = $row;
-        $chart_labels[] = $row['revenue_year'];
-        $chart_values[] = $row['total_revenue'];
-    }
-} elseif (!$result) {
-    error_log("Error fetching yearly revenue: " . $conn->error);
-}
 ?>
 
 
@@ -58,8 +15,7 @@ if ($result && $result->num_rows > 0) {
     <link rel="icon" href="uploads/favicon.ico">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-      <link rel="stylesheet" href="css/report_year.css">
- 
+     <link rel="stylesheet" href="css/report_year.css">
 </head>
 
 <body>
@@ -113,8 +69,6 @@ if ($result && $result->num_rows > 0) {
     <div class='invoice-box'>
         <div class='contact-info'>
             <p style="text-align: center;" class='company-name'>MOBILE GEAR</p>
-            <p style="text-align: center;">Địa chỉ: Số 254 Tây Sơn - P. Trung Liệt - Q. Đống Đa - TP. Hà Nội</p>
-            <p style="text-align: center;">Điện thoại: 0587.911.287 | Email: mobilegear@gmail.com</p>
         </div>
     </div>
 

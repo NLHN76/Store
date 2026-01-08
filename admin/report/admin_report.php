@@ -1,30 +1,6 @@
 <?php
 require_once "../../db.php" ;
-
-$start_date = isset($_GET['start_date']) ? $_GET['start_date'] : '';
-$end_date = isset($_GET['end_date']) ? $_GET['end_date'] : '';
-
-$sql = "SELECT DATE(order_date) AS order_day, 
-               COUNT(id) AS order_count, 
-               SUM(total_price) AS total_revenue 
-        FROM payment";
-
-if (!empty($start_date) && !empty($end_date)) {
-    $sql .= " WHERE DATE(order_date) BETWEEN '$start_date' AND '$end_date'";
-}
-
-$sql .= " GROUP BY DATE(order_date) ORDER BY order_day DESC";
-$result = $conn->query($sql);
-
-$order_dates = [];
-$order_counts = [];
-$total_revenues = [];
-
-while ($row = $result->fetch_assoc()) {
-    $order_dates[] = date('d/m/Y', strtotime($row['order_day']));
-    $order_counts[] = $row['order_count'];
-    $total_revenues[] = $row['total_revenue'];
-}
+require_once "function/report_day.php" ;
 ?>
 
 <!DOCTYPE html>
@@ -35,34 +11,13 @@ while ($row = $result->fetch_assoc()) {
     <title>Thống Kê Doanh Thu</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-
-    <style>
-        body { font-family: Arial, sans-serif; text-align: center; }
-        table { width: 80%; margin: 20px auto; border-collapse: collapse; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        th { background-color: #f2f2f2; }
-        .filter-form { margin-bottom: 20px; }
-        canvas { width: 100% !important; height: 500px !important; margin: auto; }
-        .back-button {
-            display: block;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .back-button img {
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-        }
-
-    </style>
+       <link rel="stylesheet" href="css/report_day.css">
 </head>
 
 <body>
     <h1>Thống Kê Doanh Thu Theo Ngày</h1>
-    <li><a href="report_client.php"><i class="fas fa-chart-bar"></i> Thống kê chi tiêu Khách hàng</a></li>
-    <li><a href="report_year.php"><i class="fas fa-chart-bar"></i> Thống kê doanh thu năm  </a></li>
+    <li><a href="client_report.php"><i class="fas fa-chart-bar"></i> Thống kê chi tiêu Khách hàng</a></li>
+    <li><a href="year_report.php"><i class="fas fa-chart-bar"></i> Thống kê doanh thu năm  </a></li>
     <a href="../admin_interface.php" class="back-button" title="Quay lại trang quản trị">
             <img src="../uploads/exit.jpg" alt="Quay lại"> 
         </a>
@@ -75,9 +30,6 @@ while ($row = $result->fetch_assoc()) {
     </form>
 
     <button onclick="exportPDF()">Xuất PDF</button>
-
-
-
 
     <div id="export-content">
     <?php if ($result->num_rows > 0): ?>
@@ -110,40 +62,11 @@ while ($row = $result->fetch_assoc()) {
     <div class='invoice-box'>
         <div class='contact-info'>
             <p class='company-name'>MOBILE GEAR</p>
-            <p style="text-align: center;">Địa chỉ: Số 254 Tây Sơn - P. Trung Liệt - Q. Đống Đa - TP. Hà Nội</p>
-            <p style="text-align: center;">Điện thoại: 0587.911.287 | Email: mobilegear@gmail.com</p>
         </div>
     </div>
 
 
     
-    <script>
-  function exportPDF() {
-    const element = document.getElementById('export-content');
-
-    // Lấy ngày hiện tại dạng YYYYMMDD
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0'); // tháng từ 0-11 nên +1
-    const day = String(now.getDate()).padStart(2, '0');
-    const dateStr = `${year}${month}${day}`;
-
-    // Tạo tên file theo yêu cầu
-    const filename = `thong_ke_doanh_thu_theo_ngay_${dateStr}.pdf`;
-
-    // Cấu hình PDF
-    const opt = {
-        margin: 0.5,
-        filename: filename,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-    };
-
-    // Gọi html2pdf
-    html2pdf().set(opt).from(element).save();
-}
-</script>
 
 
     <script>
@@ -176,5 +99,7 @@ while ($row = $result->fetch_assoc()) {
     </script>
 
     <?php $conn->close(); ?>
+    
+<script src="js/report_day.js"></script>
 </body>
 </html>

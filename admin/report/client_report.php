@@ -1,37 +1,6 @@
 <?php
 require_once "../../db.php";
-
-// Lấy Top 10 khách hàng chi tiêu nhiều nhất
-$sql = "SELECT
-            user_code,
-            MAX(customer_name) AS customer_name,
-            COUNT(*) AS order_count,
-            SUM(total_price) AS total_spent
-        FROM
-            payment
-        WHERE
-            user_code IS NOT NULL AND user_code <> ''
-        GROUP BY
-            user_code
-        ORDER BY
-            total_spent DESC, order_count DESC
-        LIMIT 10"; 
-
-$result = $conn->query($sql);
-
-$chart_labels = []; 
-$chart_data = [];   
-$customer_table_data = [];
-
-if ($result && $result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
-        $customer_table_data[] = $row;
-
-        // Dữ liệu cho chart
-        $chart_labels[] = $row['customer_name'] . ' (' . $row['user_code'] . ')'; 
-        $chart_data[] = $row['total_spent'];
-    }
-}
+require_once "function/report_client.php";
 ?>
 
 
@@ -48,7 +17,7 @@ if ($result && $result->num_rows > 0) {
    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-        <link rel="stylesheet" href="css/report_client.css">
+    <link rel="stylesheet" href="css/report_client.css">
 </head>
 <body>
 
@@ -62,9 +31,10 @@ if ($result && $result->num_rows > 0) {
 
         <!-- --- Chart Canvas Container --- -->
    
-        <div class="chart-container">
-            <canvas id="customerSpendChart"></canvas>
-        </div>
+      <div class="chart-container" id="chart-wrapper">
+    <canvas id="customerSpendChart"></canvas>
+       </div>
+
 
         <!-- --- Data Table --- -->
         <h2>Bảng Dữ Liệu Chi Tiết</h2>
@@ -101,34 +71,11 @@ if ($result && $result->num_rows > 0) {
         <div class='invoice-box'>
         <div class='contact-info'>
             <p style="text-align: center;" class='company-name'>MOBILE GEAR</p>
-            <p style="text-align: center;">Địa chỉ: Số 254 Tây Sơn - P. Trung Liệt - Q. Đống Đa - TP. Hà Nội</p>
-            <p style="text-align: center;">Điện thoại: 0587.911.287 | Email: mobilegear@gmail.com</p>
         </div>
     </div>
 
         </div>
         
-
-        
-        <script>
-    function exportPDF() {
-        const element = document.getElementById('export-content');
-
-        // Cấu hình PDF
-        const opt = {
-            margin:       0.5,
-            filename:     'thong_ke_chi_tieu_khach_hang.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2 },
-            jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-        };
-
-        // Gọi html2pdf
-        html2pdf().set(opt).from(element).save();
-    }
-</script>
-
-
 
 
         <script>
@@ -213,5 +160,6 @@ if ($result && $result->num_rows > 0) {
     $conn->close();
     ?>
 
+<script src="js/report_client.js"></script>
 </body>
 </html>

@@ -1,0 +1,47 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+/* Bảng dữ liệu */
+table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* Form lọc */
+.filter-form {
+    margin-bottom: 20px;
+}
+
+/* Biểu đồ */
+canvas {
+    width: 100% !important;
+    height: 500px !important;
+    margin: auto;
+}
+
+/* Nút quay lại */
+.back-button {
+    display: block;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.back-button img {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+}
