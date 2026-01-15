@@ -16,7 +16,6 @@ require_once "function.php";
     <h1><?= htmlspecialchars($product['name']) ?></h1>
     <img src="../../admin/uploads/<?= htmlspecialchars($product['image']) ?>" alt="<?= htmlspecialchars($product['name']) ?>" style="max-width:300px;">
     <p><strong>Mã sản phẩm:</strong> <?= htmlspecialchars($product['product_code']) ?></p>
-    <p><strong>Loại sản phẩm:</strong> <?= htmlspecialchars($product['category']) ?></p>
     <p><strong>Giá:</strong> <?= number_format($product['price'],0,',','.') ?> VNĐ</p>
     <?php
 $colors = array_filter(array_map('trim', explode(',', $product['color'] ?? '')));

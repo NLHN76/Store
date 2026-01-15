@@ -41,7 +41,6 @@ function renderOrders(orders) {
 
             <div class="flex-1">
                 <p><strong>Sản Phẩm:</strong> ${order.product_name}</p>
-                <p><strong>Loại Sản Phẩm:</strong> ${order.category}</p>
                 <p><strong>Màu Sắc:</strong> ${colors}</p>
                 <p><strong>Số Lượng:</strong> ${order.product_quantity}</p>
                 <p><strong>Tổng Tiền:</strong> ${formattedPrice} VNĐ</p>
