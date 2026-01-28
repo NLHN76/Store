@@ -1,6 +1,6 @@
 <?php
 require_once "../../db.php";
-session_start();
+
 
 /* ===== LOGIN ===== */
 if (!isset($_SESSION['user_code'])) {
@@ -31,31 +31,28 @@ if (!$payment) {
 }
 
 /* ===== SPLIT DATA ===== */
-$names  = array_map('trim', explode(',', $payment['product_name']));
-$codes  = array_map('trim', explode(',', $payment['product_code']));
-$cats   = array_map('trim', explode(',', $payment['category']));
-$colors = array_map('trim', explode(',', $payment['color'] ?? ''));
-$images = array_map('trim', explode(',', $payment['image'] ?? ''));
+$names      = array_map('trim', explode(',', $payment['product_name']));
+$codes      = array_map('trim', explode(',', $payment['product_code']));
+$categories = array_map('trim', explode(',', $payment['category']));
+$colors     = array_map('trim', explode(',', $payment['color'] ?? ''));
+$images     = array_map('trim', explode(',', $payment['image'] ?? ''));
 
-/*
-  QUY ƯỚC:
-  - 1 sản phẩm → dùng product_quantity
-  - nhiều sản phẩm → mỗi sản phẩm = 1
-*/
 $quantities = [];
 
 if (count($names) === 1) {
+
     $quantities[] = (int)$payment['product_quantity'];
 } else {
+
     foreach ($names as $_) {
         $quantities[] = 1;
     }
 }
 
-/* ===== CLEAR REORDER DATA ===== */
-$_SESSION['reorder_items'] = [];
+/* ===== CLEAR CART  ===== */
+$_SESSION['cart'] = [];
 
-/* ===== ADD PRODUCTS ===== */
+/* ===== ADD TO CART ===== */
 foreach ($codes as $i => $code) {
 
     /* lấy giá hiện tại */
@@ -70,19 +67,19 @@ foreach ($codes as $i => $code) {
     $stmtP->close();
 
     if ($product && (int)$product['is_active'] === 0) {
-        continue; // bỏ SP ngừng bán
+        continue; // bỏ SP đã ngừng bán
     }
 
-    $qty = $quantities[$i];
+    $qty = $quantities[$i] ?? 1;
 
-    // giá fallback an toàn
+
     $unitPrice = $product['price']
         ?? ((float)$payment['total_price'] / max(array_sum($quantities), 1));
 
-    $_SESSION['reorder_items'][] = [
+    $_SESSION['cart'][] = [
         'product_code' => $code,
         'name'         => preg_replace('/\s*\(x\d+\)$/i', '', $names[$i]),
-        'category'     => $cats[$i] ?? '',
+        'category'     => $categories[$i] ?? '',
         'color'        => $colors[$i] ?? '',
         'image'        => '../../admin/uploads/' . ($images[$i] ?? ''),
         'price'        => (float)$unitPrice,
@@ -91,5 +88,5 @@ foreach ($codes as $i => $code) {
 }
 
 /* ===== REDIRECT ===== */
-header("Location: ../pay/user_pay.php");
+header("Location: ../pay/no_cart.php");
 exit;

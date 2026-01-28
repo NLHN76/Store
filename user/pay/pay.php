@@ -54,7 +54,6 @@
         echo "<strong>Mã:</strong> " . htmlspecialchars($item['product_code']) . "<br>";
         echo "<strong>Tên:</strong> " . htmlspecialchars($item['name']) . " (x" . htmlspecialchars($item['quantity']) . ")<br>";
         echo "<strong>Màu:</strong> " . htmlspecialchars($item['color']) . "<br>";
-        echo "<strong>Loại:</strong> " . htmlspecialchars($item['category']) . "<br>";
         echo "<strong>Giá:</strong> " . number_format($itemTotal, 0, ',', '.') . " VNĐ";
         ?>
     </div>

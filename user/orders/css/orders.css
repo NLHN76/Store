@@ -66,15 +66,12 @@
 }
 
 
-
-
 .scroll-box {
     max-height: 220px;      
     overflow-y: auto;       
     padding-right: 6px;     
 }
 
-/* Tùy chọn: scrollbar gọn hơn */
 .scroll-box::-webkit-scrollbar {
     width: 6px;
 }
