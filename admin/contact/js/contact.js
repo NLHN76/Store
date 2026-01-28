@@ -2,7 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('tr.new-contact').forEach(function(row) {
         row.addEventListener('click', function(e) {
-            // tránh click vào nút xóa cũng trigger
+ 
             if (e.target.closest('button')) return;
 
             const contactId = this.dataset.id;
