@@ -32,3 +32,15 @@
 
     // Cập nhật ban đầu
     updateSelectedProducts();
+
+
+    form.addEventListener('submit', function (e) {
+    updateSelectedProducts();
+
+    const products = JSON.parse(productsInput.value || "[]");
+
+    if (products.length === 0) {
+        e.preventDefault();
+        alert("Vui lòng chọn ít nhất 1 sản phẩm để xuất báo giá");
+    }
+});

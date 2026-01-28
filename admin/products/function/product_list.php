@@ -1,3 +1,4 @@
+
 <div class="product-container">
 <?php if (empty($products)): ?>
     <p class="no-products">

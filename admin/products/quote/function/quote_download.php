@@ -1,22 +1,6 @@
 <?php
-require_once "../../db.php";
 
-// Lấy sản phẩm từ CSDL
-$sql = "SELECT product_code, name, category, price FROM products ORDER BY id DESC";
-$result = $conn->query($sql);
-
-$products_db = [];
-if ($result) {
-    while ($row = $result->fetch_assoc()) {
-        $products_db[] = $row;
-    }
-}
-
-function format_price($price) {
-    return number_format($price, 0, ',', '.') . " VNĐ";
-}
-
-
+require_once "quote_data.php";
 // Xử lý form submit để trả về file HTML báo giá download
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['products'])) {
     $customer_name = $_POST['customer_name'] ?? '';
@@ -42,10 +26,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['products'])) {
     <!DOCTYPE html>
     <html lang="vi">
     <head>
-        <meta charset="UTF-8" />
-        <title>Báo giá sản phẩm</title>
-         <link rel="stylesheet" href="css/quote.css">
-    </head>
+    <meta charset="UTF-8">
+    <title>Báo giá sản phẩm</title>
+
+    <style>
+        <?php
+        include __DIR__ . '/../css/quote.css';
+        ?>
+    </style>
+</head>
+
     <body>
         <h1>BÁO GIÁ SẢN PHẨM</h1>
 
@@ -94,60 +84,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['products'])) {
     exit;
 }
 ?>
-
-
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8" />
-    <title>Chỉnh sửa Báo giá sản phẩm</title>
-    <link rel ="stylesheet" href="css/edit_quote.css">
-</head>
-<body>
-    <h1>Chỉnh sửa Báo giá sản phẩm</h1>
-    <form method="post" id="quote-form">
-        <label for="customer_name">Tên khách hàng:</label>
-        <input type="text" name="customer_name" id="customer_name" required>
-
-        <label for="quote_date">Ngày báo giá:</label>
-        <input type="date" name="quote_date" id="quote_date" value="<?= date('Y-m-d') ?>" required>
-         
-        <p class="note"><strong>Điều khoản:</strong></p>
-        <textarea name="terms" id="terms" rows="4">Báo giá có hiệu lực trong 7 ngày kể từ ngày lập. 
-Đã bao gồm VAT và chưa tính thêm phí vận chuyển.</textarea>
-
-        <h3>Chọn sản phẩm báo giá:</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th>Chọn</th>
-                    <th>Mã SP</th>
-                    <th>Tên sản phẩm</th>
-                    <th>Loại</th>
-                    <th>Giá (VNĐ)</th>
-                    <th>Số lượng</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($products_db as $prod): ?>
-                <tr>
-                    <td><input type="checkbox" class="product-checkbox" data-name="<?= htmlspecialchars($prod['name'], ENT_QUOTES) ?>" data-price="<?= $prod['price'] ?>"></td>
-                    <td><?= htmlspecialchars($prod['product_code']) ?></td>
-                    <td><?= htmlspecialchars($prod['name']) ?></td>
-                    <td><?= htmlspecialchars($prod['category']) ?></td>
-                    <td><?= format_price($prod['price']) ?></td>
-                    <td><input type="number" class="product-qty" value="1" min="1" disabled></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-
-        <input type="hidden" name="products" id="products-input">
-
-        <button type="submit">Xuất Báo giá </button>
-    </form>
-
-    
-<script src="js/product_quote.js"> </script>
-</body>
-</html>

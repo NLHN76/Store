@@ -1,6 +1,7 @@
 <?php
 require_once "product_functions.php";
 
+
 $available_colors = load_colors();
 
 $add_error = "";

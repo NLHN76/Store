@@ -80,6 +80,6 @@
 </div>
 
 <!-- Báo giá -->
-<form action="product_quote.php" method="get" target="_blank" style="margin-top:10px;">
+<form action="quote/product_quote.php" method="get" target="_blank" style="margin-top:10px;">
     <button type="submit">Báo Giá Sản Phẩm</button>
 </form>
