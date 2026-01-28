@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             echo "<script>
             alert('Đăng nhập thành công');
-           window.location.href = 'user_logout.php';
+           window.location.href = 'user_login.html';
          </script>";
 
 

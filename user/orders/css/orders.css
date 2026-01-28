@@ -1,59 +1,84 @@
-
+/* ================== ORDER LIST ================== */
 #order-list {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 18px;
+    gap: 16px;
     margin-top: 16px;
 }
 
-/* Card */
-#order-list > div {
-    padding: 14px !important;
+/* ================== ORDER CARD ================== */
+.order-card {
+    padding: 14px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
 }
 
-/* Tiêu đề */
-#order-list h3 {
-    font-size: 16px;
+/* ================== TITLE ================== */
+.order-card h3 {
+    font-size: 15px;
     margin-bottom: 8px;
     padding-bottom: 6px;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-/* Nội dung chữ */
-#order-list p {
+/* ================== TEXT ================== */
+.order-card p {
     font-size: 13px;
+    line-height: 1.45;
     margin: 2px 0;
-    line-height: 1.4;
 }
 
-#order-list strong {
+.order-card strong {
     font-weight: 600;
 }
 
-
-/* Container ảnh */
+/* ================== IMAGES ================== */
 .order-images {
     display: flex;
-    gap: 12px;
-    margin-bottom: 14px;
+    gap: 10px;
+    margin-bottom: 12px;
     overflow-x: auto;
 }
 
-/* Ảnh sản phẩm */
 .order-image {
-    width: 120px;     
-    height: 120px;
+    width: 110px;
+    height: 110px;
     object-fit: cover;
     border-radius: 10px;
     border: 1px solid #e5e7eb;
     cursor: pointer;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.order-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, .15);
+}
+
+/* ================== BUTTON ================== */
+.order-card button,
+.order-card a {
+    font-size: 12px;
+    padding: 6px 12px;
+    margin-top: 8px;
+    border-radius: 6px;
 }
 
 
 
-/* ===== NÚT HỦY NHỎ LẠI ===== */
-#order-list button {
-    font-size: 12px;
-    padding: 6px 10px;
-    margin-top: 8px;
+
+.scroll-box {
+    max-height: 220px;      
+    overflow-y: auto;       
+    padding-right: 6px;     
+}
+
+/* Tùy chọn: scrollbar gọn hơn */
+.scroll-box::-webkit-scrollbar {
+    width: 6px;
+}
+.scroll-box::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 4px;
 }

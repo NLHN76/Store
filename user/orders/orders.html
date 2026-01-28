@@ -20,6 +20,33 @@
     max-h-[70vh] overflow-y-auto p-2 bg-gray-50 rounded">
 </div>
 
+<!-- ORDER CARD TEMPLATE -->
+<template id="order-card-template">
+    <div class="bg-white shadow-md rounded-lg p-6 flex flex-col">
+
+        <h3 class="order-id text-xl font-bold mb-4"></h3>
+
+        <!-- PRODUCTS -->
+       <div class="order-products space-y-3 scroll-box"></div>
+
+
+        <div class="mt-4 text-sm space-y-1">
+            <p><strong>Tổng số lượng:</strong> <span class="total-quantity"></span></p>
+            <p><strong>Tổng Tiền:</strong> <span class="product-price"></span> VNĐ</p>
+            <p><strong>Ngày Đặt:</strong> <span class="order-date"></span></p>
+            <p>
+                <strong>Trạng Thái:</strong>
+                <span class="order-status"></span>
+            </p>
+
+            <div class="order-actions mt-3"></div>
+        </div>
+
+    </div>
+</template>
+
+
+
 <!-- PAYMENT MODAL -->
 <div id="payment-modal"
      class="fixed inset-0 hidden z-50 bg-black bg-opacity-50 flex items-center justify-center"
@@ -47,13 +74,21 @@
 
 </main>
 
+
+
 <footer class="bg-gray-800 text-white p-4 text-center text-sm">
     <p>Copyright @2025 mobilegear.vn</p>
 </footer>
 
 
 
-<script src="js/function.js"></script>
+<script src="js/status_filter.js"></script>
+<script src="js/order.js"></script>
+<script src="js/render_order.js"></script>
+<script src="js/render_button.js"></script>
+<script src="js/products.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/cancel_order.js"></script>
 <script src="js/products.js"></script>
 </body>
 </html>

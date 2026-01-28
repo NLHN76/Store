@@ -85,7 +85,7 @@ $colors = array_filter(array_map('trim', explode(',', $product['color'] ?? '')))
       </div>
       <div style="display:flex; flex-direction:column; gap:10px;">
         <button type="submit" class="btn-submit">Gửi đánh giá</button>
-        <a href="../user_logout.php" class="btn-back">⬅ Quay về</a>
+        <a href="../user_login.html" class="btn-back">⬅ Quay về</a>
       </div>
     </form>
     
@@ -150,7 +150,7 @@ function addToCartDetail() {
     .then(data => {
         if (data.success) {
             // ✅ chuyển sang giỏ + reload data
-            window.location.href = "../user_logout.php#cart";
+            window.location.href = "../user_login.html#cart";
         } else {
             alert(data.error || '❌ Thêm thất bại');
         }

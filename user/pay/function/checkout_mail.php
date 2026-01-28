@@ -37,3 +37,4 @@ function buildMailBody($name, $total, $items, $address, $user_code) {
     $html .= "<h3>Tổng tiền: " . number_format($total, 0, ',', '.') . " VNĐ</h3>";
     return $html;
 }
+?>
