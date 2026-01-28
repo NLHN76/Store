@@ -30,7 +30,7 @@ function renderProducts(products) {
                       ${colors.map(c => `<option value="${c}">${c}</option>`).join('')}
                   </select>
               </div>`
-            : `<p><strong>Màu sắc:</strong> Không có</p>`;
+            : ``;
 
         const productDiv = document.createElement('div');
         productDiv.className = 'product';

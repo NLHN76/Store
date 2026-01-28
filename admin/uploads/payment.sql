@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th1 27, 2026 lúc 08:17 PM
+-- Thời gian đã tạo: Th1 28, 2026 lúc 10:03 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -94,7 +94,30 @@ INSERT INTO `payment` (`id`, `customer_name`, `customer_email`, `customer_phone`
 (260, 'Huy', 'Duongquanghuy@gmail.com', '0948003196', '310', '9AAG09I0', 'SP0011', 'Bluetooth True Wireless Havit TW976 (x1)', 'prod_695cbabc5f082.png', 1, 1000000.00, 'tai nghe', 'Đen', '2026-01-07 16:56:55', 'Đã hủy', NULL, NULL, NULL, 1),
 (261, 'Huy', 'Duongquanghuy@gmail.com', '0948003196', '310', '9AAG09I0', 'SP0026', 'Baseus Explorer Series Type-C to iPhone 20W 1M (x1)', 'prod_6975dc8ff2a89.jpg', 1, 150000.00, 'cáp sạc', 'Mặc định', '2026-01-25 09:08:53', 'Đã giao hàng', 2, '2026-01-25 09:09:29', NULL, NULL),
 (262, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0006', 'JBL Live Pro 2 (x1)', 'prod_69149a1d2b2b44.12463294.jpg', 1, 1500000.00, 'tai nghe', 'Đen', '2026-01-27 08:24:34', 'Đã hủy', NULL, NULL, NULL, NULL),
-(263, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0007', 'Sony WF-1000XM5 (x1)', 'prod_691520dee469a9.26207248.jpg', 1, 4000000.00, 'tai nghe', 'Đen', '2026-01-27 18:26:20', 'Đã hủy', NULL, NULL, NULL, NULL);
+(263, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0007', 'Sony WF-1000XM5 (x1)', 'prod_691520dee469a9.26207248.jpg', 1, 4000000.00, 'tai nghe', 'Đen', '2026-01-27 18:26:20', 'Đã hủy', NULL, NULL, NULL, NULL),
+(264, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0011', 'Havit TW976 (x1)', 'prod_695cbabc5f082.png', 1, 1000000.00, 'tai nghe', 'Đen', '2026-01-27 19:36:23', 'Đã hủy', NULL, NULL, NULL, NULL),
+(265, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0011', 'Havit TW976 (x1)', 'prod_695cbabc5f082.png', 1, 1000000.00, 'tai nghe', 'Đen', '2026-01-27 19:48:19', 'Đã hủy', NULL, NULL, NULL, NULL),
+(266, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004', 'JBL Wave Beam (x1)', 'prod_69149987e535d7.28187096.jpg', 1, 1200000.00, 'tai nghe', 'Đen', '2026-01-27 19:57:44', 'Đã hủy', NULL, NULL, NULL, NULL),
+(267, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004', 'JBL Wave Beam (x1)', 'prod_69149987e535d7.28187096.jpg', 1, 1200000.00, 'tai nghe', 'Đen', '2026-01-27 20:07:26', 'Đã hủy', NULL, NULL, NULL, NULL),
+(268, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0006', 'JBL Live Pro 2 (x1)', 'prod_69149a1d2b2b44.12463294.jpg', 1, 1500000.00, 'tai nghe', 'Đen', '2026-01-28 03:45:18', 'Đã hủy', NULL, NULL, NULL, NULL),
+(269, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004', 'JBL Wave Beam (x1)', 'prod_69149987e535d7.28187096.jpg', 1, 1200000.00, 'tai nghe', 'Đen', '2026-01-28 04:21:28', 'Đã hủy', NULL, NULL, NULL, NULL),
+(270, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0005', 'JBL Wave Buds 2 (x1)', 'prod_691499b3822bb6.32063747.jpg', 1, 1300000.00, 'tai nghe', 'Đen', '2026-01-28 04:47:35', 'Đã hủy', NULL, NULL, NULL, NULL),
+(271, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0005', 'JBL Wave Buds 2 (x1)', 'prod_691499b3822bb6.32063747.jpg', 1, 1300000.00, 'tai nghe', 'Đen', '2026-01-28 06:33:35', 'Đã hủy', NULL, NULL, NULL, NULL),
+(272, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004, SP0005', 'JBL Wave Beam (x1), JBL Wave Buds 2 (x1)', 'prod_69149987e535d7.28187096.jpg, prod_691499b3822bb6.32063747.jpg', 2, 2500000.00, 'tai nghe', 'Đen, Đen', '2026-01-28 06:55:53', 'Đã hủy', NULL, NULL, NULL, NULL),
+(273, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004, SP0005', 'JBL Wave Beam (x1), JBL Wave Buds 2 (x1)', 'prod_69149987e535d7.28187096.jpg, prod_691499b3822bb6.32063747.jpg', 2, 2500000.00, 'tai nghe, ', 'Đen, Đen', '2026-01-28 07:20:54', 'Đã hủy', NULL, NULL, NULL, NULL),
+(274, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004, SP0005, SP0006', 'JBL Wave Beam (x1), JBL Wave Buds 2 (x1), JBL Live Pro 2 (x1)', 'prod_69149987e535d7.28187096.jpg, prod_691499b3822bb6.32063747.jpg, prod_69149a1d2b2b44.12463294.jpg', 3, 4000000.00, 'tai nghe, ', 'Đen, Đen, Đen', '2026-01-28 07:23:38', 'Đã thanh toán', NULL, NULL, NULL, NULL),
+(275, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004, SP0005', 'JBL Wave Beam (x1), JBL Wave Buds 2 (x1)', 'prod_69149987e535d7.28187096.jpg, prod_691499b3822bb6.32063747.jpg', 2, 2500000.00, 'tai nghe, ', 'Đen, Đen', '2026-01-28 08:06:53', 'Đã hủy', NULL, NULL, NULL, NULL),
+(276, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004, SP0005', 'JBL Wave Beam (x1), JBL Wave Buds 2 (x1)', 'prod_69149987e535d7.28187096.jpg, prod_691499b3822bb6.32063747.jpg', 2, 2500000.00, 'tai nghe, ', 'Đen, Đen', '2026-01-28 08:22:06', 'Đã hủy', NULL, NULL, NULL, NULL),
+(277, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004', 'JBL Wave Beam (x1)', 'prod_69149987e535d7.28187096.jpg', 1, 1200000.00, 'tai nghe', 'Đen', '2026-01-28 08:23:30', 'Đã hủy', NULL, NULL, NULL, NULL),
+(278, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004, SP0005', 'JBL Wave Beam (x1), JBL Wave Buds 2 (x1)', 'prod_69149987e535d7.28187096.jpg, prod_691499b3822bb6.32063747.jpg', 2, 2500000.00, 'tai nghe, ', 'Đen, Đen', '2026-01-28 08:23:46', 'Đã hủy', NULL, NULL, NULL, NULL),
+(279, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004', 'JBL Wave Beam (x1)', 'prod_69149987e535d7.28187096.jpg', 1, 1200000.00, 'tai nghe', 'Đen', '2026-01-28 08:24:26', 'Đã hủy', NULL, NULL, NULL, NULL),
+(280, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004, SP0005', 'JBL Wave Beam (x1), JBL Wave Buds 2 (x1)', 'prod_69149987e535d7.28187096.jpg, prod_691499b3822bb6.32063747.jpg', 2, 2500000.00, 'tai nghe, ', 'Đen, Đen', '2026-01-28 08:24:54', 'Đã hủy', NULL, NULL, NULL, NULL),
+(281, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004, SP0005', 'JBL Wave Beam (x1), JBL Wave Buds 2 (x1)', 'prod_69149987e535d7.28187096.jpg, prod_691499b3822bb6.32063747.jpg', 2, 2500000.00, 'tai nghe, ', 'Đen, Đen', '2026-01-28 08:36:20', 'Chờ xử lý', NULL, NULL, NULL, NULL),
+(282, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004', 'JBL Wave Beam (x1)', 'prod_69149987e535d7.28187096.jpg', 1, 1200000.00, 'tai nghe', 'Đen', '2026-01-28 08:36:54', 'Chờ xử lý', NULL, NULL, NULL, NULL),
+(283, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004, SP0005', 'JBL Wave Beam (x1), JBL Wave Buds 2 (x1)', 'prod_69149987e535d7.28187096.jpg, prod_691499b3822bb6.32063747.jpg', 2, 2500000.00, 'tai nghe, ', 'Đen, Đen', '2026-01-28 08:40:17', 'Chờ xử lý', NULL, NULL, NULL, NULL),
+(284, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0005', 'JBL Wave Buds 2 (x1)', 'prod_691499b3822bb6.32063747.jpg', 1, 1300000.00, '', 'Đen', '2026-01-28 08:43:09', 'Chờ xử lý', NULL, NULL, NULL, NULL),
+(285, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004', 'JBL Wave Beam (x1)', 'prod_69149987e535d7.28187096.jpg', 1, 1200000.00, 'tai nghe', 'Đen', '2026-01-28 08:48:06', 'Chờ xử lý', NULL, NULL, NULL, NULL),
+(286, 'Nam', 'Namdo2003hp@gmail.com', '0948303968', '198 Lê Duẩn Kiến An Hải Phòng', '8BHF5H1K', 'SP0004, SP0005', 'JBL Wave Beam (x1), JBL Wave Buds 2 (x1)', 'prod_69149987e535d7.28187096.jpg, prod_691499b3822bb6.32063747.jpg', 2, 2500000.00, 'tai nghe, ', 'Đen, Đen', '2026-01-28 08:48:19', 'Chờ xử lý', NULL, NULL, NULL, NULL);
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -116,7 +139,7 @@ ALTER TABLE `payment`
 -- AUTO_INCREMENT cho bảng `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=264;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=287;
 
 --
 -- Các ràng buộc cho các bảng đã đổ

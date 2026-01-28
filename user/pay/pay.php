@@ -33,8 +33,8 @@
 
 <div class="cart-summary">
 <h2>Xem Lại Giỏ Hàng</h2>
-<p><strong>Tổng Số Lượng Sản Phẩm:</strong> <?php echo $itemCount; ?></p>
-<p><strong>Tổng Tiền:</strong> <?php echo number_format($totalPrice, 0, ',', '.'); ?> VNĐ</p>
+<p><strong>Tổng số sản phẩm:</strong> <?php echo $itemCount; ?></p>
+<p><strong>Tổng giá trị:</strong> <?php echo number_format($totalPrice, 0, ',', '.'); ?> VNĐ</p>
 <h3>Chi Tiết Sản Phẩm:</h3>
 
 <ul>

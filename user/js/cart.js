@@ -64,6 +64,7 @@ function showNotification(text) {
     }, 1500);
 }
 
+
 // ================= HIỂN THỊ GIỎ HÀNG =================
 function updateCartDisplay() {
     const cartDiv = document.getElementById('cart-items');
@@ -76,8 +77,9 @@ function updateCartDisplay() {
         cartDiv.innerHTML = '<p>Giỏ hàng trống.</p>';
         document.getElementById('checkout').style.display = 'none';
         document.getElementById('cart-quantity').textContent = '0';
-        document.getElementById('total-quantity').textContent = 'Tổng sản phẩm: 0';
-        document.getElementById('total-price').textContent = '0 VNĐ';
+
+        document.getElementById('total-quantity').textContent = 'Tổng số sản phẩm: 0';
+        document.getElementById('total-price').textContent = 'Tổng giá trị: 0 VNĐ';
         return;
     }
 
@@ -127,14 +129,14 @@ function updateCartDisplay() {
         total += item.price * item.quantity;
     });
 
-    totalPrice = total;
 
     document.getElementById('checkout').style.display = 'block';
-    document.getElementById('total-price').textContent =
-        total.toLocaleString('vi-VN') + ' VNĐ';
     document.getElementById('total-quantity').textContent =
-        'Tổng sản phẩm: ' + count;
+        'Tổng số sản phẩm: ' + count;
+    document.getElementById('total-price').textContent =
+        'Tổng giá trị: ' + total.toLocaleString('vi-VN') + ' VNĐ';
     document.getElementById('cart-quantity').textContent = count;
 }
+
 
 
