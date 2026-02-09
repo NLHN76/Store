@@ -3,7 +3,11 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/button.css">
+<link rel="stylesheet" href="css/feedback.css">
 <link rel="stylesheet" href="css/product_detail.css">
+
 <title>Chi tiết sản phẩm - <?= htmlspecialchars($product['name']) ?></title>
 </head>
 <body>
@@ -27,14 +31,17 @@ $colors = array_filter(array_map('trim', explode(',', $product['color'] ?? '')))
             </option>
         <?php endforeach; ?>
     </select>
-</div>
-<?php endif; ?>
+</div><?php endif; ?><div style="margin-top:20px; display:flex; gap:15px; align-items:center;">
+  
+   <button 
+    class="btn-add-cart"
+    onclick="addToCartDetail(this)"
+    data-product-code="<?= htmlspecialchars($product['product_code']) ?>"
+    data-price="<?= $product['price'] ?>"
+>
+    Thêm vào giỏ hàng 
+</button>
 
-    <div style="margin-top:20px; display:flex; gap:15px; align-items:center;">
-    <button onclick="addToCartDetail()"
-            style="padding:10px 16px; background:#28a745; color:white; border:none; cursor:pointer;">
-        🛒 Thêm vào giỏ hàng
-    </button>
 
 </div>
 
@@ -86,7 +93,8 @@ $colors = array_filter(array_map('trim', explode(',', $product['color'] ?? '')))
     </form>
     
   <?php else: ?>
-    <p style="color:red;">Bạn cần đăng nhập để gửi đánh giá.</p>
+      <p style="color:red;">Bạn cần đăng nhập để gửi đánh giá.</p>
+      <a href="../user.html" class="btn-back">⬅ Quay về</a>
   <?php endif; ?>
 
   <h3 style="margin-top:20px;">Đánh giá gần đây</h3>
@@ -127,35 +135,7 @@ $colors = array_filter(array_map('trim', explode(',', $product['color'] ?? '')))
 </div>
 
 
-<script>
-function addToCartDetail() {
-    const colorSelect = document.getElementById('productColor');
-    const color = colorSelect ? colorSelect.value : null;
-
-    fetch('../cart/add_to_cart.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            product_code: "<?= $product['product_code'] ?>",
-            color: color,
-            quantity: 1,
-            price: <?= $product['price'] ?>
-        })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            // ✅ chuyển sang giỏ + reload data
-            window.location.href = "../user_login.html#cart";
-        } else {
-            alert(data.error || '❌ Thêm thất bại');
-        }
-    })
-    .catch(() => alert('❌ Lỗi kết nối'));
-}
-
-
-</script>
+<script src="js/products.js"></script>
 
 
 </body>
