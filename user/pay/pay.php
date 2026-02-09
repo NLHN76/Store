@@ -74,7 +74,7 @@
 <?php endif; ?>
 
 
-<a href="../user_login.html" class="back-button">Quay lại trang chủ</a>
+<a href="../user.html" class="back-button">Quay lại trang chủ</a>
 </div>
 </body>
 </html>         

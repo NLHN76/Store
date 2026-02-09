@@ -88,13 +88,12 @@ $colors = array_filter(array_map('trim', explode(',', $product['color'] ?? '')))
       </div>
       <div style="display:flex; flex-direction:column; gap:10px;">
         <button type="submit" class="btn-submit">Gửi đánh giá</button>
-        <a href="../user_login.html" class="btn-back">⬅ Quay về</a>
+        <a href="../user.html" class="btn-back">⬅ Quay về</a>
       </div>
     </form>
     
   <?php else: ?>
       <p style="color:red;">Bạn cần đăng nhập để gửi đánh giá.</p>
-      <a href="../user.html" class="btn-back">⬅ Quay về</a>
   <?php endif; ?>
 
   <h3 style="margin-top:20px;">Đánh giá gần đây</h3>
