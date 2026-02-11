@@ -1,26 +1,26 @@
-/* Footer */
+/* ================== FOOTER ================== */
 footer {
-    background-color:#343a40 ;
+    background-color: #343a40;
     color: #fff;
     padding: 20px 10px 10px;
     font-family: Arial, sans-serif;
 }
 
+/* ===== CONTAINER ===== */
 .footer-container {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     align-items: flex-start;
     gap: 20px;
 }
 
-/* --- CỘT TRÁI (Mobile Gear) --- */
+/* ===== CỘT TRÁI (Mobile Gear) ===== */
 .footer-column:first-child {
     flex: 1;
-    padding-top: 20px; 
+    padding-top: 20px;
 }
 
-/* --- CỘT GIỮA (Bản đồ) --- */
+/* ===== CỘT GIỮA (Bản đồ) ===== */
 .footer-column:nth-child(2) {
     flex: 1;
     display: flex;
@@ -28,22 +28,25 @@ footer {
     align-items: center;
 }
 
-/* --- CỘT PHẢI (Liên kết nhanh + Social) --- */
+/* ===== CỘT PHẢI (Liên kết + Social) ===== */
 .footer-column:last-child {
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;  
-    text-align: center;   
-    margin-left: auto;    
+    align-items: center;
+    text-align: center;
+    margin-left: auto;
 }
 
-.footer-column h3, .footer-column h4 {
+/* ===== TEXT ===== */
+.footer-column h3,
+.footer-column h4 {
     margin-bottom: 15px;
     color: #fafaf7;
 }
 
-.footer-column p, .footer-column li {
+.footer-column p,
+.footer-column li {
     margin: 5px 0;
 }
 
@@ -52,28 +55,31 @@ footer {
     padding: 0;
 }
 
+/* ===== LINKS ===== */
 .footer-column ul li a {
     color: #fff;
     text-decoration: none;
-    transition: 0.3s;
+    transition: color 0.3s;
 }
 
 .footer-column ul li a:hover {
     color: #f4b400;
 }
 
+/* ===== SOCIAL ===== */
 .social-icons a {
     display: inline-block;
     margin-left: 10px;
     color: #fff;
     font-size: 20px;
-    transition: 0.3s;
+    transition: color 0.3s;
 }
 
 .social-icons a:hover {
     color: #f4b400;
 }
 
+/* ===== BOTTOM ===== */
 .footer-bottom {
     text-align: center;
     margin-top: 20px;
@@ -81,17 +87,4 @@ footer {
     padding-top: 10px;
     font-size: 14px;
     color: #aaa;
-}
-
-@media (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        gap: 30px;
-    }
-
-    /* Trên mobile tất cả căn trái cho dễ đọc */
-    .footer-column:last-child {
-        align-items: flex-start;
-        text-align: left;
-    }
 }

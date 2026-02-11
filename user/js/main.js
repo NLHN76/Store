@@ -1,6 +1,5 @@
 
 // ================= DOM ELEMENTS =================
-const productsContainer = document.getElementById('products-container');
 const searchInput = document.getElementById('searchInput');
 const categoryFilter = document.getElementById('categoryFilter');
 const priceFilter = document.getElementById('priceFilter');

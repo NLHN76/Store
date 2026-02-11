@@ -1,76 +1,101 @@
 // ================= TRANG CHỦ =================
 function renderHome(data) {
-    const homeSection = document.getElementById('home');
-    homeSection.innerHTML = '';
+    renderBanner(data.banner);
+    renderPromotions(data.promotions);
+    renderFeaturedProducts(data.featured_products);
+}
 
-    /* ================= BANNER ================= */
-    if (data.banner) {
-        const b = document.createElement('div');
-        b.className = 'banner';
+/* ================= BANNER ================= */
+function renderBanner(banner) {
+    const bannerBox = document.getElementById('home-banner');
+    bannerBox.innerHTML = '';
 
-        b.innerHTML = `
-            <img src="${data.banner.image}" alt="${data.banner.title}">
-            <div class="banner-content">
-                <h1>${data.banner.title}</h1>
-                <p>${data.banner.description}</p>
-            </div>
-        `;
+    if (!banner) return;
 
-        homeSection.appendChild(b);
-    }
+    const div = document.createElement('div');
+    div.className = 'banner';
 
-    /* ================= KHUYẾN MÃI ================= */
-    if (data.promotions && data.promotions.length) {
-        const promoSection = document.createElement('div');
-        promoSection.className = 'promo-grid';
+    const img = document.createElement('img');
+    img.src = banner.image;
+    img.alt = banner.title;
 
-        data.promotions.forEach(p => {
-            const d = document.createElement('div');
-            d.className = 'promo-item';
+    const content = document.createElement('div');
+    content.className = 'banner-content';
 
-            d.innerHTML = `
-                <img src="${p.image}" alt="${p.title}">
-                <h3>${p.title}</h3>
-                <p>${p.description}</p>
-                <a href="${p.link || '#'}" class="cta-btn">Xem chi tiết</a>
-            `;
+    const h1 = document.createElement('h1');
+    h1.textContent = banner.title;
 
-            promoSection.appendChild(d);
-        });
+    const p = document.createElement('p');
+    p.textContent = banner.description;
 
-        homeSection.appendChild(promoSection);
-    }
+    content.append(h1, p);
+    div.append(img, content);
+    bannerBox.appendChild(div);
+}
 
-    /* ================= SẢN PHẨM NỔI BẬT ================= */
-    if (data.featured_products && data.featured_products.length) {
-        const title = document.createElement('h2');
-        title.className = 'section-title';
-        title.textContent = 'Sản phẩm nổi bật';
-        homeSection.appendChild(title);
+/* ================= PROMOTIONS ================= */
+function renderPromotions(promotions) {
+    const promoBox = document.getElementById('home-promotions');
+    const template = document.getElementById('promotion-template');
 
-        const featuredWrap = document.createElement('div');
-        featuredWrap.className = 'featured-grid';
+    promoBox.innerHTML = '';
 
-        data.featured_products.forEach(p => {
-            // ⚠️ bảo vệ tránh lỗi
-            if (!p.product_code) return;
+    if (!promotions || !promotions.length) return;
 
-            const item = document.createElement('div');
-            item.className = 'featured-item';
+    promotions.forEach(p => {
+        const clone = template.content.cloneNode(true);
 
-          item.innerHTML = `
-    <img src="${p.image}" alt="${p.name}" style="cursor:pointer">
-    <h4>${p.name}</h4>
-    <p class="price">${Number(p.price).toLocaleString()} VNĐ</p>
+        const img = clone.querySelector('.promo-img');
+        img.src = p.image;
+        img.alt = p.title;
 
-    <button class="btn-find"
-        onclick="goToProduct('${p.product_code}')">
-        Khám phá sản phẩm
-    </button>
-`;
-            featuredWrap.appendChild(item);
-        });
+        clone.querySelector('.promo-title').textContent = p.title;
+        clone.querySelector('.promo-desc').textContent = p.description;
 
-        homeSection.appendChild(featuredWrap);
-    }
+        const link = clone.querySelector('.cta-btn');
+        link.href = p.link || '#';
+
+        promoBox.appendChild(clone);
+    });
+}
+
+/* ================= FEATURED PRODUCTS ================= */
+function renderFeaturedProducts(products) {
+    const grid = document.getElementById('home-featured');
+    const title = document.getElementById('featured-title');
+
+    grid.innerHTML = '';
+    title.style.display = 'none';
+
+    if (!products || !products.length) return;
+
+    title.style.display = 'block';
+
+    products.forEach(p => {
+        if (!p.product_code) return;
+
+        const item = document.createElement('div');
+        item.className = 'featured-item';
+
+        const img = document.createElement('img');
+        img.src = p.image;
+        img.alt = p.name;
+        img.style.cursor = 'pointer';
+        img.onclick = () => goToProduct(p.product_code);
+
+        const name = document.createElement('h4');
+        name.textContent = p.name;
+
+        const price = document.createElement('p');
+        price.className = 'price';
+        price.textContent = Number(p.price).toLocaleString() + ' VNĐ';
+
+        const btn = document.createElement('button');
+        btn.className = 'btn-find';
+        btn.textContent = 'Khám phá sản phẩm';
+        btn.onclick = () => goToProduct(p.product_code);
+
+        item.append(img, name, price, btn);
+        grid.appendChild(item);
+    });
 }

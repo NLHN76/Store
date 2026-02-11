@@ -7,10 +7,10 @@ async function checkUnpaidOrdersForMenu() {
 
         const hasUnpaid = data.some(order => order.status === "Chờ thanh toán");
 
-        // ❗ ở mục Đơn Hàng
+    
         const orderAlert = document.getElementById('order-alert');
 
-        // ❗ ở chữ Tài Khoản
+    
         const accountAlert = document.getElementById('account-order-alert');
 
         if (hasUnpaid) {

@@ -56,7 +56,31 @@
 </header>
 
 <main>
-    <section id="home"></section>
+   <section id="home">
+    <!-- Banner -->
+    <div id="home-banner"></div>
+    
+    <template id="promotion-template">
+    <div class="promo-item">
+        <img class="promo-img">
+        <h3 class="promo-title"></h3>
+        <p class="promo-desc"></p>
+        <a class="cta-btn">Xem chi tiết</a>
+    </div>
+    </template>
+    
+    <!-- Promotions -->
+    <div id="home-promotions" class="promo-grid"></div>
+
+    <!-- Featured title -->
+    <h2 class="section-title" id="featured-title" style="display:none;">
+        Sản phẩm nổi bật
+    </h2>
+
+    <!-- Featured products -->
+    <div id="home-featured" class="featured-grid"></div>
+   </section>
+
 
     
     <section id="products">
@@ -78,8 +102,31 @@
                 <option value="1000+">Trên 1 triệu</option>
             </select>
         </div>
-        <div id="products-container"></div>
+          <div id="productsContainer"></div>
     </section>
+
+
+    <template id="product-template">
+    <div class="product">
+        <img class="product-image" style="width:150px;height:150px;cursor:pointer;">
+        <h3 class="product-name"></h3>
+        <p><strong>Giá:</strong> <span class="product-price"></span> VNĐ</p>
+
+        <div class="color-select-container" style="display:none">
+            <label><strong>Màu sắc:</strong></label>
+            <select class="color-select"></select>
+        </div>
+
+        <p><strong>Kho:</strong> <span class="stock">0</span></p>
+        <p class="stock-warning" style="display:none;color:red;">
+            ❌ Màu này đã hết hàng!
+        </p>
+
+        <button class="add-cart-btn">Mua sản phẩm</button>
+        <p><strong>Đánh giá:</strong> ⭐ <span class="avg-rating"></span></p>
+    </div>
+</template>
+
 
 
   <section id="cart">
@@ -145,6 +192,7 @@
         </form>
     </section>
       
+
     <section id="profile-section">
     <div class="modal-content">
         <form id="profile-form">
@@ -171,6 +219,7 @@
    
 
 
+
 <!-- CHAT BOX -->
 <div id="messenger-box" style="display:none">
     <div class="chat-header">
@@ -186,8 +235,7 @@
     </div>
 </div>
 
-
-   <div class="notification" id="notification"></div>
+ <div id="notification" class="notification"></div>
 
 </main>
 
@@ -213,6 +261,7 @@
                 <li><a href="#home" onclick="showSection('home')">Trang Chủ</a></li>
                 <li><a href="#products" onclick="showSection('products')">Sản Phẩm</a></li>
                 <li><a href="#cart" onclick="showSection('cart')">Giỏ Hàng</a></li>
+                <li><a href="#contact" onclick="showSection('contact')"> Liên Hệ</a></li>
                 
             </ul>
             <h4>Kết nối với chúng tôi</h4>
@@ -245,9 +294,9 @@
 <script src="js/contact.js"></script>
 <script src="js/logout.js"></script>
 <script src="js/search.js"></script>
-<script src="js/cart.js"></script>
 <script src="js/home.js"></script>
 <script src="js/products_detail.js"></script>
+<script src="js/cart.js"></script>
 <script src="js/profile.js"></script>
 <script src="js/register_login.js"></script>
 </body>

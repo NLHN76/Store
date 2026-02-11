@@ -1,14 +1,12 @@
-/* Khung chứa ô tìm kiếm và lọc danh mục */
-/* Filter bar */
+/* ================== FILTER BAR ================== */
 .filter-bar {
     display: flex;
-    flex-wrap: wrap; 
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     margin-bottom: 15px;
 }
 
-/* Tìm kiếm */
+/* ===== SEARCH ===== */
 #searchInput {
     padding: 6px 10px;
     width: 280px;
@@ -16,7 +14,7 @@
     border: 1px solid #ccc;
 }
 
-/* Dropdown category và price */
+/* ===== DROPDOWN ===== */
 #categoryFilter,
 #priceFilter {
     padding: 6px 10px;
@@ -27,28 +25,13 @@
     transition: border-color 0.3s, transform 0.2s;
 }
 
-/* Hover effect */
 #categoryFilter:hover,
 #priceFilter:hover {
     border-color: #ff5722;
     transform: translateY(-1px);
 }
 
-/* Khi priceFilter hiện ra */
+/* ===== PRICE FILTER (ẨN BAN ĐẦU) ===== */
 #priceFilter {
-    display: none; 
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-    .filter-bar {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    #searchInput,
-    #categoryFilter,
-    #priceFilter {
-        width: 100%;
-    }
+    display: none;
 }
