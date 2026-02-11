@@ -18,7 +18,7 @@ function addToCartDetail(btn) {
     .then(res => res.json())
     .then(data => {
         if (data.success) {
-            window.location.href = "../user_login.html#cart";
+            window.location.href = "../user.html#cart";
         } else {
             alert(data.error || '❌ Thêm thất bại');
         }

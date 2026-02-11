@@ -9,13 +9,15 @@
   <link rel="stylesheet" href="css/footer.css">
   <link rel="stylesheet" href="css/home.css">
   <link rel="stylesheet" href="css/products.css">
-    <link rel="stylesheet" href="css/menu.css">
+ <link rel="stylesheet" href="css/menu.css">
   <link rel="stylesheet" href="css/register_login.css">
   <link rel="stylesheet" href="css/cart.css">
   <link rel="stylesheet" href="css/features_products.css">
+  <link rel="stylesheet" href="css/notification.css">
+  <link rel="stylesheet" href="css/order_alert.css">
   <link rel="stylesheet" href="css/search.css">
   <link rel="stylesheet" href="css/contact.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 <header>
@@ -25,12 +27,13 @@
             <li> <a href="#home" onclick="showSection('home')"><i class="fa fa-home"></i> Trang Chủ </a></li>
             <li><a href="#products" onclick="showSection('products')"><i class="fas fa-box"></i> Sản Phẩm</a></li>
             <li><a href="#cart" onclick="showSection('cart')"><i class="fas fa-shopping-cart"></i> Giỏ Hàng (<span id="cart-quantity">0</span>)</a></li>
-               <li><a href="#contact" onclick="showSection('contact')"><i class="fas fa-phone"></i> Liên Hệ</a></li>
-           <li id="login-menu">  <a href="#login" onclick="showSection('login')"> <i class="fas fa-right-to-bracket"></i> Đăng Nhập </a></li>
+            <li><a href="#contact" onclick="showSection('contact')"><i class="fas fa-phone"></i> Liên Hệ</a></li>
+            <li id="login-menu">  <a href="#login" onclick="showSection('login')"> <i class="fas fa-right-to-bracket"></i> Đăng Nhập </a></li>
 
             <li class="account-menu hidden" id="account-menu">
     <a href="#" id="account-btn">
-        <i class="fas fa-user"></i> Tài Khoản
+        <i class="fas fa-user"></i>
+        <span id="account-name">Tài Khoản</span>
         <span id="account-order-alert" class="order-alert hidden">❗</span>
     </a>
 
@@ -46,6 +49,7 @@
         <li><a href="#" onclick="logout()">Đăng Xuất</a></li>
     </ul>
 </li>
+
 
         </ul>
     </nav>
@@ -183,7 +187,8 @@
 </div>
 
 
-       
+   <div class="notification" id="notification"></div>
+
 </main>
 
 
@@ -226,14 +231,14 @@
 <!-- Chat Zalo & Messenger -->
 <a href="https://zalo.me/0587911287" target="_blank" id="zalo-float"><img src="../admin/uploads/download.png" alt="Chat Zalo" class="zalo-icon"></a>
 <!-- FLOAT BUTTON -->
-<a href="javascript:void(0);" id="messenger-float">
-    <img src="../admin/uploads/mess.jpg" class="messenger-icon">
-    <span id="messenger-badge" class="chat-badge" style="display:none">1</span>
-</a>
+<div id="messenger-float">
+  <img src="../admin/uploads/mess.jpg" class="messenger-icon">
+  <span id="messenger-badge" class="chat-badge" style="display:none">1</span>
+</div>
 
 
 <script src="js/check_login.js"></script>
-<script src="js/notification.js"></script>
+<script src="js/check_orders.js"></script>
 <script src="js/chat.js"></script>
 <script src="js/pay.js"></script>
 <script src="js/main.js"></script>
@@ -246,4 +251,5 @@
 <script src="js/profile.js"></script>
 <script src="js/register_login.js"></script>
 </body>
+
 </html>

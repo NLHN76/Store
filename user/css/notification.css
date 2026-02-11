@@ -1,0 +1,15 @@
+/*Thông báo*/
+#notification {
+  display: none;
+  background-color: #f70101;
+  color: white;
+  padding: 15px 25px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  font-size: 1rem;
+}
