@@ -1,39 +1,37 @@
-/* ================= FLOAT ICONS ================= */
-#zalo-float,
-#messenger-float {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  z-index: 1000;
+/* ===== FLOAT WRAPPER ===== */
+.messenger-float {
+    position: fixed;
+    bottom: 120px;  
+    right: 20px;
+    cursor: pointer;
+    z-index: 999;
 }
 
-#messenger-float {
-  margin-bottom: 80px;
-}
-
-.zalo-icon,
+/* ===== ICON ===== */
 .messenger-icon {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  box-shadow: 0 0 10px rgba(0,0,0,0.25);
-  cursor: pointer;
-  transition: transform 0.2s ease;
-}
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
 
-.zalo-icon:hover,
-.messenger-icon:hover {
-  transform: scale(1.1);
 }
 
 
-.chat-open #messenger-float {
-  display: none;
+/* ===== ZALO FLOAT ===== */
+.zalo-float {
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    z-index: 999;
+}
+
+.zalo-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
 }
 
 /* ================= CHAT BOX ================= */
-#messenger-box {
+.messenger-box {
   display: none;
   position: fixed;
   bottom: 90px;
@@ -49,22 +47,12 @@
   animation: chatFadeUp 0.25s ease;
 }
 
-@keyframes chatFadeUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
 
 /* ================= HEADER ================= */
 .chat-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   padding: 12px 14px;
   background: linear-gradient(135deg, #4CAF50, #43a047);
   color: #fff;
@@ -76,103 +64,120 @@
   background: rgba(255,255,255,0.25);
   border: none;
   color: #fff;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   cursor: pointer;
 }
 
 .chat-header button:hover {
-  background: rgba(255,255,255,0.4);
+  background: rgba(255,255,255,0.45);
 }
 
 /* ================= MESSAGES ================= */
-#messenger-messages {
+.messenger-messages {
   height: 300px;
   padding: 12px;
   overflow-y: auto;
   background: #f5f7f9;
   font-size: 14px;
+  scroll-behavior: smooth;
 }
 
-#messenger-messages::-webkit-scrollbar {
+.messenger-messages::-webkit-scrollbar {
   width: 6px;
 }
-#messenger-messages::-webkit-scrollbar-thumb {
-  background: #ccc;
+
+.messenger-messages::-webkit-scrollbar-thumb {
+  background: #cfcfcf;
   border-radius: 6px;
 }
 
-/* Bubble */
+/* ================= BUBBLE ================= */
 .admin-message,
 .user-message {
-  padding: 9px 12px;
+  padding: 10px 14px;
   margin: 6px 0;
-  border-radius: 14px;
-  max-width: 75%;
-  line-height: 1.4;
-  word-wrap: break-word;
+  border-radius: 16px;
+  max-width: 80%;
+  line-height: 1.45;
+  word-break: break-word;
+  box-sizing: border-box;
 }
 
 .admin-message {
   background: #e4e6eb;
   color: #000;
-  border-top-left-radius: 4px;
+  border-top-left-radius: 6px;
 }
 
 .user-message {
   background: linear-gradient(135deg, #4CAF50, #43a047);
   color: #fff;
   margin-left: auto;
-  border-top-right-radius: 4px;
-  text-align: right;
+  border-top-right-radius: 6px;
+  text-align: left;
 }
 
 /* ================= INPUT ================= */
 .chat-input {
   display: flex;
   gap: 8px;
-  padding: 8px;
+  padding: 10px;
   border-top: 1px solid #e0e0e0;
   background: #fff;
+  align-items: flex-end;
 }
 
-#messenger-input {
-  flex: 1;
+.messenger-input {
+  flex: 1 1 auto;      
+  width: 100%;
   border: none;
   outline: none;
-  padding: 10px 12px;
+  padding: 1px 10px;
   font-size: 14px;
-  border-radius: 20px;
+  line-height: 1.5;
+  border-radius: 16px;
   background: #f1f3f4;
+  resize: none;
+  min-height: 56px;
+  max-height: 140px;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
-#send-messenger {
+
+/* ================= SEND BUTTON ================= */
+.send-messenger {
   border: none;
   background: #4CAF50;
   color: #fff;
-  padding: 9px 16px;
-  border-radius: 20px;
+  width: 52px;         
+  height: 56px;
+  transform: translateY(-15px);
+  border-radius: 16px;
   cursor: pointer;
+  font-size: 13px;
+  padding: 0;
 }
 
-#send-messenger:hover {
+.send-messenger:hover {
   background: #43a047;
 }
 
 /* ================= BADGE ================= */
-#messenger-badge {
+.chat-badge {
   display: none;
   position: absolute;
   top: -5px;
   right: -5px;
-  background: red;
-  color: white;
-  font-size: 12px;
-  font-weight: bold;
+  background: #ff3b30;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
   width: 18px;
   height: 18px;
-  text-align: center;
   line-height: 18px;
+  text-align: center;
   border-radius: 50%;
 }

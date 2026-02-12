@@ -1,6 +1,5 @@
-/* Cart Styles */
-
-#cart {
+/* ================= CART ================= */
+.cart-section {
   background-color: #fefefe;
   padding: 35px 30px;
   max-width: 700px;
@@ -11,14 +10,16 @@
   transition: all 0.3s ease;
 }
 
-#cart h2 {
+/* TIÊU ĐỀ */
+.cart-title {
   text-align: center;
   color: #2c3e50;
   margin-bottom: 25px;
   font-size: 24px;
 }
 
-#cart-items {
+/* DANH SÁCH SẢN PHẨM */
+.cart-items {
   border-top: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
   padding: 15px 0;
@@ -28,8 +29,9 @@
   color: #333;
 }
 
-#total-quantity,
-#total-price {
+/* TỔNG SỐ LƯỢNG & TỔNG TIỀN */
+.cart-total-qty,
+.cart-total-price {
   font-size: 17px;
   margin-bottom: 10px;
   color: #444;
@@ -38,19 +40,43 @@
   padding: 0 5px;
 }
 
-  #checkout {
-    display: block;
-    width: 100%;
-    padding: 12px 24px;
-    background-color: #2e832e;
-    color: white;
+/* NÚT ĐẶT HÀNG */
+.cart-checkout-btn {
+  display: block;
+  width: 100%;
+  padding: 12px 24px;
+  background-color: #2e832e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.cart-checkout-btn:hover {
+  background-color: #258f35;
+}
+
+
+/* MỖI SẢN PHẨM TRONG GIỎ */
+.cart-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 15px;
+}
+
+/* NÚT + - XÓA */
+.cart-item button {
+    width: 36px;
+    height: 32px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 1.1rem;
-    transition: background-color 0.2s ease-in-out;
-  }
-  
-  #checkout:hover {
-    background-color: #258f35;
-  }
+    font-size: 14px;
+    background: #2e943c;
+}
+

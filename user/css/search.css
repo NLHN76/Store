@@ -1,37 +1,27 @@
-/* ================== FILTER BAR ================== */
-.filter-bar {
+/* Section sản phẩm */
+.products-section {
+    padding: 20px;
+}
+
+/* Thanh lọc */
+.products-filter {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 15px;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
-/* ===== SEARCH ===== */
-#searchInput {
-    padding: 6px 10px;
-    width: 280px;
-    border-radius: 6px;
+/* Ô tìm kiếm */
+.filter-input {
+    flex: 1;
+    padding: 8px;
     border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
-/* ===== DROPDOWN ===== */
-#categoryFilter,
-#priceFilter {
-    padding: 6px 10px;
-    border-radius: 6px;
+/* Select */
+.filter-select {
+    padding: 8px;
     border: 1px solid #ccc;
-    background-color: #fff;
-    cursor: pointer;
-    transition: border-color 0.3s, transform 0.2s;
+    border-radius: 4px;
 }
 
-#categoryFilter:hover,
-#priceFilter:hover {
-    border-color: #ff5722;
-    transform: translateY(-1px);
-}
-
-/* ===== PRICE FILTER (ẨN BAN ĐẦU) ===== */
-#priceFilter {
-    display: none;
-}
