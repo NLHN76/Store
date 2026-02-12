@@ -1,5 +1,6 @@
 <?php
 require_once "../../db.php";
+
 $user_id = intval($_GET['user_id'] ?? 0);
 if (!$user_id) exit("Chưa chọn user!");
 
@@ -13,28 +14,34 @@ $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $res = $stmt->get_result();
 
-$html = '';
 $last_id = 0;
+?>
 
-while ($row = $res->fetch_assoc()) {
-    $content = nl2br(htmlspecialchars($row['content']));
-    $time = date('H:i', strtotime($row['created_at']));
-    $last_id = max($last_id, $row['id']);
+<?php while ($row = $res->fetch_assoc()): ?>
 
-    if ($row['sender_role'] === 'user') {
-        $html .= '
+    <?php
+        $content = nl2br(htmlspecialchars($row['content']));
+        $time    = date('H:i', strtotime($row['created_at']));
+        $last_id = max($last_id, $row['id']);
+    ?>
+
+    <?php if ($row['sender_role'] === 'user'): ?>
         <div class="alert alert-light text-start p-2 mb-2 rounded">
-            <strong>' . htmlspecialchars($row['user_name']) . ':</strong> ' . $content . '
-            <div class="msg-time text-start">' . $time . '</div>
-        </div>';
-    } else {
-        $html .= '
+            <strong><?= htmlspecialchars($row['user_name']) ?>:</strong>
+            <?= $content ?>
+            <div class="msg-time text-start"><?= $time ?></div>
+        </div>
+    <?php else: ?>
         <div class="alert alert-success text-end p-2 mb-2 rounded">
-            <strong>Bạn:</strong> ' . $content . '
-            <div class="msg-time text-end">' . $time . '</div>
-        </div>';
-    }
-}
+            <strong>Bạn:</strong>
+            <?= $content ?>
+            <div class="msg-time text-end"><?= $time ?></div>
+        </div>
+    <?php endif; ?>
+
+<?php endwhile; ?>
+
+<?php
 $stmt->close();
 
 // ===== UPDATE LAST SEEN =====
@@ -49,5 +56,6 @@ if ($last_id > 0) {
     $stmt2->close();
 }
 
-echo $html;
+$conn->close();
 exit;
+?>

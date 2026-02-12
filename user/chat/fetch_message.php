@@ -14,27 +14,30 @@ $stmt = $conn->prepare("
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
 $result = $stmt->get_result();
+?>
 
-$html = '';
-while ($row = $result->fetch_assoc()) {
+<?php while ($row = $result->fetch_assoc()): ?>
 
-    $content = nl2br(htmlspecialchars($row['content']));
-    $time = date('H:i', strtotime($row['created_at']));
+    <?php
+        $content = nl2br(htmlspecialchars($row['content']));
+        $time = date('H:i', strtotime($row['created_at']));
+    ?>
 
-    if ($row['sender_role'] === 'user') {
-        $html .= '
+    <?php if ($row['sender_role'] === 'user'): ?>
         <div class="user-message">
-            <strong>Bạn:</strong> ' . $content . '
-            <div class="msg-time">' . $time . '</div>
-        </div>';
-    } else {
-        $html .= '
+            <strong>Bạn:</strong> <?= $content ?>
+            <div class="msg-time"><?= $time ?></div>
+        </div>
+    <?php else: ?>
         <div class="admin-message">
-            <strong>Admin:</strong> ' . $content . '
-            <div class="msg-time">' . $time . '</div>
-        </div>';
-    }
-}
+            <strong>Admin:</strong> <?= $content ?>
+            <div class="msg-time"><?= $time ?></div>
+        </div>
+    <?php endif; ?>
 
-echo $html;
+<?php endwhile; ?>
+
+<?php
+$stmt->close();
 $conn->close();
+?>

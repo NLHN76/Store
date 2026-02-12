@@ -1,5 +1,4 @@
 <?php
-
 require_once "../db.php";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -9,8 +8,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $password = $_POST['login-password'];
 
     $stmt = $conn->prepare("
-        SELECT id, name, password, user_code 
-        FROM users 
+        SELECT id, name, password, user_code
+        FROM users
         WHERE email = ? AND name = ?
         LIMIT 1
     ");
@@ -31,24 +30,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION['user_name'] = $db_name;
             $_SESSION['user_code'] = $user_code;
 
-            // ✅ LƯU LOCALSTORAGE + CHUYỂN TRANG
-            echo "<script>
-                localStorage.setItem('isLoggedIn','true');
-                localStorage.setItem('user_name','" . addslashes($db_name) . "');
-                alert('Đăng nhập thành công');
-                window.location.href = 'user.html';
-            </script>";
+            // ✅ CHUYỂN TRANG 
+            header("Location: user.html");
             exit;
 
         } else {
-            echo "<div style='color:red;'>Sai mật khẩu.</div>";
+            $error = "Sai mật khẩu.";
         }
 
     } else {
-        echo "<div style='color:red;'>Email hoặc tên không đúng.</div>";
+        $error = "Email hoặc tên không đúng.";
     }
 
     $stmt->close();
 }
 
 $conn->close();
+?>

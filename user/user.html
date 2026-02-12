@@ -211,25 +211,28 @@
     </div>
 
 
-    <section id="contact" class="contact-section" style="display:none;">
+   <section id="contact" class="contact-section" style="display:none;">
 
     <form id="contact-form" class="contact-form">
-            <h2 class="contact-title">Liên Hệ</h2>
+        <h2 class="contact-title">Liên Hệ</h2>
+
         <label for="name">Tên:</label>
-        <input type="text" id="name" class="contact-input" required>
+        <input type="text" id="name" name="name" class="contact-input" required>
 
         <label for="email">Email:</label>
-        <input type="email" id="email" class="contact-input" required>
+        <input type="email" id="email" name="email" class="contact-input" required>
 
         <label for="phone">Số điện thoại:</label>
-        <input type="tel" id="phone" class="contact-input" required>
+        <input type="tel" id="phone" name="phone" class="contact-input" required>
 
         <label for="message">Nội dung:</label>
-        <textarea id="message" class="contact-textarea" required></textarea>
+        <textarea id="message" name="message" class="contact-textarea" required></textarea>
 
         <button type="submit" class="contact-btn">Gửi</button>
     </form>
-   </section>
+
+</section>
+
 
 
   <section id="profile-section" class="profile-section">

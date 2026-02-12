@@ -40,18 +40,24 @@ if ($result && $result->num_rows > 0) {
     }
 }
 // ----------------- 3. XÓA THỦ CÔNG -----------------
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['delete'])) {
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['delete'])) {
+
     $id = intval($_POST['id']); // đảm bảo là số nguyên
-    $delete_sql = "DELETE FROM contact WHERE id = ?";
-    $stmt = $conn->prepare($delete_sql);
+
+    $stmt = $conn->prepare("DELETE FROM contact WHERE id = ?");
     $stmt->bind_param("i", $id);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Đã xóa thành công!'); window.location.href='';</script>";
-        exit;
+        $_SESSION['msg'] = "Đã xóa thành công!";
     } else {
-        echo "<script>alert('Xóa không thành công.');</script>";
+        $_SESSION['msg'] = "Xóa không thành công.";
     }
+
+    $stmt->close();
+
+    // reload trang 
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
 }
 
 // ----------------- 4. TÌM KIẾM LIÊN HỆ  -----------------
