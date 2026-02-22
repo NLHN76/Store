@@ -1,7 +1,7 @@
 <?php
 require_once "../db.php";
 
-// Kiểm tra đăng nhập (nếu muốn bắt buộc)
+// Kiểm tra đăng nhập 
 $userId = $_SESSION['user_id'] ?? null;
 
 // Khi gửi form
