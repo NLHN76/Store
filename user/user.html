@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="css/contact.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
 <header>
     <h1>Mobile Gear</h1>
@@ -30,6 +31,7 @@
             <li><a href="#cart" onclick="showSection('cart')"><i class="fas fa-shopping-cart"></i> Giỏ Hàng (<span id="cart-quantity">0</span>)</a></li>
             <li><a href="#contact" onclick="showSection('contact')"><i class="fas fa-phone"></i> Liên Hệ</a></li>
             <li id="login-menu">  <a href="#login" onclick="showSection('login')"> <i class="fas fa-right-to-bracket"></i> Đăng Nhập </a></li>
+
            <li id="account-menu" class="account-menu hidden">
 
     <a href="#" id="account-btn" class="account-btn">  <i class="fas fa-user account-icon"></i>
@@ -45,16 +47,13 @@
 
  <li class="dropdown-item"><a href="orders/orders.html" class="dropdown-link order-link"> Đơn Hàng <span id="order-alert"  class="order-alert hidden"> ❗</span> </a> </li>
 
-        <li class="dropdown-item">  <a href="#"  class="dropdown-link logout-link"  onclick="logout()"> Đăng Xuất </a></li>
+ <li class="dropdown-item">  <a href="#"  class="dropdown-link logout-link"  onclick="logout()"> Đăng Xuất </a></li>
 
-    </ul>
-</li>
+     </ul>
+           </li>
 
-    </ul>
-</li>
-
-
-        </ul>
+    
+       </ul>
     </nav>
 </header>
 
@@ -157,12 +156,7 @@
     </div>
 
     <button
-        id="checkout"
-        class="cart-checkout-btn"
-        style="display: none;"
-        onclick="checkout()"
-    >
-        Đặt hàng
+        id="checkout" class="cart-checkout-btn" style="display: none;" onclick="checkout()" > Đặt hàng
     </button>
 </section>
 
@@ -355,7 +349,6 @@
 </footer>
 
 <!-- Chat Zalo & Messenger -->
-<!-- Chat Zalo -->
 <a href="https://zalo.me/0587911287" target="_blank"
    id="zalo-float" class="zalo-float">
     <img src="../admin/uploads/download.png" class="zalo-icon">
