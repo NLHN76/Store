@@ -165,6 +165,7 @@
     <div id="login-section" class="container" style="display:none;">
         <h1>Đăng Nhập</h1>
         <form id="login-form" class="form" method="POST" action="login.php">
+          
             <div class="form-group">
                 <label for="login-name">Tên:</label>
                 <input type="text" id="login-name" name="login-name" required>
@@ -178,12 +179,14 @@
                 <input type="password" id="login-password" name="login-password" required>
                 <span class="toggle-password" onclick="togglePassword('login-password')">👁️</span>
             </div>
+              <div id="login-error" style="color:red; margin-bottom:10px;"></div>
             <button type="submit">Đăng Nhập</button>
             <p class="register-link">Chưa có tài khoản? <a href="#register" onclick="showSection('register')"><i class="fas fa-user-plus"></i> Đăng ký tại đây</a></p>
             <p><a href="password/forgot_password.php">Quên mật khẩu?</a></p>
         </form>
     </div>
 
+    
     <div id="register-section" class="container" style="display:none;">
         <h2>Đăng Ký</h2>
         <form id="register-form" class="form" method="POST" action="register.php">
@@ -360,7 +363,7 @@
     <span id="messenger-badge" class="chat-badge" style="display:none">1</span>
 </div>
 
-
+<script src="js/login-alert.js"></script>
 <script src="js/check_login.js"></script>
 <script src="js/check_orders.js"></script>
 <script src="js/main.js"></script>

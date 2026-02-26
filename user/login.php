@@ -1,11 +1,19 @@
 <?php
+
 require_once "../db.php";
+
+header('Content-Type: application/json');
+
+$response = [
+    "success" => false,
+    "message" => ""
+];
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
-    $email    = trim($_POST['login-email']);
-    $name     = trim($_POST['login-name']);
-    $password = $_POST['login-password'];
+    $email    = trim($_POST['login-email'] ?? '');
+    $name     = trim($_POST['login-name'] ?? '');
+    $password = $_POST['login-password'] ?? '';
 
     $stmt = $conn->prepare("
         SELECT id, name, password, user_code
@@ -25,25 +33,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if (password_verify($password, $hashed_password)) {
 
-            // ✅ LƯU SESSION
             $_SESSION['user_id']   = $id;
             $_SESSION['user_name'] = $db_name;
             $_SESSION['user_code'] = $user_code;
 
-            // ✅ CHUYỂN TRANG 
-            header("Location: user.html");
-            exit;
+            $response["success"] = true;
 
         } else {
-            $error = "Sai mật khẩu.";
+            $response["message"] = "Sai mật khẩu.";
         }
 
     } else {
-        $error = "Email hoặc tên không đúng.";
+        $response["message"] = "Email hoặc tên không đúng.";
     }
 
     $stmt->close();
 }
 
 $conn->close();
-?>
+echo json_encode($response);
