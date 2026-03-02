@@ -1,7 +1,3 @@
-// ================= GIỎ HÀNG TOÀN CỤC =================
-let cart = [];
-let totalPrice = 0;
-let allProducts = [];
 
 // ================= THÊM VÀO GIỎ =================
 function addToCart(btn) {
