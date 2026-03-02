@@ -5,9 +5,10 @@ function renderOrders(orders) {
 
     if (!orders || orders.length === 0) {
         orderList.innerHTML = `
-            <p class="col-span-full text-center text-gray-500">
+            <p class="message message-empty">
                 Không có đơn hàng nào
-            </p>`;
+            </p>
+        `;
         return;
     }
 

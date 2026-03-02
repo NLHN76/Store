@@ -1,5 +1,3 @@
-
-
 /* ================== HELPER ================== */
 function splitField(value) {
     if (!value) return [];
@@ -10,7 +8,11 @@ function createOrderCard(order) {
     const template = document.getElementById('order-card-template');
     const card = template.content.cloneNode(true);
 
-    const status = statusMap[order.status] || { icon: "❓", class: "text-gray-500" };
+    const status = statusMap[order.status] || {
+        icon: "❓",
+        class: "status-unknown"
+    };
+
     const price = Number(order.total_price).toLocaleString('vi-VN');
 
     /* ===== ORDER INFO ===== */
@@ -19,7 +21,7 @@ function createOrderCard(order) {
     card.querySelector('.order-date').textContent = order.order_date;
 
     const statusEl = card.querySelector('.order-status');
-    statusEl.className = status.class;
+    statusEl.className = `order-status ${status.class}`;
     statusEl.textContent = `${status.icon} ${order.status}`;
 
     /* ===== SPLIT PRODUCTS ===== */
@@ -27,42 +29,33 @@ function createOrderCard(order) {
     const colors = splitField(order.color);
     const images = splitField(order.image);
 
-    let quantities = [];
-    if (String(order.product_quantity).includes(',')) {
-        quantities = splitField(order.product_quantity).map(q => parseInt(q) || 0);
-    } else {
-        quantities = names.map(() => parseInt(order.product_quantity) || 0);
-    }
-
     let totalQuantity = 0;
 
-if (String(order.product_quantity).includes(',')) {
-    splitField(order.product_quantity).forEach(q => {
-        totalQuantity += Number(q);
-    });
-} else {
-    totalQuantity = Number(order.product_quantity);
-}
+    if (String(order.product_quantity).includes(',')) {
+        splitField(order.product_quantity).forEach(q => {
+            totalQuantity += Number(q) || 0;
+        });
+    } else {
+        totalQuantity = Number(order.product_quantity) || 0;
+    }
 
-// GÁN RA HTML
-card.querySelector('.total-quantity').textContent = totalQuantity;
+    card.querySelector('.total-quantity').textContent = totalQuantity;
 
-
-    /* ===== RENDER PRODUCTS  ===== */
+    /* ===== RENDER PRODUCTS ===== */
     const productBox = card.querySelector('.order-products');
     productBox.innerHTML = '';
 
     names.forEach((name, index) => {
         const productEl = document.createElement('div');
-        productEl.className = 'order-product-item flex gap-3 mb-3';
+        productEl.className = 'order-product-item';
 
         const imgSrc = images[index]
             ? `../../admin/uploads/${images[index]}`
             : '';
 
         productEl.innerHTML = `
-            <img src="${imgSrc}" class="order-image">
-            <div>
+            <img src="${imgSrc}" class="order-image" alt="${name}">
+            <div class="order-product-info">
                 <p><strong>Tên:</strong> ${name}</p>
                 <p><strong>Màu:</strong> ${colors[index] || 'Không có màu'}</p>
             </div>
@@ -76,4 +69,3 @@ card.querySelector('.total-quantity').textContent = totalQuantity;
 
     return card;
 }
-

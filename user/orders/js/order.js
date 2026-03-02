@@ -1,31 +1,43 @@
 let allOrders = []; // Lưu tất cả đơn hàng
 
-// Map trạng thái → icon + màu
+// Map trạng thái → icon + class CSS thuần
 const statusMap = {
-    "Chờ xử lý":        {icon: "🕒", class: "text-gray-500 font-semibold"},
-    "Chờ thanh toán":   {icon: "🕓", class: "text-orange-500 font-semibold"},
-    "Đã thanh toán":    {icon: "✔️", class: "text-green-600 font-semibold"},
-    "Đang xử lý":       {icon: "⚠️", class: "text-yellow-500 font-semibold"},
-    "Đang giao hàng":   {icon: "🚚", class: "text-blue-500 font-semibold"},
-    "Đã giao hàng":     {icon: "✅", class: "text-green-700 font-semibold"},
-    "Đã hủy":           {icon: "❌", class: "text-red-500 font-semibold"}
+    "Chờ xử lý":        { icon: "🕒", class: "status-pending" },
+    "Chờ thanh toán":   { icon: "🕓", class: "status-wait-payment" },
+    "Đã thanh toán":    { icon: "✔️", class: "status-paid" },
+    "Đang xử lý":       { icon: "⚠️", class: "status-processing" },
+    "Đang giao hàng":   { icon: "🚚", class: "status-shipping" },
+    "Đã giao hàng":     { icon: "✅", class: "status-delivered" },
+    "Đã hủy":           { icon: "❌", class: "status-cancelled" }
 };
 
 // Fetch danh sách đơn hàng
 async function fetchOrders() {
+    const orderList = document.getElementById('order-list');
+
     try {
         const response = await fetch('order.php');
         const data = await response.json();
-        if(data.status === 'error'){
-            document.getElementById('order-list').innerHTML = `<p class="col-span-full text-red-500 text-center">${data.message}</p>`;
+
+        if (data.status === 'error') {
+            orderList.innerHTML = `
+                <p class="message message-error">
+                    ${data.message}
+                </p>
+            `;
             return;
         }
+
         allOrders = data;
         renderStatusFilters();
         renderOrders(allOrders);
-    } catch(error) {
+
+    } catch (error) {
         console.error(error);
-        document.getElementById('order-list').innerHTML = `<p class="col-span-full text-red-500 text-center">Không thể tải thông tin đơn hàng.</p>`;
+        orderList.innerHTML = `
+            <p class="message message-error">
+                Không thể tải thông tin đơn hàng.
+            </p>
+        `;
     }
 }
-

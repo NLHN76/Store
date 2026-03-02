@@ -59,6 +59,11 @@
 }
 
 
+.add-cart-btn {
+  background:#258f35;
+  color:#f3f3f3 ;
+}
+
 /* MỖI SẢN PHẨM TRONG GIỎ */
 .cart-item {
     display: flex;
