@@ -1,0 +1,41 @@
+/* ================== ACTION BUTTONS ================== */
+.order-actions {
+    margin-top: 12px;
+}
+
+.order-btn {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: none;
+    font-size: 14px;
+    color: #ffffff;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+/* Cancel */
+.order-btn-cancel {
+    background-color: #dc2626;
+}
+.order-btn-cancel:hover {
+    background-color: #b91c1c;
+}
+
+/* Pay */
+.order-btn-pay {
+    background-color: #2563eb;
+}
+.order-btn-pay:hover {
+    background-color: #1d4ed8;
+}
+
+/* Reorder */
+.order-btn-reorder {
+    background-color: #16a34a;
+}
+.order-btn-reorder:hover {
+    background-color: #15803d;
+}

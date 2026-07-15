@@ -1,0 +1,50 @@
+/* Căn giữa toàn bộ section */
+.contact-section {
+    display: flex;
+    justify-content: center;  
+    padding: 40px 15px;       
+}
+
+/* Khung form */
+.contact-form {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+
+    margin-left: 500px; 
+}
+
+/* Tiêu đề */
+.contact-title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Input & textarea */
+.contact-input,
+.contact-textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; 
+}
+
+/* Button */
+.contact-btn {
+    width: 100%;
+    padding: 12px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.contact-btn:hover {
+    background: #43a047;
+}

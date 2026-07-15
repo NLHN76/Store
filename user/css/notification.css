@@ -1,0 +1,15 @@
+/* Thông báo */
+.notification {
+    display: none;
+    position: fixed;
+    top: 300px;
+    right: 600px;
+
+    padding: 12px 20px;
+    background: red;
+    color: white;
+
+    border-radius: 6px;
+    font-size: 14px;
+    z-index: 1000;
+}

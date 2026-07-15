@@ -1,0 +1,27 @@
+/* Section sản phẩm */
+.products-section {
+    padding: 20px;
+}
+
+/* Thanh lọc */
+.products-filter {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Ô tìm kiếm */
+.filter-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Select */
+.filter-select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+

@@ -1,0 +1,21 @@
+.feedback-item {
+    border-bottom: 1px solid #ddd;
+    margin: 10px 0;
+    padding-bottom: 8px;
+}
+
+.feedback-item small {
+    color: #666;
+}
+
+textarea {
+    width: 95%;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* FORM */
+.feedback-form-wrapper {
+    display: block;
+}

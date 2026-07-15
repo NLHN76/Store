@@ -1,0 +1,41 @@
+/* ===== MENU TÀI KHOẢN ===== */
+.account-menu {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.account-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    min-width: 160px;
+
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    margin-top: 6px;
+    padding: 0;
+    list-style: none;
+    z-index: 1000;
+}
+
+.account-dropdown li a {
+    display: block;
+    padding: 10px 16px;
+    color: #333;
+    text-decoration: none;
+}
+
+.account-dropdown li a:hover {
+    background: #f4b400;
+}
+
+/* Hover hoặc JS */
+.account-menu:hover .account-dropdown,
+.account-menu.show-dropdown .account-dropdown {
+    display: block;
+}

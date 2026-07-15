@@ -1,0 +1,21 @@
+.btn-submit {
+    padding: 8px 15px;
+    border-radius: 5px;
+    background: #28a745;
+    color: #fff;
+    border: none;
+}
+
+.btn-back {
+    padding: 8px 15px;
+    border-radius: 5px;
+    background: #007bff;
+    color: #fff;
+}
+
+.btn-add-cart {
+    padding: 10px 20px;
+    background: #2ecc71;
+    color: #fff;
+    border-radius: 6px;
+}

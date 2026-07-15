@@ -1,0 +1,23 @@
+/* ================== PRODUCTS ================== */
+.order-products {
+    margin-top: 10px;
+}
+
+.order-product-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.order-image {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+.order-product-info p {
+    margin: 2px 0;
+}

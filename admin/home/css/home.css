@@ -1,0 +1,137 @@
+body{
+    margin:0;
+    padding:0;
+    font-family:"Segoe UI", Tahoma, Verdana, sans-serif;
+    background:#e0e5ec;
+    color:#333;
+}
+
+.container{
+    max-width:800px;
+    margin:30px auto;
+    padding:20px;
+}
+
+.window{
+    background:#fff;
+    border-radius:12px;
+    padding:20px;
+    margin-bottom:25px;
+    border:1px solid #ccc;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    max-height:400px;
+    overflow-y:auto;
+}
+
+h2{
+    text-align:center;
+    margin-bottom:25px;
+    font-size:1.8em;
+}
+
+h3{
+    margin-bottom:15px;
+    font-size:1.4em;
+    color:#222;
+}
+
+form input,
+form textarea,
+form button{
+    width:100%;
+    padding:10px;
+    margin-bottom:12px;
+    border-radius:6px;
+    border:1px solid #ccc;
+    font-size:0.95em;
+    box-sizing:border-box;
+}
+
+form input:focus,
+form textarea:focus{
+    border-color:#4a90e2;
+    outline:none;
+    box-shadow:0 0 5px rgba(74,144,226,0.3);
+}
+
+form button{
+    background:#4a90e2;
+    color:#fff;
+    border:none;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+form button:hover{
+    background:#357ABD;
+}
+
+textarea{
+    resize:vertical;
+    min-height:60px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+}
+
+th,
+td{
+    padding:10px;
+    border-bottom:1px solid #e0e0e0;
+    text-align:left;
+    vertical-align:middle;
+    word-wrap:break-word;
+}
+
+th{
+    background:#4a90e2;
+    color:#fff;
+    font-weight:600;
+}
+
+img{
+    max-width:80px;
+    max-height:60px;
+    border-radius:5px;
+    object-fit:cover;
+    display:block;
+    margin:auto;
+}
+
+.modal{
+    display:none;
+    position:fixed;
+    z-index:1000;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.5);
+}
+
+.modal-content{
+    background:#fff;
+    width:400px;
+    margin:10% auto;
+    padding:20px;
+    border-radius:12px;
+    border:1px solid #ccc;
+    box-shadow:0 5px 20px rgba(0,0,0,0.3);
+    position:relative;
+}
+
+.close{
+    float:right;
+    font-size:24px;
+    font-weight:bold;
+    color:#aaa;
+    cursor:pointer;
+}
+
+.close:hover{
+    color:#000;
+}

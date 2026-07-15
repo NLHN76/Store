@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Gear</title>
+  <link rel="stylesheet" href="css/user.css">
+  <link rel="stylesheet" href="css/chat.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/products.css">
+  <link rel="stylesheet" href="css/profile.css">
+   <link rel="stylesheet" href="css/menu.css">
+  <link rel="stylesheet" href="css/register_login.css">
+  <link rel="stylesheet" href="css/cart.css">
+  <link rel="stylesheet" href="css/features_products.css">
+  <link rel="stylesheet" href="css/notification.css">
+  <link rel="stylesheet" href="css/order_alert.css">
+  <link rel="stylesheet" href="css/search.css">
+  <link rel="stylesheet" href="css/contact.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+<header>
+    <h1>Mobile Gear</h1>
+    <nav>
+        <ul>
+            <li> <a href="#home" onclick="showSection('home')"><i class="fa fa-home"></i> Trang Chủ </a></li>
+            <li><a href="#products" onclick="showSection('products')"><i class="fas fa-box"></i> Sản Phẩm</a></li>
+            <li><a href="#cart" onclick="showSection('cart')"><i class="fas fa-shopping-cart"></i> Giỏ Hàng (<span id="cart-quantity">0</span>)</a></li>
+            <li><a href="#contact" onclick="showSection('contact')"><i class="fas fa-phone"></i> Liên Hệ</a></li>
+            <li id="login-menu">  <a href="#login" onclick="showSection('login')"> <i class="fas fa-right-to-bracket"></i> Đăng Nhập </a></li>
+
+           <li id="account-menu" class="account-menu hidden">
+
+    <a href="#" id="account-btn" class="account-btn">  <i class="fas fa-user account-icon"></i>
+
+        <span id="account-name" class="account-name"> Tài Khoản </span>
+
+        <span id="account-order-alert" class="order-alert hidden">❗ </span>
+    </a>
+
+    <ul id="account-dropdown" class="account-dropdown">
+
+<li class="dropdown-item"><a href="#" id="profile-btn" class="dropdown-link">Thông tin cá nhân </a> </li>
+
+ <li class="dropdown-item"><a href="orders/orders.html" class="dropdown-link order-link"> Đơn Hàng <span id="order-alert"  class="order-alert hidden"> ❗</span> </a> </li>
+
+ <li class="dropdown-item">  <a href="#"  class="dropdown-link logout-link"  onclick="logout()"> Đăng Xuất </a></li>
+
+     </ul>
+           </li>
+
+    
+       </ul>
+    </nav>
+</header>
+
+<main>
+   <section id="home">
+    <!-- Banner -->
+    <div id="home-banner"></div>
+    
+    <template id="promotion-template">
+    <div class="promo-item">
+        <img class="promo-img">
+        <h3 class="promo-title"></h3>
+        <p class="promo-desc"></p>
+        <a class="cta-btn">Xem chi tiết</a>
+    </div>
+    </template>
+    
+    <!-- Promotions -->
+    <div id="home-promotions" class="promo-grid"></div>
+
+    <!-- Featured title -->
+    <h2 class="section-title" id="featured-title" style="display:none;">
+        Sản phẩm nổi bật
+    </h2>
+
+    <!-- Featured products -->
+    <div id="home-featured" class="featured-grid"></div>
+   </section>
+
+
+    
+   <section id="products" class="products-section">
+
+    <div class="filter-bar products-filter">
+        <input type="text"
+               id="searchInput"
+               class="filter-input"
+               placeholder="Tìm kiếm sản phẩm theo loại, tên hoặc mã...">
+
+        <select id="categoryFilter" class="filter-select">
+            <option value="all">Tất cả danh mục</option>
+            <option value="Tai nghe">Tai nghe</option>
+            <option value="Cáp sạc">Cáp sạc</option>
+            <option value="Ốp lưng">Ốp lưng</option>
+            <option value="Kính cường lực">Kính cường lực</option>
+        </select>
+
+        <select id="priceFilter"
+                class="filter-select"
+                style="display:none;">
+            <option value="all">Tất cả giá</option>
+            <option value="0-100">Dưới 100K</option>
+            <option value="100-300">100K - 300K</option>
+            <option value="300-500">300K - 500K</option>
+            <option value="500-1000">500K - 1 triệu</option>
+            <option value="1000+">Trên 1 triệu</option>
+        </select>
+    </div>
+
+    <div id="productsContainer" class="products-container"></div>
+
+</section>
+
+
+
+    <template id="product-template">
+    <div class="product">
+        <img class="product-image" style="width:150px;height:150px;cursor:pointer;">
+        <h3 class="product-name"></h3>
+        <p><strong>Giá:</strong> <span class="product-price"></span> VNĐ</p>
+
+        <div class="color-select-container" style="display:none">
+            <label><strong>Màu sắc:</strong></label>
+            <select class="color-select"></select>
+        </div>
+
+        <p><strong>Kho:</strong> <span class="stock">0</span></p>
+        <p class="stock-warning" style="display:none;color:red;">
+            ❌ Màu này đã hết hàng!
+        </p>
+
+        <button class="add-cart-btn">Mua sản phẩm</button>
+        <p><strong>Đánh giá:</strong> ⭐ <span class="avg-rating"></span></p>
+    </div>
+</template>
+
+
+
+<section id="cart" class="cart-section">
+    <h2 class="cart-title">Giỏ Hàng</h2>
+
+    <div id="cart-items" class="cart-items"></div>
+
+    <div id="total-quantity" class="cart-total-qty">
+        Tổng số sản phẩm: 0
+    </div>
+
+    <div id="total-price" class="cart-total-price">
+        Tổng giá trị: 0 VNĐ
+    </div>
+
+    <button
+        id="checkout" class="cart-checkout-btn" style="display: none;" onclick="checkout()" > Đặt hàng
+    </button>
+</section>
+
+
+
+    <div id="login-section" class="container" style="display:none;">
+        <h1>Đăng Nhập</h1>
+        <form id="login-form" class="form" method="POST" action="login.php">
+          
+            <div class="form-group">
+                <label for="login-name">Tên:</label>
+                <input type="text" id="login-name" name="login-name" required>
+            </div>
+            <div class="form-group">
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" name="login-email" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">Mật Khẩu:</label>
+                <input type="password" id="login-password" name="login-password" required>
+              
+            </div>
+              <div id="login-error" style="color:red; margin-bottom:10px;"></div>
+            <button type="submit">Đăng Nhập</button>
+            <p class="register-link">Chưa có tài khoản? <a href="#register" onclick="showSection('register')"><i class="fas fa-user-plus"></i> Đăng ký tại đây</a></p>
+            <p><a href="password/forgot_password.php">Quên mật khẩu?</a></p>
+        </form>
+    </div>
+
+    
+    <div id="register-section" class="container" style="display:none;">
+        <h2>Đăng Ký</h2>
+        <form id="register-form" class="form" method="POST" action="register.php">
+            <div class="form-group">
+                <label for="register-name">Tên:</label>
+                <input type="text" id="register-name" name="register-name" required>
+            </div>
+            <div class="form-group">
+                <label for="register-email">Email:</label>
+                <input type="email" id="register-email" name="register-email" required>
+            </div>
+            <div class="form-group">
+                <label for="register-password">Mật Khẩu:</label>
+                <input type="password" id="register-password" name="register-password" required>
+            </div>
+            <button type="submit">Đăng Ký</button>
+        </form>
+    </div>
+
+
+   <section id="contact" class="contact-section" style="display:none;">
+
+    <form id="contact-form" class="contact-form">
+        <h2 class="contact-title">Liên Hệ</h2>
+
+        <label for="name">Tên:</label>
+        <input type="text" id="name" name="name" class="contact-input" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" class="contact-input" required>
+
+        <label for="phone">Số điện thoại:</label>
+        <input type="tel" id="phone" name="phone" class="contact-input" required>
+
+        <label for="message">Nội dung:</label>
+        <textarea id="message" name="message" class="contact-textarea" required></textarea>
+
+        <button type="submit" class="contact-btn">Gửi</button>
+    </form>
+
+</section>
+
+
+
+  <section id="profile-section" class="profile-section">
+    <div class="modal-content profile-modal">
+        <form id="profile-form" class="profile-form">
+
+            <h2 class="profile-title">Thông tin cá nhân</h2>
+
+            <label for="profile-name" class="profile-label">Tên:</label>
+            <input type="text"
+                   id="profile-name"
+                   name="name"
+                   readonly
+                   class="profile-input disabled-input">
+
+            <label for="profile-email" class="profile-label">Email:</label>
+            <input type="email"
+                   id="profile-email"
+                   name="email"
+                   readonly
+                   class="profile-input disabled-input">
+
+            <label for="profile-phone" class="profile-label">Số điện thoại:</label>
+            <input type="tel"
+                   id="profile-phone"
+                   name="phone"
+                   class="profile-input">
+
+            <label for="profile-address" class="profile-label">Địa chỉ:</label>
+            <input type="text"
+                   id="profile-address"
+                   name="address"
+                   class="profile-input">
+
+            <div class="profile-actions">
+                <button type="submit" class="profile-btn save-btn">Cập nhật</button>
+                <button type="button"
+                        class="profile-btn close-btn"
+                        onclick="closeProfile()">Đóng</button>
+            </div>
+
+        </form>
+    </div>
+</section>
+
+   
+
+
+
+<!-- CHAT BOX -->
+<div id="messenger-box" class="messenger-box">
+
+    <!-- HEADER -->
+    <div class="chat-header">
+        <span>Hỗ trợ Khách Hàng</span>
+        <button id="close-messenger" class="close-messenger">✖</button>
+    </div>
+
+    <!-- MESSAGES -->
+    <div id="messenger-messages" class="messenger-messages">
+    </div>
+
+    <!-- INPUT -->
+    <div class="chat-input">
+    <textarea
+        id="messenger-input"
+        class="messenger-input"
+        placeholder="Nhập tin nhắn..."
+        rows="3"
+    ></textarea>
+
+    <button id="send-messenger" class="send-messenger">
+        Gửi
+    </button>
+</div>
+
+
+</div>
+
+ <div id="notification" class="notification"></div>
+
+</main>
+
+
+
+<footer>
+    <div class="footer-container">
+        <div class="footer-column">
+            <h3>MOBILE GEAR</h3>
+            <p>Địa chỉ: Số 254 Tây Sơn - P. Trung Liệt - Q. Đống Đa - TP. Hà Nội</p>
+            <p>Điện thoại: 0587.911.287</p>
+            <p>Email: mobilegear@gmail.com</p>
+        </div>
+        
+        <div class="footer-column">
+            <h4>Bản đồ cửa hàng</h4>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.850620123456!2d105.82664431540412!3d21.00818248599739!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab123456789%3A0xabcdef123456!2s254%20Tay%20Son%2C%20Trung%20Liet%2C%20Dong%20Da%2C%20Hanoi!5e0!3m2!1sen!2s!4v1700000000000" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+
+        <div class="footer-column">
+            <h4>Liên kết nhanh</h4>
+            <ul>
+                <li><a href="#home" onclick="showSection('home')">Trang Chủ</a></li>
+                <li><a href="#products" onclick="showSection('products')">Sản Phẩm</a></li>
+                <li><a href="#cart" onclick="showSection('cart')">Giỏ Hàng</a></li>
+                <li><a href="#contact" onclick="showSection('contact')"> Liên Hệ</a></li>
+                
+            </ul>
+            <h4>Kết nối với chúng tôi</h4>
+            <div class="social-icons">
+                <a href="https://www.facebook.com/nam.nguyen.133454" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://zalo.me/0587911287" target="_blank"><i class="fab fa-zalo"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 MOBILE GEAR. All rights reserved.</p>
+    </div>
+</footer>
+
+<!-- Chat Zalo-->
+<a href="https://zalo.me/0587911287" target="_blank"
+   id="zalo-float" class="zalo-float">
+    <img src="../admin/uploads/download.png" class="zalo-icon">
+</a>
+
+<!-- Messenger -->
+<div id="messenger-float" class="messenger-float">
+    <img src="../admin/uploads/messenger.jpg" class="messenger-icon">
+    <span id="messenger-badge" class="chat-badge" style="display:none">1</span>
+</div>
+
+<script src="js/login-alert.js"></script>
+<script src="js/check_login.js"></script>
+<script src="js/check_orders.js"></script>
+<script src="js/main.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/pay.js"></script>
+<script src="js/contact.js"></script>
+<script src="js/logout.js"></script>
+<script src="js/search.js"></script>
+<script src="js/home.js"></script>
+<script src="js/products_detail.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/register_login.js"></script>
+
+</body>
+</html>

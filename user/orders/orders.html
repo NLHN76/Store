@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Đơn Hàng - Mobile Gear</title>
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/products.css">
+<link rel="stylesheet" href="css/button.css">
+<link rel="stylesheet" href="css/modal.css">
+<link rel="stylesheet" href="css/footer.css">
+</head>
+
+<body class="page">
+
+<main class="main-container">
+    <h1 class="page-title">Thông Tin Đơn Hàng</h1>
+
+    <!-- Nút lọc trạng thái -->
+    <div id="status-filters" class="status-filters"></div>
+
+    <!-- Danh sách đơn hàng -->
+    <div id="order-list" class="order-list"></div>
+
+    <!-- ORDER CARD TEMPLATE -->
+    <template id="order-card-template">
+        <div class="order-card">
+
+            <h3 class="order-id"></h3>
+
+            <!-- PRODUCTS -->
+            <div class="order-products scroll-box"></div>
+
+            <div class="order-info">
+                <p><strong>Tổng số lượng:</strong> <span class="total-quantity"></span></p>
+                <p><strong>Tổng Tiền:</strong> <span class="product-price"></span> VNĐ</p>
+                <p><strong>Ngày Đặt:</strong> <span class="order-date"></span></p>
+                <p>
+                    <strong>Trạng Thái:</strong>
+                    <span class="order-status"></span>
+                </p>
+
+                <div class="order-actions"></div>
+            </div>
+
+        </div>
+    </template>
+
+    <!-- PAYMENT MODAL -->
+    <div id="payment-modal" class="modal hidden" onclick="closePaymentModal()">
+
+        <div class="modal-content" onclick="event.stopPropagation()">
+
+            <button class="modal-close" onclick="closePaymentModal()">✖</button>
+
+            <h3 class="modal-title">Quét Mã QR Để Thanh Toán</h3>
+
+            <img src="../pay/file/qr.png"
+                 alt="QR Thanh Toán"
+                 class="modal-qr">
+
+            <p id="modal-content-text" class="modal-text"></p>
+        </div>
+    </div>
+
+</main>
+
+<footer class="footer">
+    <p>Copyright @2025 mobilegear.vn</p>
+</footer>
+
+<!-- JS (giữ nguyên) -->
+<script src="js/products.js"></script>
+<script src="js/status_filter.js"></script>
+<script src="js/render_order.js"></script>
+<script src="js/render_button.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/cancel_order.js"></script>
+<script src="js/order.js"></script>
+
+</body>
+</html>
