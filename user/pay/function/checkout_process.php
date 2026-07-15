@@ -40,19 +40,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+<<<<<<< HEAD
 // **Step 2: Trừ kho + Ghi lịch sử tồn kho**
+=======
+      // **Step 2: Trừ kho + Ghi lịch sử tồn kho**
+>>>>>>> 3deee0fbe47e4e7aa1cab060278d22f91a5946bc
 foreach ($itemsGrouped as $item) {
 
     // Trừ kho
     $stmtUpdate = $conn->prepare("
+<<<<<<< HEAD
         UPDATE product_inventory
         SET quantity = quantity - ?
+=======
+        UPDATE product_inventory 
+        SET quantity = quantity - ? 
+>>>>>>> 3deee0fbe47e4e7aa1cab060278d22f91a5946bc
         WHERE product_code = ? AND color = ?
     ");
     $stmtUpdate->bind_param("iss", $item['quantity'], $item['product_code'], $item['color']);
     $stmtUpdate->execute();
     $stmtUpdate->close();
 
+<<<<<<< HEAD
     // Lấy product_id
     $stmtProd = $conn->prepare("
         SELECT id
@@ -114,11 +124,34 @@ foreach ($itemsGrouped as $item) {
             $note
         );
 
+=======
+    // Lấy product_id từ products
+    $stmtProdId = $conn->prepare("SELECT id FROM products WHERE product_code = ? LIMIT 1");
+    $stmtProdId->bind_param("s", $item['product_code']);
+    $stmtProdId->execute();
+    $resProd = $stmtProdId->get_result()->fetch_assoc();
+    $stmtProdId->close();
+
+    if ($resProd) {
+        $product_id = $resProd['id'];
+
+        // Ghi lịch sử
+        $note = "Trừ tồn kho khi đặt hàng (User: {$user_code})";
+        $stmtHist = $conn->prepare("
+            INSERT INTO inventory_history (product_id, product_code, color, quantity_change, import_price, type, note)
+            VALUES (?, ?, ?, ?, 0, 'Bán hàng', ?)
+        ");
+        $stmtHist->bind_param("issis", $product_id, $item['product_code'], $item['color'], $item['quantity'], $note);
+>>>>>>> 3deee0fbe47e4e7aa1cab060278d22f91a5946bc
         $stmtHist->execute();
         $stmtHist->close();
     }
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3deee0fbe47e4e7aa1cab060278d22f91a5946bc
         // **Step 3: Lưu đơn hàng**
        // Gom dữ liệu sản phẩm
 $productCodesString = implode(', ', array_map(

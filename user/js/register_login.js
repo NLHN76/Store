@@ -10,6 +10,7 @@ document.getElementById('register-form').onsubmit = e => {
           pass = document.getElementById('register-password').value;
     const xhr = new XMLHttpRequest();
     xhr.open("POST","register.php",true);
+    xhr.open("POST","../user/user_register.php",true);
     xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
     xhr.onload = () => xhr.status===200 ? 
         (xhr.responseText.startsWith("Đăng ký thành công") ? (alert(xhr.responseText), showSection('login-section')) : alert(xhr.responseText)) 
