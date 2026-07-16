@@ -5,4 +5,5 @@ return array (
   2 => 'Vàng',
   3 => 'Hồng',
   4 => 'Xanh',
+  5 => 'Đỏ',
 );
