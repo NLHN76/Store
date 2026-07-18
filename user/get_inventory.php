@@ -34,3 +34,4 @@ $quantity = (int)($inventory['quantity'] ?? 0);
 
 // Trả JSON
 echo json_encode(['quantity' => $quantity]);
+?>

@@ -1,5 +1,5 @@
 <?php
-require_once "../../db.php";
+require_once "db.php";
 
 $user_id = intval($_GET['user_id'] ?? 0);
 if (!$user_id) exit("Chưa chọn user!");

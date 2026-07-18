@@ -1,5 +1,5 @@
 <?php
-require_once "../../db.php";
+require_once "db.php";
 $res = $conn->query("
     SELECT DISTINCT user_id, user_name
     FROM message
@@ -17,3 +17,4 @@ while ($row = $res->fetch_assoc()) {
 
 echo json_encode($users);
 exit;
+?>

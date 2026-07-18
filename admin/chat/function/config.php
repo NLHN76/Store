@@ -1,6 +1,6 @@
 <?php
 if (!isset($conn)) {
-    require_once "../../db.php";
+    require_once "db.php";
 }
 
 // ================== CẤU HÌNH ==================
@@ -12,3 +12,4 @@ $conn->query("
     DELETE FROM message 
     WHERE created_at < NOW() - INTERVAL $daysToKeep DAY
 ");
+?>

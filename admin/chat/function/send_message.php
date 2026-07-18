@@ -1,5 +1,5 @@
 <?php
-require_once "../../db.php";
+require_once "db.php";
 $message = trim($_POST['message'] ?? '');
 $user_id = intval($_POST['user_id'] ?? 0);
 
@@ -18,3 +18,4 @@ $stmt->execute();
 $stmt->close();
 
 exit("OK");
+?>

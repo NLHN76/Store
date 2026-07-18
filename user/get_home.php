@@ -59,3 +59,4 @@ echo json_encode([
     'promotions' => $promotions,
     'featured_products' => $featured_products
 ], JSON_UNESCAPED_UNICODE);
+?>

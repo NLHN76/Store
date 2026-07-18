@@ -1,5 +1,5 @@
 <?php
-require_once "../../db.php";
+require_once "db.php";
 $user_id = intval($_GET['user_id'] ?? 0);
 if (!$user_id) {
     echo json_encode(['new' => 0]);
@@ -22,3 +22,4 @@ echo json_encode([
     'new' => ($row['cnt'] ?? 0) > 0 ? 1 : 0
 ]);
 exit;
+?>
