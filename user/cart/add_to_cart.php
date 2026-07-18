@@ -90,3 +90,5 @@ if ($item) {
 }
 
 echo json_encode(['success' => true]);
+
+?>

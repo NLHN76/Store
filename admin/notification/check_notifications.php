@@ -44,3 +44,5 @@ echo json_encode([
     'chat'       => $chat,
     'lowStock'   => $lowStock
 ]);
+
+?>

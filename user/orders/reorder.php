@@ -90,3 +90,5 @@ foreach ($codes as $i => $code) {
 /* ===== REDIRECT ===== */
 header("Location: ../pay/no_cart.php");
 exit;
+
+?>

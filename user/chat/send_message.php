@@ -20,3 +20,4 @@ $stmt->close();
 
 echo "OK";
 $conn->close();
+?>

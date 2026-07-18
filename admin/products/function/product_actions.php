@@ -168,5 +168,5 @@ if ($search !== "") {
     $products = $result->fetch_all(MYSQLI_ASSOC);
 }
 
-
+?>
 

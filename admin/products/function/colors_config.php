@@ -7,3 +7,5 @@ return array (
   4 => 'Xanh',
   5 => 'Đỏ',
 );
+
+?>
