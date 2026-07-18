@@ -20,7 +20,7 @@ if (isset($_GET['token'])) {
 
             // Mã hóa mật khẩu trước khi lưu vào cơ sở dữ liệu
             $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-            $sql = "UPDATE users SET name='$new_name', password='$hashed_password' WHERE email='$email'";
+            $sql = "UPDATE shipper SET name='$new_name', password='$hashed_password' WHERE email='$email'";
             if ($conn->query($sql) === TRUE) {
                 // Xóa token sau khi đã đặt lại tên và mật khẩu
                 $conn->query("DELETE FROM password_resets WHERE token='$token'");
@@ -60,7 +60,7 @@ $conn->close();
             <input type="password" id="new_password" name="new_password" required>
         </div>
         <button type="submit">Cập nhật thông tin</button>
-        <button onclick="window.location.href='http://localhost:8080/store/user/user.html';">Quay lại Trang Chủ</button>
+        <button onclick="window.location.href='http://localhost:8080/store/shipper/login/login.php';">Quay lại Đăng nhập</button>
     </form>
 </body>
 

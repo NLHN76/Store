@@ -25,3 +25,5 @@ echo json_encode([
     'success' => true,
     'new_orders' => $new_orders
 ]);
+
+?>

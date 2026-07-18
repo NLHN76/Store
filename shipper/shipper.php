@@ -169,10 +169,6 @@
                         <input type="text" name="cmt" class="form-control" value="<?= htmlspecialchars($shipper['cmt']) ?>">
                     </div>
                     <div class="mb-2">
-                        <label>Mật khẩu mới</label>
-                        <input type="password" name="password" class="form-control">
-                    </div>
-                    <div class="mb-2">
                         <label>Avatar</label>
                         <input type="file" name="avatar" accept="image/*" class="form-control">
                     </div>

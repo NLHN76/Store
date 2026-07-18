@@ -47,27 +47,42 @@ if(isset($_POST['action'])){
         echo "fail"; exit;
     }
 
-    // Cập nhật thông tin shipper
-    if($action=="update_shipper_info"){
-        $id = intval($_POST['shipper_id']);
-        $fields = ['name','email','phone','dob','cmt']; $types='sssss'; $params=[];
-        foreach($fields as $f) $params[] = $_POST[$f] ?? '';
+  // Cập nhật thông tin shipper
+if($action=="update_shipper_info"){
+    $id = intval($_POST['shipper_id']);
 
-        if(!empty($_POST['password'])){ $fields[]='password'; $types.='s'; $params[]=password_hash($_POST['password'],PASSWORD_DEFAULT); }
-        if(isset($_FILES['avatar']) && $_FILES['avatar']['error']==0){
-            $ext = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
-            if(in_array($ext,['jpg','jpeg','png','gif'])){
-                $avatar_path = "uploads/shipper_".$id.".".$ext;
-                move_uploaded_file($_FILES['avatar']['tmp_name'],$avatar_path);
-                $fields[]='avatar'; $types.='s'; $params[]=$avatar_path;
-            }
+    $fields = ['name','email','phone','dob','cmt'];
+    $types = 'sssss';
+    $params = [];
+
+    foreach($fields as $f) $params[] = $_POST[$f] ?? '';
+
+    // Cập nhật avatar
+    if(isset($_FILES['avatar']) && $_FILES['avatar']['error']==0){
+        $ext = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
+
+        if(in_array($ext,['jpg','jpeg','png','gif'])){
+            $avatar_path = "uploads/shipper_".$id.".".$ext;
+            move_uploaded_file($_FILES['avatar']['tmp_name'],$avatar_path);
+
+            $fields[] = 'avatar';
+            $types .= 's';
+            $params[] = $avatar_path;
         }
-        $fields_str = implode(', ',array_map(fn($f)=>"$f=?", $fields));
-        $stmt = $conn->prepare("UPDATE shipper SET $fields_str WHERE id=?");
-        $types.='i'; $params[]=$id;
-        $stmt->bind_param($types,...$params);
-        echo $stmt->execute()?"success":$conn->error; exit;
     }
+
+    $fields_str = implode(', ', array_map(fn($f)=>"$f=?", $fields));
+
+    $stmt = $conn->prepare("UPDATE shipper SET $fields_str WHERE id=?");
+
+    $types .= 'i';
+    $params[] = $id;
+
+    $stmt->bind_param($types, ...$params);
+
+    echo $stmt->execute() ? "success" : $conn->error;
+    exit;
+   }
 }
 
 

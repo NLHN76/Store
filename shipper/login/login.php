@@ -21,7 +21,7 @@
 <?php endif; ?>
 
 
-    <form method="POST">
+    <form method="POST" action="shipper_login.php">
         <div class="mb-3">
             <label>Email</label>
             <input type="email" name="email" class="form-control" required>
@@ -39,6 +39,7 @@
         <p class="mt-3 text-center">
             Chưa có tài khoản?
             <a href="../register/shipper_register.php">Đăng ký</a>
+             <p><a href="../password/forgot_password.php">Quên mật khẩu?</a></p>
         </p>
     </form>
 </div>

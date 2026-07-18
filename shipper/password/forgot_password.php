@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Kiểm tra xem email có tồn tại trong cơ sở dữ liệu không
-    $sql = "SELECT * FROM users WHERE email='$email'";
+    $sql = "SELECT * FROM shipper WHERE email='$email'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = "INSERT INTO password_resets (email, token) VALUES ('$email', '$token')";
         if ($conn->query($sql) === TRUE) {
             // Gửi email đặt lại mật khẩu
-            $reset_link = "http://localhost:8080/store/user/password/reset_password.php?token=" . $token;
+            $reset_link = "http://localhost:8080/store/shipper/password/reset_password.php?token=" . $token;
 
             $mail = new PHPMailer(true);
             try {

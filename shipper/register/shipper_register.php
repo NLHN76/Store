@@ -45,7 +45,7 @@ if (isset($_POST['register'])) {
             $_SESSION['shipper_id'] = $stmt->insert_id;
             $_SESSION['shipper_name'] = $name;
 
-            header("Location: ../shipper_dashboard.php");
+            header("Location: ../login/login.php");
             exit;
         } else {
             $error = $stmt->error;
