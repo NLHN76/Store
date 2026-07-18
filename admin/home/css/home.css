@@ -5,7 +5,20 @@ body{
     background:#e0e5ec;
     color:#333;
 }
+.ntnt{
+    display:inline-block;
+    padding:10px 20px;
+    background:#2563eb;
+    color:#fff;
+    text-decoration:none;
+    border-radius:10px;
+    transition:.3s;
 
+}
+
+.ntnt:hover{
+    background:#1d4ed8;
+}
 .container{
     max-width:800px;
     margin:30px auto;

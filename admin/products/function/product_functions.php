@@ -51,3 +51,5 @@ function save_colors($colors) {
     $content = "<?php\nreturn " . var_export($colors, true) . ";\n";
     file_put_contents($file, $content);
 }
+
+?>

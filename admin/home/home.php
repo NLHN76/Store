@@ -11,8 +11,7 @@
 <body>
 <div class="container">
     
-    <h2>Quản lý Trang Chủ</h2>
-
+     <a href="../admin_interface.php" class="ntnt">Quay về</a>
     <!-- ================= BANNER ================= -->
     <div class="window">
         <h3>Banner Trang Chủ</h3>

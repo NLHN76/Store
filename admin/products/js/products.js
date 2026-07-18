@@ -54,6 +54,36 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
+document.querySelectorAll("form").forEach(form=>{
 
+form.addEventListener("submit",function(e){
+
+    sessionStorage.setItem(
+        "scrollPosition",
+        window.scrollY
+    );
+
+});
+
+});
+
+
+window.onload=function(){
+
+setTimeout(()=>{
+
+let scroll=sessionStorage.getItem("scrollPosition");
+
+if(scroll){
+
+window.scrollTo(0,scroll);
+
+sessionStorage.removeItem("scrollPosition");
+
+}
+
+},100);
+
+};
 
 

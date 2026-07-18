@@ -1,10 +1,13 @@
 
 
 /* ================== PRODUCTS GRID ================== */
-.products-container {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr); 
-    gap: 15px;
+
+.products-container{
+    width:calc(100% - 10cm);
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:15px;
 }
 
 
@@ -46,6 +49,19 @@
 }
 
 /* ================== COLOR SELECT ================== */
+
+.product-price{
+    color:#fe0b0b;
+    font-weight: bold;
+    font-size:15px;
+}
+
+.currency{
+    color:#fe0b0b;
+    font-weight: bold;
+     font-size:15px;
+}
+
 .color-select-container {
     margin: 8px 0;
 }

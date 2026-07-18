@@ -16,8 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $available_colors[] = $new;
             save_colors($available_colors);
         }
-        header("Location: admin_products.php?color=added");
-        exit;
     }
 
     if ($_POST['action'] === "delete_color") {
@@ -27,8 +25,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
             $available_colors = array_values($available_colors);
             save_colors($available_colors);
         }
-        header("Location: admin_products.php?color=deleted");
-        exit;
     }
 }
 
@@ -60,9 +56,6 @@ if (isset($_POST['action']) && $_POST['action'] === "add") {
     $stmt->bind_param("sdssss", $name, $price, $colors, $category, $image_name, $code);
     $stmt->execute();
     $stmt->close();
-
-    header("Location: admin_products.php?status=added");
-    exit;
 }
 
 // ====================== SỬA SẢN PHẨM =====================
@@ -112,8 +105,7 @@ if (isset($_POST['action']) && $_POST['action'] === "edit") {
     $stmt->execute();
     $stmt->close();
 
-    header("Location: admin_products.php?status=edited");
-    exit;
+
 }
 
 // ====================== XÓA SẢN PHẨM =====================
@@ -148,9 +140,6 @@ if (isset($_POST['action']) && $_POST['action'] === "delete") {
     $stmt->bind_param("i", $product_id);
     $stmt->execute();
     $stmt->close();
-
-    header("Location: admin_products.php?status=deleted");
-    exit;
 }
 
 
@@ -158,8 +147,6 @@ if (isset($_POST['action']) && $_POST['action'] === "delete") {
 if (isset($_POST['action']) && $_POST['action'] === "toggle_status") {
     $id = intval($_POST['product_id']);
     $conn->query("UPDATE products SET is_active = 1 - is_active WHERE id = $id");
-    header("Location: admin_products.php?status=toggled");
-    exit;
 }
 
 // ====================== TÌM KIẾM =====================
@@ -180,3 +167,6 @@ if ($search !== "") {
     $result = $conn->query($sql);
     $products = $result->fetch_all(MYSQLI_ASSOC);
 }
+
+
+

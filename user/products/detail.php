@@ -55,7 +55,7 @@ $colors = array_filter(array_map('trim', explode(',', $product['color'] ?? '')))
 
 <?php if ($related_products->num_rows): ?>
 <div class="product-detail" style="margin-top:20px;">
-    <h2>Gợi ý sản phẩm khác</h2>
+    <h2>Sản phẩm tương tự</h2>
     <div class="related-products">
         <?php while($rel = $related_products->fetch_assoc()): ?>
             <div class="related-item">
