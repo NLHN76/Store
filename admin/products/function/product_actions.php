@@ -32,12 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 if (isset($_POST['action']) && $_POST['action'] === "add") {
 
     $name = trim($_POST['product_name']);
+    $brand = trim($_POST['product_brand']);
     $category = trim($_POST['product_category']);
     $price = clean_price($_POST['product_price']);
 
     $allowed = ['Tai nghe', 'Cáp sạc', 'Ốp lưng', 'Kính cường lực'];
 
-    if ($name === "" || $price < 0 || !in_array($category, $allowed)) {
+    if ($name === "" || $brand === "" || $price < 0 || !in_array($category, $allowed)) {
         $add_error = "Dữ liệu thêm không hợp lệ.";
         return;
     }
@@ -52,8 +53,10 @@ if (isset($_POST['action']) && $_POST['action'] === "add") {
     $colors = implode(",", $_POST['product_colors'] ?? []);
     $code = generate_product_code($category, $conn); // đổi sang mysqli
 
-    $stmt = $conn->prepare("INSERT INTO products(name, price, color, category, image, product_code) VALUES (?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param("sdssss", $name, $price, $colors, $category, $image_name, $code);
+ $stmt = $conn->prepare("INSERT INTO products(name, brand, price, color, category, image, product_code) VALUES (?, ?, ?, ?, ?, ?, ?)");
+
+$stmt->bind_param("ssdssss",$name,$brand,$price,$colors,$category,$image_name,$code
+);
     $stmt->execute();
     $stmt->close();
 }
@@ -63,13 +66,14 @@ if (isset($_POST['action']) && $_POST['action'] === "edit") {
 
     $id = intval($_POST['product_id']);
     $name = trim($_POST['product_name']);
+    $brand = trim($_POST['product_brand']);
     $category = trim($_POST['product_category']);
     $price = clean_price($_POST['product_price']);
     $colors = implode(",", $_POST['product_colors'] ?? []);
 
     $allowed = ['Tai nghe', 'Cáp sạc', 'Ốp lưng', 'Kính cường lực'];
 
-    if ($name === "" || $price < 0 || !in_array($category, $allowed)) {
+    if ($name === "" || $brand === "" || $price < 0 || !in_array($category, $allowed)) {
         $edit_error = "Dữ liệu sửa không hợp lệ.";
         return;
     }
@@ -100,11 +104,24 @@ if (isset($_POST['action']) && $_POST['action'] === "edit") {
     }
 
     // ========== Update DB ==========
-    $stmt = $conn->prepare("UPDATE products SET name=?, price=?, color=?, category=?, image=? WHERE id=?");
-    $stmt->bind_param("sdsssi", $name, $price, $colors, $category, $image_name, $id);
+    $stmt = $conn->prepare("
+    UPDATE products
+    SET name=?, brand=?, price=?, color=?, category=?, image=?
+    WHERE id=?
+");
+
+$stmt->bind_param(
+    "ssdsssi",
+    $name,
+    $brand,
+    $price,
+    $colors,
+    $category,
+    $image_name,
+    $id
+);
     $stmt->execute();
     $stmt->close();
-
 
 }
 

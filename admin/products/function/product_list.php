@@ -29,6 +29,7 @@
             <form method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
                 <input type="text" name="product_name" value="<?= htmlspecialchars($product['name']) ?>" required>
+                <input type="text" name="product_brand"value="<?= htmlspecialchars($product['brand']) ?>"placeholder="Thương hiệu"required>
                 <input type="text" name="product_price" value="<?= number_format($product['price'],0,',','.') ?>" required>
 
                 <label>Chọn màu sắc:</label>

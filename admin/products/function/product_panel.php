@@ -53,18 +53,30 @@
     <div class="modal-content">
         <button id="close-modal-btn">×</button>
         <form method="POST" enctype="multipart/form-data">
+
             <label>Chọn màu sắc:</label>
             <div class="color-options">
                 <?php if (!empty($available_colors)): ?>
                     <?php foreach ($available_colors as $color): ?>
-                        <label><input type="checkbox" name="product_colors[]" value="<?= htmlspecialchars($color) ?>"><?= htmlspecialchars($color) ?></label><br>
+                        <label>
+                            <input type="checkbox" name="product_colors[]" value="<?= htmlspecialchars($color) ?>">
+                            <?= htmlspecialchars($color) ?>
+                        </label><br>
                     <?php endforeach; ?>
                 <?php endif; ?>
-                <label><input type="checkbox" name="product_colors[]" value="Mặc định">Màu mặc định</label>
+                <label>
+                    <input type="checkbox" name="product_colors[]" value="Mặc định">
+                    Màu mặc định
+                </label>
             </div>
 
             <input type="text" name="product_name" placeholder="Tên sản phẩm" required>
+
+            <!-- Thêm trường thương hiệu -->
+            <input type="text" name="product_brand" placeholder="Thương hiệu" required>
+
             <input type="text" name="product_price" placeholder="Chỉ nhập số" required>
+
             <select name="product_category" required>
                 <option value="" disabled selected>-- Chọn loại sản phẩm --</option>
                 <option value="Tai nghe">Tai nghe</option>
@@ -72,8 +84,11 @@
                 <option value="Ốp lưng">Ốp lưng</option>
                 <option value="Kính cường lực">Kính cường lực</option>
             </select>
+
             <input type="file" name="product_image" accept="image/*">
+
             <input type="hidden" name="action" value="add">
+
             <button type="submit">Thêm sản phẩm</button>
         </form>
     </div>
