@@ -14,10 +14,11 @@ function renderProducts(products) {
         );
         const priceFormatted = priceNumber.toLocaleString('vi-VN');
 
-        // ===== DATASET =====
-        productDiv.dataset.name = product.name;
-        productDiv.dataset.price = priceNumber;
-        productDiv.dataset.code = product.product_code;
+       // ===== DATASET =====
+         productDiv.dataset.name = product.name;
+         productDiv.dataset.price = priceNumber;
+         productDiv.dataset.code = product.product_code;
+         productDiv.dataset.category = product.category;
 
         // ===== GÁN NỘI DUNG =====
         clone.querySelector('.product-image').src = product.image;

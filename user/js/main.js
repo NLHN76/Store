@@ -12,6 +12,7 @@ const formatPrice = price => parseFloat(price.replace(/\./g, '').replace(',', '.
 
 
 
+// ================= Bật/tắt mật khẩu===============
 function togglePassword(id) {
     const f = document.getElementById(id);
     f.type = f.type === 'password' ? 'text' : 'password';
@@ -36,23 +37,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // 1️⃣ Hiển thị trang chủ
     showSection('home');
 
-    // 2️⃣ Lấy sản phẩm
     fetchJSON('get_products.php').then(data => {
-        allProducts = data;
 
-        // Khởi tạo tồn kho theo màu
-        allProducts.forEach(p => {
-            p.stock = {};
-            const colors = p.color
-                ?.split(',')
-                .map(c => c.trim())
-                .filter(Boolean) || [];
+    allProducts = data;
 
-            colors.forEach(c => p.stock[c] = 0);
-        });
+    allProducts.forEach(p => {
+        p.stock = {};
 
-        renderProducts(allProducts);
+        const colors = p.color
+            ?.split(',')
+            .map(c => c.trim())
+            .filter(Boolean) || [];
+
+        colors.forEach(c => p.stock[c] = 0);
     });
+
+    renderProducts(allProducts);
+
+    populateBrandFilter();
+
+    initCategoryFilter();
+
+});
 
     // 3️⃣ Lấy dữ liệu trang chủ
     fetchJSON('get_home.php').then(renderHome);

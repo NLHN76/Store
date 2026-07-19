@@ -1,77 +1,172 @@
+// ================= BIẾN TOÀN CỤC =================
+let selectedCategory = "all";
+
 // ================= LỌC SẢN PHẨM =================
 function applyFilters() {
-    const kw = searchInput.value.toLowerCase();
-    const cat = categoryFilter.value;
-    const pr = priceFilter.value;
 
-    const filtered = allProducts.filter(p => {
-        const price = parseFloat(p.price.replace(/\./g, '').replace(',', '.'));
-        const matchKeyword = [p.name, p.product_code, p.category].some(x => x.toLowerCase().includes(kw));
-        const matchCategory = cat === "all" || p.category.toLowerCase() === cat.toLowerCase();
+    const keyword = searchInput ? searchInput.value.trim().toLowerCase() : "";
+    const brand = brandFilter ? brandFilter.value : "all";
+    const price = priceFilter ? priceFilter.value : "all";
+    const feature = featureFilter ? featureFilter.value : "all";
+
+    const filtered = allProducts.filter(product => {
+
+        // ---------- Tìm kiếm ----------
+        const matchKeyword =
+            keyword === "" ||
+            product.name.toLowerCase().includes(keyword) ||
+            product.product_code.toLowerCase().includes(keyword);
+
+        // ---------- Danh mục ----------
+        const matchCategory =
+            selectedCategory === "all" ||
+            product.category.trim().toLowerCase() ===
+            selectedCategory.trim().toLowerCase();
+
+        // ---------- Thương hiệu ----------
+        const matchBrand =
+            brand === "all" ||
+            (product.brand &&
+             product.brand.trim().toLowerCase() === brand.toLowerCase());
+
+        // ---------- Giá ----------
+        const productPrice = Number(product.price.toString().replace(/\./g, ""));
+
         let matchPrice = true;
 
-        if (cat !== "all") {
-            if (pr === "0-100") matchPrice = price < 100000;
-            else if (pr === "100-300") matchPrice = price >= 100000 && price <= 300000;
-            else if (pr === "300-500") matchPrice = price >= 300000 && price <= 500000;
-            else if (pr === "500-1000") matchPrice = price >= 500000 && price <= 1000000;
-            else if (pr === "1000+") matchPrice = price > 1000000;
+        switch (price) {
+            case "0-100":
+                matchPrice = productPrice < 100000;
+                break;
+
+            case "100-300":
+                matchPrice = productPrice >= 100000 && productPrice <= 300000;
+                break;
+
+            case "300-500":
+                matchPrice = productPrice >= 300000 && productPrice <= 500000;
+                break;
+
+            case "500-1000":
+                matchPrice = productPrice >= 500000 && productPrice <= 1000000;
+                break;
+
+            case "1000+":
+                matchPrice = productPrice > 1000000;
+                break;
         }
 
-        return matchKeyword && matchCategory && matchPrice;
+        return (
+            matchKeyword &&
+            matchCategory &&
+            matchBrand &&
+            matchPrice
+        );
+
     });
 
     renderProducts(filtered);
 }
 
-// ================= EVENT LỌC =================
-searchInput.addEventListener('input', applyFilters);
-categoryFilter.addEventListener('change', () => {
-    priceFilter.style.display = categoryFilter.value === "all" ? "none" : "inline-block";
-    priceFilter.value = "all";
-    applyFilters();
-});
-priceFilter.addEventListener('change', applyFilters);
+// ================= CLICK DANH MỤC =================
+function initCategoryFilter() {
+
+    const items = document.querySelectorAll(".category-item");
+
+    items.forEach(item => {
+
+        item.addEventListener("click", function () {
+
+            items.forEach(i => i.classList.remove("active"));
+            this.classList.add("active");
+
+            selectedCategory = this.dataset.category;
+
+            // Hiện thanh bộ lọc
+            const filterBar = document.getElementById("productFilter");
+            if (filterBar) {
+                filterBar.style.display = "flex";
+            }
+
+            applyFilters();
+
+        });
+
+    });
+
+}
 
 
+//-------------------------LỌC THƯƠNG HIỆU------------------------------
+function populateBrandFilter() {
 
-// Tìm kiếm sản phẩm 
-function goToProduct(productCode) {
-    // chuyển sang trang sản phẩm
-    showSection('products');
+    const brandFilter = document.getElementById("brandFilter");
 
-    // đợi render xong
-    setTimeout(() => {
-        // reset filter
-        categoryFilter.value = 'all';
-        priceFilter.value = 'all';
+    brandFilter.innerHTML =
+        '<option value="all">Tất cả thương hiệu</option>';
 
-        // tìm đúng sản phẩm theo mã
-        searchInput.value = productCode;
+    // Lấy danh sách thương hiệu không trùng
+    const brands = [...new Set(
+        allProducts.map(p => p.brand).filter(Boolean)
+    )];
 
-        // lọc lại
-        applyFilters();
+    brands.sort();
 
-        // scroll cho UX
-        document.getElementById('products')
-            .scrollIntoView({ behavior: 'smooth' });
+    brands.forEach(brand => {
 
-        showNotification('👉 Vui lòng chọn màu sắc để mua sản phẩm');
-    }, 150);
+        brandFilter.innerHTML +=
+            `<option value="${brand}">${brand}</option>`;
+
+    });
+
 }
 
 
 
-searchInput.addEventListener('input', applyFilters);
-categoryFilter.addEventListener('change', () => {
-    priceFilter.style.display = categoryFilter.value==='all'?'none':'inline-block';
-    priceFilter.value='all';
-    applyFilters();
-});
-priceFilter.addEventListener('change', applyFilters);
+// ================= EVENT =================
+if (searchInput) {
+    searchInput.addEventListener("input", applyFilters);
+}
 
+if (brandFilter) {
+    brandFilter.addEventListener("change", applyFilters);
+}
 
+if (priceFilter) {
+    priceFilter.addEventListener("change", applyFilters);
+}
 
+if (featureFilter) {
+    featureFilter.addEventListener("change", applyFilters);
+}
 
+// ================= TÌM KIẾM TỪ TRANG CHỦ =================
+function goToProduct(productCode) {
 
+    showSection("products");
 
+    setTimeout(() => {
+
+        selectedCategory = "all";
+
+        document.querySelectorAll(".category-item")
+            .forEach(i => i.classList.remove("active"));
+
+        if (searchInput) {
+            searchInput.value = productCode;
+        }
+
+        if (brandFilter) brandFilter.value = "all";
+        if (priceFilter) priceFilter.value = "all";
+        if (featureFilter) featureFilter.value = "all";
+
+        applyFilters();
+
+        document
+            .getElementById("products")
+            .scrollIntoView({ behavior: "smooth" });
+
+        showNotification("👉 Vui lòng chọn màu sắc để mua sản phẩm");
+
+    }, 150);
+}

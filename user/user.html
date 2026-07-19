@@ -16,7 +16,8 @@
   <link rel="stylesheet" href="css/features_products.css">
   <link rel="stylesheet" href="css/notification.css">
   <link rel="stylesheet" href="css/order_alert.css">
-  <link rel="stylesheet" href="css/search.css">
+  <link rel="stylesheet" href="css/category.css">
+  <link rel="stylesheet" href="css/filter.css">
   <link rel="stylesheet" href="css/contact.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -51,11 +52,10 @@
 
      </ul>
            </li>
-
-    
        </ul>
     </nav>
 </header>
+
 
 <main>
    <section id="home">
@@ -85,38 +85,72 @@
 
 
     
-   <section id="products" class="products-section">
+ <section id="products" class="products-section">
 
-    <div class="filter-bar products-filter">
-        <input type="text"
-               id="searchInput"
-               class="filter-input"
-               placeholder="Tìm kiếm sản phẩm theo loại, tên hoặc mã...">
+    <div class="products-wrapper">
 
-        <select id="categoryFilter" class="filter-select">
-            <option value="all">Tất cả danh mục</option>
-            <option value="Tai nghe">Tai nghe</option>
-            <option value="Cáp sạc">Cáp sạc</option>
-            <option value="Ốp lưng">Ốp lưng</option>
-            <option value="Kính cường lực">Kính cường lực</option>
-        </select>
+        <div class="category-section">
+            <h2>Phụ kiện điện thoại</h2>
+            <h3>Chọn theo dòng sản phẩm</h3>
 
-        <select id="priceFilter"
-                class="filter-select"
-                style="display:none;">
-            <option value="all">Tất cả giá</option>
-            <option value="0-100">Dưới 100K</option>
-            <option value="100-300">100K - 300K</option>
-            <option value="300-500">300K - 500K</option>
-            <option value="500-1000">500K - 1 triệu</option>
-            <option value="1000+">Trên 1 triệu</option>
-        </select>
+            <div class="category-list">
+
+                <div class="product-filter" id="productFilter" style="display:none;">
+
+    <input
+        type="text" id="searchInput"placeholder="🔍 Tìm kiếm sản phẩm...">
+
+    <select id="brandFilter">
+        <option value="all">Tất cả thương hiệu</option>
+    </select>
+
+    <select id="priceFilter">
+        <option value="all">Tất cả giá</option>
+        <option value="0-100">Dưới 100.000đ</option>
+        <option value="100-300">100.000 - 300.000đ</option>
+        <option value="300-500">300.000 - 500.000đ</option>
+        <option value="500-1000">500.000 - 1.000.000đ</option>
+        <option value="1000+">Trên 1.000.000đ</option>
+    </select>
+
+    <select id="featureFilter">
+        <option value="all">Tất cả chức năng</option>
+    </select>
+               </div>
+               
+                <div class="category-item active" data-category="all">
+                    <img src="images/pkdt.jpg">
+                    <span>Tất cả</span>
+                </div>
+
+                <div class="category-item" data-category="Tai nghe">
+                    <img src="images/tainghe.jpg" alt="">
+                    <span>Tai nghe</span>
+                </div>
+
+                <div class="category-item" data-category="Cáp sạc">
+                    <img src="images/capsac.jpg" alt="">
+                    <span>Cáp sạc</span>
+                </div>
+
+                <div class="category-item" data-category="Ốp lưng">
+                    <img src="images/oplung.jpg" alt="">
+                    <span>Ốp lưng</span>
+                </div>
+
+                <div class="category-item" data-category="Kính cường lực">
+                    <img src="images/kinh.jpg" alt="">
+                    <span>Kính cường lực</span>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="productsContainer" class="products-container"></div>
+
     </div>
 
-    <div id="productsContainer" class="products-container"></div>
-
 </section>
-
 
 
     <template id="product-template">
@@ -188,6 +222,7 @@
         </form>
     </div>
 
+    
     
     <div id="register-section" class="container" style="display:none;">
         <h2>Đăng Ký</h2>
@@ -352,6 +387,8 @@
         <p>&copy; 2025 MOBILE GEAR. All rights reserved.</p>
     </div>
 </footer>
+
+
 
 <!-- Chat Zalo-->
 <a href="https://zalo.me/0587911287" target="_blank"

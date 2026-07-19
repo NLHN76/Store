@@ -1,11 +1,11 @@
 <?php
 require_once "../db.php";
-
 // ✅ Truy vấn: lấy sản phẩm + màu sắc + điểm trung bình + số lượt đánh giá
 $sql = "
     SELECT 
         p.product_code, 
         p.name, 
+        P.brand,
         p.price, 
         p.color,              
         p.image, 
@@ -16,7 +16,7 @@ $sql = "
     FROM products p
     LEFT JOIN feedback f ON p.product_code = f.product_code
     WHERE p.is_active = 1
-    GROUP BY p.product_code, p.name, p.price, p.color, p.image, p.category, p.is_active
+    GROUP BY p.product_code, p.name,p.brand, p.price, p.color, p.image, p.category, p.is_active
 ";
 
 $result = $conn->query($sql);
