@@ -31,12 +31,13 @@ Báo giá có hiệu lực trong 7 ngày.
     <table>
         <thead>
         <tr>
-            <th>Chọn</th>
-            <th>Mã SP</th>
-            <th>Tên</th>
-            <th>Loại</th>
-            <th>Giá</th>
-            <th>Số lượng</th>
+    <th>Chọn</th>
+    <th>Mã SP</th>
+    <th>Tên</th>
+    <th>Thương hiệu</th>
+    <th>Loại</th>
+    <th>Giá</th>
+    <th>Số lượng</th>
         </tr>
         </thead>
         <tbody>
@@ -44,16 +45,18 @@ Báo giá có hiệu lực trong 7 ngày.
             <tr>
                 <td>
                     <input type="checkbox"
-                           class="product-checkbox"
-                           data-name="<?= htmlspecialchars($p['name'], ENT_QUOTES) ?>"
-                           data-price="<?= $p['price'] ?>">
-                </td>
-                <td><?= $p['product_code'] ?></td>
-                <td><?= $p['name'] ?></td>
-                <td><?= $p['category'] ?></td>
-                <td><?= format_price($p['price']) ?></td>
-                <td>
-                    <input type="number" class="product-qty" value="1" min="1" disabled>
+               class="product-checkbox"
+               data-name="<?= htmlspecialchars($p['name'], ENT_QUOTES) ?>"
+               data-brand="<?= htmlspecialchars($p['brand'], ENT_QUOTES) ?>"
+               data-price="<?= $p['price'] ?>">
+    </td>
+    <td><?= htmlspecialchars($p['product_code']) ?></td>
+    <td><?= htmlspecialchars($p['name']) ?></td>
+    <td><?= htmlspecialchars($p['brand']) ?></td>
+    <td><?= htmlspecialchars($p['category']) ?></td>
+    <td><?= format_price($p['price']) ?></td>
+    <td>
+        <input type="number" class="product-qty"value="1"min="1"disabled>
                 </td>
             </tr>
         <?php endforeach; ?>
