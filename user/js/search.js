@@ -7,7 +7,6 @@ function applyFilters() {
     const keyword = searchInput ? searchInput.value.trim().toLowerCase() : "";
     const brand = brandFilter ? brandFilter.value : "all";
     const price = priceFilter ? priceFilter.value : "all";
-    const feature = featureFilter ? featureFilter.value : "all";
 
     const filtered = allProducts.filter(product => {
 
@@ -136,9 +135,6 @@ if (priceFilter) {
     priceFilter.addEventListener("change", applyFilters);
 }
 
-if (featureFilter) {
-    featureFilter.addEventListener("change", applyFilters);
-}
 
 // ================= TÌM KIẾM TỪ TRANG CHỦ =================
 function goToProduct(productCode) {
@@ -158,7 +154,6 @@ function goToProduct(productCode) {
 
         if (brandFilter) brandFilter.value = "all";
         if (priceFilter) priceFilter.value = "all";
-        if (featureFilter) featureFilter.value = "all";
 
         applyFilters();
 
