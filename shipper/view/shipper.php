@@ -15,7 +15,7 @@
         📦 Có đơn hàng mới!
     </div>
 
-    <audio id="newOrderSound" src="notification.mp3" preload="auto"></audio>
+    <audio id="newOrderSound" src="sound/notification.mp3" preload="auto"></audio>
 
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -23,7 +23,7 @@
         <div class="d-flex align-items-center gap-2">
             <img src="<?= htmlspecialchars($avatar_login) ?>" class="avatar-login" title="Click để chỉnh sửa thông tin">
             <span>Xin chào, <?= htmlspecialchars($shipper_name) ?></span>
-            <a href="shipper_logout.php" class="btn btn-sm btn-danger ms-3">Đăng xuất</a>
+            <a href="functions/shipper_logout.php" class="btn btn-sm btn-danger ms-3">Đăng xuất</a>
         </div>
     </div>
 
