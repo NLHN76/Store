@@ -1,0 +1,22 @@
+.product-filter{
+    display:flex;
+    gap:15px;
+    align-items:center;
+    margin:25px 0;
+    flex-wrap:wrap;
+}
+
+.product-filter input{
+    width:350px;
+    padding:12px 15px;
+    border:1px solid #ddd;
+    border-radius:10px;
+}
+
+.product-filter select{
+    min-width:180px;
+    padding:12px;
+    border:1px solid #ddd;
+    border-radius:10px;
+    cursor:pointer;
+}
