@@ -1,8 +1,5 @@
 
 // ================= DOM ELEMENTS =================
-const searchInput = document.getElementById('searchInput');
-const categoryFilter = document.getElementById('categoryFilter');
-const priceFilter = document.getElementById('priceFilter');
 const notification = document.getElementById('notification');
 
 // ================= HÀM TIỆN ÍCH =================

@@ -1,5 +1,11 @@
-// ================= BIẾN TOÀN CỤC =================
+
 let selectedCategory = "all";
+
+
+// ================= DOM ELEMENTS =================
+const searchInput = document.getElementById('searchInput');
+const categoryFilter = document.getElementById('categoryFilter');
+const priceFilter = document.getElementById('priceFilter');
 
 // ================= LỌC SẢN PHẨM =================
 function applyFilters() {
@@ -192,3 +198,6 @@ function goToProduct(productCode) {
 
     }, 150);
 }
+
+
+

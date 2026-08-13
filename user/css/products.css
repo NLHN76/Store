@@ -106,3 +106,11 @@
     background: #aaa;
     cursor: not-allowed;
 }
+
+
+.category-section h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #222;
+    text-align: center;
+}
