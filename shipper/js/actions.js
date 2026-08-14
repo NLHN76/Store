@@ -1,14 +1,24 @@
+document.addEventListener("click", function (e) {
+    const receiveBtn = e.target.closest(".receive-btn");
 
+    if (!receiveBtn) return;
 
-$(document).on('click', '.receive-btn', function (e) {
     e.stopPropagation();
 
-    var id = $(this).data("id");
+    const id = receiveBtn.dataset.id;
 
-    $.post("shipper_dashboard.php", {
-        action: "receive_order",
-        order_id: id
-    }, function (res) {
+    fetch("shipper_dashboard.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({
+            action: "receive_order",
+            order_id: id
+        })
+    })
+    .then(response => response.text())
+    .then(res => {
         if (res === "success") {
             ShipperState.pendingOrders.delete(id);
             stopAlert();
@@ -21,17 +31,29 @@ $(document).on('click', '.receive-btn', function (e) {
 });
 
 
-$(document).on('change', '.status-select', function (e) {
+document.addEventListener("change", function (e) {
+    const statusSelect = e.target.closest(".status-select");
+
+    if (!statusSelect) return;
+
     e.stopPropagation();
 
-    var id = $(this).data("id");
-    var status = $(this).val();
+    const id = statusSelect.dataset.id;
+    const status = statusSelect.value;
 
-    $.post("shipper_dashboard.php", {
-        action: "update_status",
-        order_id: id,
-        new_status: status
-    }, function (res) {
+    fetch("shipper_dashboard.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({
+            action: "update_status",
+            order_id: id,
+            new_status: status
+        })
+    })
+    .then(response => response.text())
+    .then(res => {
         if (res === "success") {
             ShipperState.pendingOrders.delete(id);
             stopAlert();

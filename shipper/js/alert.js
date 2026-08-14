@@ -1,16 +1,20 @@
-
-
-var ShipperState = {
+const ShipperState = {
     alertAudio: null,
     alertInterval: null,
     lastOrderId: 0,
     pendingOrders: new Set()
 };
 
-$(function () {
-    ShipperState.alertAudio = document.getElementById('newOrderSound');
-    ShipperState.lastOrderId = parseInt($("#newOrderBanner").data("last-id") || 0);
+document.addEventListener("DOMContentLoaded", function () {
+    ShipperState.alertAudio = document.getElementById("newOrderSound");
+
+    const banner = document.getElementById("newOrderBanner");
+
+    ShipperState.lastOrderId = parseInt(
+        banner?.dataset.lastId || 0
+    );
 });
+
 
 /* ================= ÂM THANH CẢNH BÁO ================= */
 
@@ -19,10 +23,13 @@ function startAlert() {
 
     ShipperState.alertInterval = setInterval(function () {
         if (ShipperState.alertAudio) {
-            ShipperState.alertAudio.play().catch(function () {});
+            ShipperState.alertAudio
+                .play()
+                .catch(function () {});
         }
     }, 2000);
 }
+
 
 function stopAlert() {
     ShipperState.pendingOrders.clear();

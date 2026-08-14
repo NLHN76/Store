@@ -79,7 +79,7 @@ document.getElementById("messenger-float").onclick = toggleChatBox;
 
 document.getElementById("close-messenger").onclick = () => {
     document.getElementById("messenger-box").style.display = "none";
-    document.body.classList.remove("chat-open"); // HIỆN icon messenger
+    document.body.classList.remove("chat-open"); 
 };
 
 document.getElementById("send-messenger").onclick = sendMessage;
