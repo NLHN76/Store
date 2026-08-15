@@ -1,8 +1,3 @@
-function toggle(id, count){
-    const el = document.getElementById(id);
-    if(!el) return;
-    el.style.display = count > 0 ? "inline-block" : "none";
-}
 
 function checkNotifications(){
     fetch("notification/check_notifications.php")
