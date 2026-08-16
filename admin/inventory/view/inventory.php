@@ -83,7 +83,6 @@
                     <select name="product_id" id="product_id" class="form-select" required onchange="loadColors(this.value)">
                         <option value="">-- Chọn sản phẩm --</option>
                         <?php foreach($productOptions as $p): 
-                            // Chuyển mảng màu thành chuỗi, ví dụ "Đỏ,Xanh,Vàng"
                             $colorsStr = htmlspecialchars($p['color']);
                         ?>
                         <option value="<?= (int)$p['id'] ?>" data-colors="<?= $colorsStr ?>">
@@ -131,7 +130,7 @@
                     <th>Mã SP</th>
                     <th>Tồn kho</th>
                     <th>Đã bán</th>
-                    <th>Giá nhập trung bình</th>
+                    <th>Giá nhập sản phẩm</th>
                     <th>Giá bán/1 sản phẩm</th>
                     <th>Thao tác</th>
                 </tr>
@@ -164,7 +163,7 @@
     <td><?= htmlspecialchars($item['color']) ?></td>
     <td class="fw-bold text-primary"><?= htmlspecialchars($item['product_code']) ?></td>
 
-    <!-- Tồn kho hiển thị trực tiếp, không cho chỉnh sửa -->
+    <!--Hiển thị tồn kho-->
     <td><?= (int)$item['actual_stock'] ?></td>
     <td><?= (int)$item['sold'] ?></td>
     <td><?= number_format($item['import_price'],0,',','.') ?></td>
