@@ -5,7 +5,6 @@
   max-width: 700px;
   margin: 50px auto;
   border-radius: 15px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
   font-family: 'Segoe UI', Tahoma, sans-serif;
   transition: all 0.3s ease;
 }
@@ -20,7 +19,7 @@
 
 /* DANH SÁCH SẢN PHẨM */
 .cart-items {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #ddd;     /* đường viền */
   border-bottom: 1px solid #ddd;
   padding: 15px 0;
   margin-bottom: 20px;
@@ -36,7 +35,6 @@
   margin-bottom: 10px;
   color: #444;
   display: flex;
-  justify-content: space-between;
   padding: 0 5px;
 }
 
@@ -70,7 +68,6 @@
     align-items: center;
     gap: 10px;
     padding: 10px 0;
-    border-bottom: 1px solid #eee;
     font-size: 15px;
 }
 
@@ -82,6 +79,7 @@
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
+    color:white ;
     background: #2e943c;
 }
 
