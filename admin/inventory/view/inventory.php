@@ -146,7 +146,7 @@
             <?php foreach($inventoryData as $productName => $items):
                 $collapseId = 'collapse_' . md5($productName);
             ?>
-                <!-- Dòng cha -->
+                
                 <tr class="parent-row" data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?>">
                     <td colspan="8" class="text-start fw-bold">
                         <i class="fa-solid fa-box"></i>
@@ -157,7 +157,7 @@
                 <?php foreach($items as $item):
                     $colorKey = preg_replace('/[^a-zA-Z0-9_-]/','_',$item['color']);
                 ?>
-                <!-- Dòng con -->
+               
               <tr class="collapse" id="<?= $collapseId ?>">
     <td class="text-start"><?= htmlspecialchars($item['product_name']) ?></td>
     <td><?= htmlspecialchars($item['color']) ?></td>

@@ -8,7 +8,6 @@
     <title>Quản Lý Đơn Hàng</title>
 
     <link rel="stylesheet" href="css/orders.css">
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 </head>
 
 <body>
@@ -107,8 +106,9 @@
 
     </template>
 
-
+  
     <script src="js/orders.js"></script>
+    
 
 </body>
 </html>

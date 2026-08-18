@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Shipper Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <link rel="stylesheet" href="css/shipper.css">
 
 </head>
@@ -27,112 +26,184 @@
         </div>
     </div>
 
-    <!-- Bảng đơn hàng -->
-    <div class="table-responsive">
-        <table class="table table-bordered align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th>ID</th>
-                    <th>Khách hàng</th>
-                    <th>Sản phẩm</th>
-                    <th>Màu sắc</th>
-                    <th>Tổng tiền</th>
-                    <th>Trạng thái</th>
-                    <th>Shipper</th>
-                    <th>Hành động</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php if($orders->num_rows > 0): ?>
-                <?php while($row = $orders->fetch_assoc()): 
-                    $status_class = match($row['status']) {
-                        'Đang xử lý' => 'status-dangxuly',
-                        'Đang giao hàng' => 'status-danggiaohang',
-                        'Đã giao hàng' => 'status-dagiao',
-                        default => ''
-                    };
+   <!-- Bảng đơn hàng -->
+<div class="table-responsive">
+    <table class="table table-bordered align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Đơn hàng</th>
+                <th>Khách hàng</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
 
-                    // Các trạng thái shipper có thể chỉnh
-                    $editable_statuses = [];
-                    if($row['shipper_id'] == $shipper_id){
-                        $editable_statuses = match($row['status']) {
-                            'Đang xử lý' => ['Đang xử lý','Đang giao hàng','Đã giao hàng'],
-                            'Đang giao hàng' => ['Đang giao hàng','Đã giao hàng'],
-                            default => []
-                        };
-                    }
-                ?>
-                
-                <tr class="<?= $status_class ?>" 
-                    <?= $row['status'] !== 'Đã giao hàng' ? 'data-bs-toggle="collapse" data-bs-target="#order'.$row['id'].'" style="cursor:pointer;"' : '' ?>>
-                    <td>#<?= $row['id'] ?></td>
+        <tbody>
+        <?php if ($orders->num_rows > 0): ?>
+
+            <?php while ($row = $orders->fetch_assoc()):
+
+                $status_class = match ($row['status']) {
+                    'Đang xử lý' => 'status-dangxuly',
+                    'Đang giao hàng' => 'status-danggiaohang',
+                    'Đã giao hàng' => 'status-dagiao',
+                    default => ''
+                };
+
+                $editable_statuses = [];
+
+                if ($row['shipper_id'] == $shipper_id) {
+                    $editable_statuses = match ($row['status']) {
+                        'Đang xử lý' => [
+                            'Đang xử lý',
+                            'Đang giao hàng',
+                            'Đã giao hàng'
+                        ],
+                        'Đang giao hàng' => [
+                            'Đang giao hàng',
+                            'Đã giao hàng'
+                        ],
+                        default => []
+                    };
+                }
+            ?>
+
+                <!-- Dòng chính -->
+                <tr class="<?= $status_class ?>"
+                    <?= $row['status'] !== 'Đã giao hàng'
+                        ? 'data-bs-toggle="collapse" data-bs-target="#order' . $row['id'] . '" style="cursor:pointer;"'
+                        : '' ?>>
+
+                    <td>
+                        #<?= $row['id'] ?>
+                    </td>
+
                     <td>
                         <b><?= htmlspecialchars($row['customer_name']) ?></b><br>
-                        <small><?= htmlspecialchars($row['customer_phone']) ?></small>
                     </td>
-                    <td><?= htmlspecialchars($row['product_name']) ?></td>
-                    <td><?= htmlspecialchars($row['color']) ?></td>
-                    <td><?= number_format($row['total_price'],0,",",".") ?>₫</td>
+
                     <td>
-                        <?php if($editable_statuses): ?>
-                            <select class="form-select form-select-sm status-select" data-id="<?= $row['id'] ?>">
-                                <?php foreach($editable_statuses as $s): ?>
-                                    <option value="<?= $s ?>" <?= $row['status']==$s?'selected':'' ?>><?= $s ?></option>
+                        <?php if ($editable_statuses): ?>
+
+                            <select
+                                class="form-select form-select-sm status-select"
+                                data-id="<?= $row['id'] ?>"
+                            >
+                                <?php foreach ($editable_statuses as $status): ?>
+                                    <option
+                                        value="<?= $status ?>"
+                                        <?= $row['status'] == $status ? 'selected' : '' ?>
+                                    >
+                                        <?= $status ?>
+                                    </option>
                                 <?php endforeach; ?>
                             </select>
+
                         <?php else: ?>
-                            <span class="text-muted"><?= htmlspecialchars($row['status']) ?></span>
+
+                            <span class="text-muted">
+                                <?= htmlspecialchars($row['status']) ?>
+                            </span>
+
                         <?php endif; ?>
                     </td>
+
                     <td>
-                        <?php if($row['shipper_id']): ?>
-                            <div class="d-flex align-items-center gap-2">
-                                <img src="<?= htmlspecialchars($row['shipper_avatar'] ?? 'https://via.placeholder.com/30') ?>" class="avatar-order">
-                                <span><?= htmlspecialchars($row['shipper_name']) ?></span>
-                            </div>
-                        <?php else: ?>
-                            <span class="text-secondary">Chưa nhận</span>
-                        <?php endif; ?>
-                    </td>
-                    <td>
-                        <?php if($row['status']=='Đang xử lý' && is_null($row['shipper_id'])): ?>
-                            <button class="btn btn-success btn-sm receive-btn" data-id="<?= $row['id'] ?>">Nhận đơn</button>
+                        <?php if (
+                            $row['status'] == 'Đang xử lý' &&
+                            is_null($row['shipper_id'])
+                        ): ?>
+
+                            <button
+                                class="btn btn-success btn-sm receive-btn"
+                                data-id="<?= $row['id'] ?>"
+                            >
+                                Nhận đơn
+                            </button>
+
                         <?php endif; ?>
                     </td>
                 </tr>
 
-                <?php if($row['status'] !== 'Đã giao hàng'): ?>
                 <!-- Chi tiết đơn hàng -->
-                <tr class="collapse-row">
-                    <td colspan="8" class="p-0">
-                        <div id="order<?= $row['id'] ?>" class="collapse p-3">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <p><b>📞 Điện thoại:</b> <?= htmlspecialchars($row['customer_phone']) ?></p>
-                                    <p><b>🏠 Địa chỉ:</b> <?= htmlspecialchars($row['customer_address']) ?></p>
-                                    <p><b>📅 Ngày đặt:</b> <?= htmlspecialchars($row['order_date']) ?></p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p><b>📦 Sản phẩm:</b> <?= htmlspecialchars($row['product_name']) ?></p>
-                                    <p><b>🔢 Số lượng:</b> <?= $row['product_quantity'] ?></p>
-                                    <p><b>🎨 Màu sắc:</b> <?= htmlspecialchars($row['color']) ?></p>
-                                    <p><b>💰 Tổng tiền:</b> <?= number_format($row['total_price'],0,",",".") ?>₫</p>
+                <?php if ($row['status'] !== 'Đã giao hàng'): ?>
+
+                    <tr class="collapse-row">
+                        <td colspan="4" class="p-0">
+
+                            <div
+                                id="order<?= $row['id'] ?>"
+                                class="collapse p-3"
+                            >
+                                <div class="row">
+
+                                    <div class="col-md-6">
+                                        <p>
+                                            <b>📞 Điện thoại:</b>
+                                            <?= htmlspecialchars($row['customer_phone']) ?>
+                                        </p>
+
+                                        <p>
+                                            <b>🏠 Địa chỉ:</b>
+                                            <?= htmlspecialchars($row['customer_address']) ?>
+                                        </p>
+
+                                        <p>
+                                            <b>📅 Ngày đặt:</b>
+                                            <?= htmlspecialchars($row['order_date']) ?>
+                                        </p>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <p>
+                                            <b>📦 Sản phẩm:</b>
+                                            <?= htmlspecialchars($row['product_name']) ?>
+                                        </p>
+
+                                        <p>
+                                            <b>🔢 Số lượng:</b>
+                                            <?= $row['product_quantity'] ?>
+                                        </p>
+
+                                        <p>
+                                            <b>🎨 Màu sắc:</b>
+                                            <?= htmlspecialchars($row['color']) ?>
+                                        </p>
+
+                                        <p>
+                                            <b>💰 Tổng tiền:</b>
+                                            <?= number_format($row['total_price'], 0, ",", ".") ?>₫
+                                        </p>
+
+                                        <p>
+                                            <b>🚚 Shipper:</b>
+                                            <?= $row['shipper_id']
+                                                ? htmlspecialchars($row['shipper_name'])
+                                                : 'Chưa nhận' ?>
+                                        </p>
+                                    </div>
+
                                 </div>
                             </div>
-                        </div>
-                    </td>
-                </tr>
+
+                        </td>
+                    </tr>
+
                 <?php endif; ?>
 
-                <?php endwhile; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="8" class="text-center text-muted">Không có đơn hàng</td>
-                </tr>
-            <?php endif; ?>
-            </tbody>
-        </table>
-    </div>
+            <?php endwhile; ?>
+
+        <?php else: ?>
+
+            <tr>
+                <td colspan="4" class="text-center text-muted">
+                    Không có đơn hàng
+                </td>
+            </tr>
+
+        <?php endif; ?>
+        </tbody>
+    </table>
 </div>
 
 <!-- Modal chỉnh sửa thông tin Shipper -->
@@ -183,7 +254,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 <script src="js/alert.js"></script>
 <script src="js/modal.js"></script>
 <script src="js/actions.js"></script>

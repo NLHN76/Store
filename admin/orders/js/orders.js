@@ -16,25 +16,44 @@ function deleteOrder(id) {
 
     if (!confirm(`Xóa đơn #${id}?`)) return;
 
-    $.post("functions/update.php", { delete_id: id })
-        .done(data => {
-            if (data.trim() === "success") {
-                loadOrders();
-            } else {
-                alert("Lỗi: " + data);
-            }
-        });
+    fetch("functions/update.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({
+            delete_id: id
+        })
+    })
+    .then(res => res.text())
+    .then(data => {
+
+        if (data.trim() === "success") {
+            loadOrders();
+        } else {
+            alert("Lỗi: " + data);
+        }
+
+    });
 }
 
 
 // CẬP NHẬT
 function updateStatus(id, select) {
 
-    $.post("functions/update.php", {
-        action: "update_status",
-        order_id: id,
-        new_status: select.value
-    }).done(data => {
+    fetch("functions/update.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: new URLSearchParams({
+            action: "update_status",
+            order_id: id,
+            new_status: select.value
+        })
+    })
+    .then(res => res.text())
+    .then(data => {
 
         if (data.trim() === "success") {
             loadOrders();
@@ -49,50 +68,61 @@ function updateStatus(id, select) {
 // LOAD
 function loadOrders() {
 
-    const keyword = $("input[name=keyword]").val();
+    const keyword =
+        document.querySelector("input[name=keyword]").value;
 
-    $.get(
-        "functions/get_data.php",
-        { keyword },
-        orders => renderOrders(orders),
-        "json"
-    );
+    fetch(
+        "functions/get_data.php?" +
+        new URLSearchParams({ keyword })
+    )
+    .then(res => res.json())
+    .then(orders => renderOrders(orders));
 }
 
 
 // HIỂN THỊ
 function renderOrders(orders) {
 
-    const tbody = $("#ordersTableBody").empty();
-    const template = document.getElementById("orderTemplate");
+    const tbody =
+        document.querySelector("#ordersTableBody");
+
+    tbody.innerHTML = "";
+
+    const template =
+        document.getElementById("orderTemplate");
 
     if (!orders.length) {
 
-        tbody.html(`
+        tbody.innerHTML = `
             <tr>
                 <td colspan="16" style="text-align:center">
                     Không có đơn hàng
                 </td>
             </tr>
-        `);
+        `;
 
         return;
     }
 
     orders.forEach(order => {
 
-        const row = template.content.cloneNode(true);
-        const tr = row.querySelector("tr");
+        const row =
+            template.content.cloneNode(true);
+
+        const tr =
+            row.querySelector("tr");
 
         tr.style.backgroundColor =
             colors[order.status] || "#fff";
 
 
         // DỮ LIỆU
-        tr.querySelector(".order-id").textContent = order.id;
+        tr.querySelector(".order-id").textContent =
+            order.id;
 
         tr.querySelector(".order-date").textContent =
-            new Date(order.order_date).toLocaleString("vi-VN");
+            new Date(order.order_date)
+                .toLocaleString("vi-VN");
 
         tr.querySelector(".customer-name").textContent =
             order.customer_name;
@@ -122,21 +152,21 @@ function renderOrders(orders) {
             order.product_quantity;
 
         tr.querySelector(".total-price").textContent =
-            Number(order.total_price).toLocaleString("vi-VN");
+            Number(order.total_price)
+                .toLocaleString("vi-VN");
 
         tr.querySelector(".user-code").textContent =
             order.user_code || "-";
 
 
         // TRẠNG THÁI
-        const select = tr.querySelector(".status-select");
+        const select =
+            tr.querySelector(".status-select");
 
         statuses.forEach(status => {
 
-            const option = new Option(
-                status,
-                status
-            );
+            const option =
+                new Option(status, status);
 
             option.selected =
                 status === order.status;
@@ -145,8 +175,9 @@ function renderOrders(orders) {
 
         });
 
-        select.onchange = () =>
+        select.addEventListener("change", () => {
             updateStatus(order.id, select);
+        });
 
 
         // SHIPPER
@@ -160,7 +191,7 @@ function renderOrders(orders) {
 
         // CHỨC NĂNG
         tr.querySelector(".actions").innerHTML = `
-            <button onclick="deleteOrder(${order.id})">
+            <button class="delete-btn">
                 Xóa
             </button>
 
@@ -181,22 +212,30 @@ function renderOrders(orders) {
             </form>
         `;
 
-        tbody.append(row);
+
+        // NÚT XÓA
+        tr.querySelector(".delete-btn")
+            .addEventListener("click", () => {
+                deleteOrder(order.id);
+            });
+
+
+        tbody.appendChild(row);
     });
 }
 
 
 // TÌM KIẾM
-$("#searchForm").on("submit", function(e) {
+document.querySelector("#searchForm").addEventListener("submit", function(e) {
 
-    e.preventDefault();
+        e.preventDefault();
 
-    loadOrders();
-});
+        loadOrders();
+    });
 
 
-// KHỞI ĐỘNG
-$(function() {
+
+document.addEventListener("DOMContentLoaded", function() {
 
     loadOrders();
 

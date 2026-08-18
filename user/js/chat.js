@@ -10,13 +10,13 @@ function toggleChatBox() {
 
     if (box.style.display === "block") {
         box.style.display = "none";
-        document.body.classList.remove("chat-open"); // HIỆN icon messenger
+        document.body.classList.remove("chat-open");
     } else {
         box.style.display = "block";
         badge.style.display = "none";
-        document.body.classList.add("chat-open"); // ẨN icon messenger
+        document.body.classList.add("chat-open"); 
 
-        // Đánh dấu đã đọc tất cả tin admin
+        
         const adminCount = document.querySelectorAll(
             "#messenger-messages .admin-message"
         ).length;

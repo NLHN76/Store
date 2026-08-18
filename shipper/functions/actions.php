@@ -8,16 +8,7 @@ if(isset($_POST['action'])){
     if($action=="receive_order"){
         $order_id = intval($_POST['order_id']);
 
-        $stmt = $conn->prepare("
-            UPDATE payment 
-            SET shipper_id=?, 
-                receive_date=NOW(), 
-                status='Đang giao hàng' 
-            WHERE id=? 
-              AND shipper_id IS NULL 
-              AND status='Đang xử lý'
-        ");
-
+        $stmt = $conn->prepare("UPDATE payment SET shipper_id=?, receive_date=NOW(), status='Đang giao hàng' WHERE id=? AND shipper_id IS NULL AND status='Đang xử lý'");
         $stmt->bind_param("ii", $shipper_id, $order_id);
         $stmt->execute();
 
@@ -30,44 +21,17 @@ if(isset($_POST['action'])){
         $order_id = intval($_POST['order_id']);
         $new_status = $_POST['new_status'];
 
-        $check = $conn->query("
-            SELECT status, shipper_id 
-            FROM payment 
-            WHERE id=$order_id
-        ")->fetch_assoc();
+        $check = $conn->query("SELECT status, shipper_id FROM payment WHERE id=$order_id")->fetch_assoc();
 
         if($check && $check['shipper_id']==$shipper_id){
-
             $valid_transitions = [
-                'Đang xử lý' => [
-                    'Đang xử lý',
-                    'Đang giao hàng',
-                    'Đã giao hàng'
-                ],
-
-                'Đang giao hàng' => [
-                    'Đang giao hàng',
-                    'Đã giao hàng'
-                ]
+                'Đang xử lý' => ['Đang xử lý', 'Đang giao hàng', 'Đã giao hàng'],
+                'Đang giao hàng' => ['Đang giao hàng', 'Đã giao hàng']
             ];
 
-            if(in_array(
-                $new_status,
-                $valid_transitions[$check['status']] ?? []
-            )){
-
-                $stmt = $conn->prepare("
-                    UPDATE payment 
-                    SET status=? 
-                    WHERE id=?
-                ");
-
-                $stmt->bind_param(
-                    "si",
-                    $new_status,
-                    $order_id
-                );
-
+            if(in_array($new_status, $valid_transitions[$check['status']] ?? [])){
+                $stmt = $conn->prepare("UPDATE payment SET status=? WHERE id=?");
+                $stmt->bind_param("si", $new_status, $order_id);
                 $stmt->execute();
 
                 echo "success";
@@ -81,17 +45,9 @@ if(isset($_POST['action'])){
 
     // Cập nhật thông tin shipper
     if($action=="update_shipper_info"){
-
         $id = intval($_POST['shipper_id']);
 
-        $fields = [
-            'name',
-            'email',
-            'phone',
-            'dob',
-            'cmt'
-        ];
-
+        $fields = ['name', 'email', 'phone', 'dob', 'cmt'];
         $types = 'sssss';
         $params = [];
 
@@ -100,27 +56,12 @@ if(isset($_POST['action'])){
         }
 
         // Cập nhật avatar
-        if(
-            isset($_FILES['avatar']) &&
-            $_FILES['avatar']['error']==0
-        ){
+        if(isset($_FILES['avatar']) && $_FILES['avatar']['error']==0){
+            $ext = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
 
-            $ext = strtolower(
-                pathinfo(
-                    $_FILES['avatar']['name'],
-                    PATHINFO_EXTENSION
-                )
-            );
-
-            if(in_array($ext,['jpg','jpeg','png','gif'])){
-
-                $avatar_path =
-                    "uploads/shipper_".$id.".".$ext;
-
-                move_uploaded_file(
-                    $_FILES['avatar']['tmp_name'],
-                    $avatar_path
-                );
+            if(in_array($ext, ['jpg','jpeg','png','gif'])){
+                $avatar_path = "uploads/shipper_".$id.".".$ext;
+                move_uploaded_file($_FILES['avatar']['tmp_name'], $avatar_path);
 
                 $fields[] = 'avatar';
                 $types .= 's';
@@ -128,32 +69,16 @@ if(isset($_POST['action'])){
             }
         }
 
-        $fields_str = implode(
-            ', ',
-            array_map(
-                fn($f)=>"$f=?",
-                $fields
-            )
-        );
+        $fields_str = implode(', ', array_map(fn($f)=>"$f=?", $fields));
 
-        $stmt = $conn->prepare("
-            UPDATE shipper 
-            SET $fields_str 
-            WHERE id=?
-        ");
+        $stmt = $conn->prepare("UPDATE shipper SET $fields_str WHERE id=?");
 
         $types .= 'i';
         $params[] = $id;
 
-        $stmt->bind_param(
-            $types,
-            ...$params
-        );
+        $stmt->bind_param($types, ...$params);
 
-        echo $stmt->execute()
-            ? "success"
-            : $conn->error;
-
+        echo $stmt->execute() ? "success" : $conn->error;
         exit;
     }
 }

@@ -17,4 +17,16 @@ $stmt_orders->bind_param("i", $shipper_id);
 $stmt_orders->execute();
 $orders = $stmt_orders->get_result();
 
+
+
+// Lấy ID đơn lớn nhất từ bảng payment
+$result_last = $conn->query("
+    SELECT MAX(id) as last_id 
+    FROM payment
+");
+
+$lastOrderId = ($row = $result_last->fetch_assoc())
+    ? intval($row['last_id'])
+    : 0;
+
 ?>
