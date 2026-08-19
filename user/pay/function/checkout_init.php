@@ -36,7 +36,7 @@ $itemCount = 0;
 // Gom giỏ theo product_code + color
 foreach ($cart as $item) {
 
-    // Nếu thiếu product_code → lấy từ DB
+   
     if (empty($item['product_code'])) {
         $stmtProd = $conn->prepare("
             SELECT product_code, category, image 

@@ -53,7 +53,7 @@ foreach ($itemsGrouped as $item) {
     $stmtUpdate->execute();
     $stmtUpdate->close();
 
-    // Lấy product_id
+  
     $stmtProd = $conn->prepare("
         SELECT id
         FROM products
@@ -69,7 +69,7 @@ foreach ($itemsGrouped as $item) {
 
         $product_id = $product['id'];
 
-        // Lấy giá nhập và giá bán hiện tại
+      
         $stmtPrice = $conn->prepare("
             SELECT import_price, sale_price
             FROM product_inventory
@@ -84,7 +84,7 @@ foreach ($itemsGrouped as $item) {
         $import_price = $price['import_price'] ?? 0;
         $sale_price   = $price['sale_price'] ?? 0;
 
-        // Ghi lịch sử
+
         $note = "Trừ tồn kho khi đặt hàng (User: {$user_code})";
 
         $stmtHist = $conn->prepare("
@@ -121,7 +121,7 @@ foreach ($itemsGrouped as $item) {
 
 
         // **Step 3: Lưu đơn hàng**
-       // Gom dữ liệu sản phẩm
+
 $productCodesString = implode(', ', array_map(
     fn($i) => $i['product_code'],
     $itemsGrouped
@@ -132,7 +132,7 @@ $productDetailsString = implode(', ', array_map(
     $itemsGrouped
 ));
 
-// ⭐ Gom IMAGE (chỉ lấy tên file)
+
 $productImagesString = implode(', ', array_map(
     fn($i) => basename($i['image']),
     $itemsGrouped
@@ -148,7 +148,7 @@ $colorsString = implode(', ', array_map(
     $itemsGrouped
 ));
 
-// Chuẩn bị câu INSERT (CÓ CỘT IMAGE)
+
 $stmt = $conn->prepare("
     INSERT INTO payment 
     (customer_name, customer_email, customer_phone, customer_address, user_code,
@@ -156,7 +156,7 @@ $stmt = $conn->prepare("
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ");
 
-// Bind đúng số lượng & đúng thứ tự
+
 $stmt->bind_param(
     "ssssssssiiss",
     $name_post,

@@ -31,7 +31,7 @@ function showSection(sectionId) {
 // ================= FETCH DỮ LIỆU =================
 document.addEventListener('DOMContentLoaded', () => {
 
-    // 1️⃣ Hiển thị trang chủ
+    // Hiển thị trang chủ
     showSection('home');
 
     fetchJSON('get_products.php').then(data => {
@@ -57,10 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-    // 3️⃣ Lấy dữ liệu trang chủ
+    // Lấy dữ liệu trang chủ
     fetchJSON('get_home.php').then(renderHome);
 
-    // 4️⃣ AUTO: tự điền tên + email nếu đã đăng nhập
+  
     fetchJSON('auto/auto.php')
         .then(user => {
             if (!user) return;
