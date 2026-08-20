@@ -1,6 +1,4 @@
 <?php
-require_once "inventory_functions.php" ;
-
 //Thêm / cập nhật hàng 
 if (isset($_POST['add_stock'])) {
     $product_id   = (int)($_POST['product_id'] ?? 0);

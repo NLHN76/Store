@@ -1,7 +1,4 @@
 <?php
-
-require_once "inventory_data.php" ;
-
 //Hoàn lại tồn kho khi hủy đơn
 function restoreStockFromCancelledPayment($conn){
     $res = $conn->query("
