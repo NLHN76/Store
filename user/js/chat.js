@@ -74,7 +74,7 @@ function fetchMessages() {
         });
 }
 
-// ===== Gán sự kiện =====
+// Gán sự kiện 
 document.getElementById("messenger-float").onclick = toggleChatBox;
 
 document.getElementById("close-messenger").onclick = () => {
@@ -91,8 +91,8 @@ document.getElementById("messenger-input").addEventListener("keypress", e => {
     }
 });
 
-// Fetch mỗi 2s
+
 setInterval(fetchMessages, 2000);
 
-// Load lần đầu
+
 fetchMessages();

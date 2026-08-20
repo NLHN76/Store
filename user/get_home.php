@@ -1,7 +1,7 @@
 <?php
 require_once "../db.php";
 
-/* ================== BANNER ================== */
+//BANNER 
 $sqlBanner = "SELECT * FROM home WHERE id = 1";
 $resultBanner = $conn->query($sqlBanner);
 $banner = $resultBanner ? $resultBanner->fetch_assoc() : null;
@@ -10,7 +10,7 @@ if (!empty($banner['image'])) {
     $banner['image'] = '../admin/home/uploads/' . $banner['image'];
 }
 
-/* ================== KHUYẾN MÃI ================== */
+//KHUYẾN MÃI 
 $sqlPromo = "SELECT * FROM promotions ORDER BY id DESC";
 $resultPromo = $conn->query($sqlPromo);
 
@@ -23,7 +23,7 @@ if ($resultPromo) {
         $promotions[] = $row;
     }
 }
-/* ================== SẢN PHẨM NỔI BẬT ================== */
+//SẢN PHẨM NỔI BẬT 
 $sqlFeatured = "
     SELECT 
         p.id,
@@ -50,7 +50,6 @@ if ($resultFeatured) {
 }
 
 
-/* ================== TRẢ JSON ================== */
 header('Content-Type: application/json; charset=utf-8');
 
 echo json_encode([

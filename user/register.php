@@ -1,5 +1,4 @@
 <?php
-
 require_once "../db.php";
 
 // Hàm tạo mã user_code ngẫu nhiên
@@ -31,8 +30,8 @@ function sendConfirmationEmail($name, $email) {
         $mail->isSMTP();
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = 'Namdo2003hp@gmail.com';  // Email gửi đi
-        $mail->Password = 'pdkd ujkn piok qrnu';    // Mật khẩu ứng dụng Gmail
+        $mail->Username = 'Namdo2003hp@gmail.com'; 
+        $mail->Password = 'pdkd ujkn piok qrnu';    
         $mail->SMTPSecure = PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
         $mail->CharSet = 'UTF-8';
@@ -56,14 +55,12 @@ function sendConfirmationEmail($name, $email) {
 
 
 
-
 // Xử lý form
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST['register-name'] ?? '';
     $email = $_POST['register-email'] ?? '';
     $password = $_POST['register-password'] ?? '';
 
-    // Kiểm tra đầu vào
     if (empty($name) || empty($email) || empty($password)) {
         echo "Vui lòng điền đầy đủ thông tin.";
         exit;
@@ -74,12 +71,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    if (strlen($password) < 6) {
-        echo "Mật khẩu phải có ít nhất 6 ký tự.";
-        exit;
-    }
-
-    // Kiểm tra trùng tên hoặc email
     $check_sql = "SELECT * FROM users WHERE email = ? OR name = ?";
     $stmt_check = $conn->prepare($check_sql);
     $stmt_check->bind_param("ss", $email, $name);
@@ -109,7 +100,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 sendConfirmationEmail($name, $email);
                 $inserted = true;
             } elseif ($conn->errno == 1062) {
-                // Trùng user_code
                 $attempt++;
                 $stmt_insert->close();
             } else {

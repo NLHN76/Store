@@ -1,13 +1,11 @@
 
 let selectedCategory = "all";
 
-
-// ================= DOM ELEMENTS =================
 const searchInput = document.getElementById('searchInput');
 const categoryFilter = document.getElementById('categoryFilter');
 const priceFilter = document.getElementById('priceFilter');
 
-// ================= LỌC SẢN PHẨM =================
+//  LỌC SẢN PHẨM 
 function applyFilters() {
 
     const keyword = searchInput ? searchInput.value.trim().toLowerCase() : "";
@@ -16,25 +14,25 @@ function applyFilters() {
 
     const filtered = allProducts.filter(product => {
 
-        // ---------- Tìm kiếm ----------
+  
         const matchKeyword =
             keyword === "" ||
             product.name.toLowerCase().includes(keyword) ||
             product.product_code.toLowerCase().includes(keyword);
 
-        // ---------- Danh mục ----------
+
         const matchCategory =
             selectedCategory === "all" ||
             product.category.trim().toLowerCase() ===
             selectedCategory.trim().toLowerCase();
 
-        // ---------- Thương hiệu ----------
+    
         const matchBrand =
             brand === "all" ||
             (product.brand &&
              product.brand.trim().toLowerCase() === brand.toLowerCase());
 
-        // ---------- Giá ----------
+  
         const productPrice = Number(product.price.toString().replace(/\./g, ""));
 
         let matchPrice = true;
@@ -73,7 +71,7 @@ function applyFilters() {
     renderProducts(filtered);
 }
 
-// ================= CLICK DANH MỤC =================
+//CLICK DANH MỤC
 function initCategoryFilter() {
 
     const items = document.querySelectorAll(".category-item");
@@ -82,31 +80,31 @@ function initCategoryFilter() {
 
     item.addEventListener("click", function () {
 
-        // Xóa active ở các danh mục khác
+  
         items.forEach(i => i.classList.remove("active"));
 
-        // Active danh mục đang chọn
+
         this.classList.add("active");
 
-        // Lấy danh mục được chọn
+  
         selectedCategory = this.dataset.category;
 
-        // Hiện thanh bộ lọc
+  
         const filterBar = document.getElementById("productFilter");
 
         if (filterBar) {
             filterBar.style.display = "flex";
         }
 
-        // Cập nhật danh sách thương hiệu theo danh mục
+   
         populateBrandFilter();
 
-        // Reset thương hiệu về "Tất cả"
+  
         if (brandFilter) {
             brandFilter.value = "all";
         }
 
-        // Áp dụng lại toàn bộ bộ lọc
+     
         applyFilters();
 
     });
@@ -116,7 +114,7 @@ function initCategoryFilter() {
 }
 
 
-//-------------------------LỌC THƯƠNG HIỆU------------------------------
+//LỌC THƯƠNG HIỆU
 function populateBrandFilter() {
 
     const brandFilter = document.getElementById("brandFilter");
@@ -153,7 +151,7 @@ function populateBrandFilter() {
     });
 }
 
-// ================= EVENT =================
+
 if (searchInput) {
     searchInput.addEventListener("input", applyFilters);
 }
@@ -169,7 +167,7 @@ if (priceFilter) {
 
 
 
-// ================= TÌM KIẾM TỪ TRANG CHỦ =================
+//TÌM KIẾM TỪ TRANG CHỦ 
 function goToProduct(productCode) {
 
     showSection("products");

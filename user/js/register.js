@@ -9,33 +9,31 @@ document.getElementById('register-form').onsubmit = e => {
     const email = document.getElementById('register-email').value;
     const pass = document.getElementById('register-password').value;
 
-    const xhr = new XMLHttpRequest();
+    fetch("register.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body:
+            `register-name=${encodeURIComponent(name)}` +
+            `&register-email=${encodeURIComponent(email)}` +
+            `&register-password=${encodeURIComponent(pass)}`
+    })
+    .then(response => response.text())
 
-    xhr.open("POST", "../user/register.php", true);
+    .then(data => {
 
-    xhr.setRequestHeader(
-        "Content-Type",
-        "application/x-www-form-urlencoded"
-    );
-
-    xhr.onload = () => {
-        if (xhr.status === 200) {
-
-            if (xhr.responseText.startsWith("Đăng ký thành công")) {
-                alert(xhr.responseText);
-                showSection('login-section');
-            } else {
-                alert(xhr.responseText);
-            }
-
+        if (data.startsWith("Đăng ký thành công")) {
+            alert(data);
+            showSection('login-section');
         } else {
-            alert('Lỗi đăng ký!');
+            alert(data);
         }
-    };
 
-    xhr.send(
-        `register-name=${encodeURIComponent(name)}
-        &register-email=${encodeURIComponent(email)}
-        &register-password=${encodeURIComponent(pass)}`
-    );
+    })
+
+    .catch(error => {
+        console.error(error);
+        alert("Lỗi đăng ký!");
+    });
 };

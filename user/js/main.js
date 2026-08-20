@@ -1,21 +1,21 @@
 
-// ================= DOM ELEMENTS =================
+
 const notification = document.getElementById('notification');
 
-// ================= HÀM TIỆN ÍCH =================
+
 const fetchJSON = url => fetch(url).then(res => res.json()).catch(err => console.error('❌ Lỗi:', err));
 
 const formatPrice = price => parseFloat(price.replace(/\./g, '').replace(',', '.')).toLocaleString('vi-VN');
 
 
 
-// ================= Bật/tắt mật khẩu===============
+//Bật/tắt mật khẩu
 function togglePassword(id) {
     const f = document.getElementById(id);
     f.type = f.type === 'password' ? 'text' : 'password';
 }
 
-// ================= HIỂN THỊ SECTION =================
+//HIỂN THỊ SECTION
 function showSection(sectionId) {
     document.querySelectorAll('main > section, .container')
         .forEach(s => s.style.display = 'none');
@@ -28,7 +28,7 @@ function showSection(sectionId) {
 }
 
 
-// ================= FETCH DỮ LIỆU =================
+//FETCH DỮ LIỆU
 document.addEventListener('DOMContentLoaded', () => {
 
     // Hiển thị trang chủ

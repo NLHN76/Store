@@ -8,31 +8,31 @@ function renderProducts(products) {
         const clone = template.content.cloneNode(true);
         const productDiv = clone.querySelector('.product');
 
-        // ===== XỬ LÝ GIÁ =====
+        // XỬ LÝ GIÁ 
         const priceNumber = parseFloat(
             product.price.replace(/\./g, '').replace(',', '.')
         );
         const priceFormatted = priceNumber.toLocaleString('vi-VN');
 
-       // ===== DATASET =====
+       // DATASET 
          productDiv.dataset.name = product.name;
          productDiv.dataset.price = priceNumber;
          productDiv.dataset.code = product.product_code;
          productDiv.dataset.category = product.category;
 
-        // ===== GÁN NỘI DUNG =====
+        //GÁN NỘI DUNG
         clone.querySelector('.product-image').src = product.image;
         clone.querySelector('.product-name').textContent = product.name;
         clone.querySelector('.product-price').textContent = priceFormatted;
         clone.querySelector('.avg-rating').textContent = product.avg_rating || 0;
 
-        // ===== CLICK ẢNH → CHI TIẾT =====
+        //CLICK ẢNH → CHI TIẾT 
         clone.querySelector('.product-image').onclick = () => {
             window.location.href =
                 `products/product_detail.php?code=${product.product_code}`;
         };
 
-        // ===== MÀU SẮC =====
+        //MÀU SẮC
         const colors = product.color
             ?.split(',')
             .map(c => c.trim())
@@ -69,7 +69,7 @@ function renderProducts(products) {
             loadStock();
         }
 
-        // ===== THÊM GIỎ =====
+        // THÊM GIỎ
         addBtn.onclick = () => addToCart(addBtn);
 
         productsContainer.appendChild(clone);

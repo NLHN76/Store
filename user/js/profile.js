@@ -1,24 +1,24 @@
-// Lấy các element
+
 const profileBtn = document.getElementById("profile-btn");
 const profileSection = document.getElementById("profile-section");
 const profileForm = document.getElementById("profile-form");
 
-// Hàm mở modal
+
 function openProfile(){
     profileSection.style.display = "block";
 }
 
-// Hàm đóng modal
+
 function closeProfile(){
     profileSection.style.display = "none";
 }
 
-// Khi bấm nút "Thông tin cá nhân"
+
 profileBtn.addEventListener("click", function(e){
     e.preventDefault();
     openProfile();
 
-    // Lấy dữ liệu từ server
+
     fetch("auto/get_profile.php")
     .then(res => res.json())
     .then(data => {
@@ -26,7 +26,6 @@ profileBtn.addEventListener("click", function(e){
             alert(data.error);
             closeProfile();
         } else {
-            // Điền dữ liệu vào form
             profileForm.name.value = data.name || '';
             profileForm.email.value = data.email || '';
             profileForm.phone.value = data.phone || '';
@@ -40,7 +39,8 @@ profileBtn.addEventListener("click", function(e){
     });
 });
 
-// Xử lý submit form (chỉ cập nhật phone và address)
+
+
 profileForm.addEventListener("submit", function(e){
     e.preventDefault();
 

@@ -22,7 +22,7 @@ $user = $result->fetch_assoc();
 $stmt->close();
 $conn->close();
 
-// Trả về dữ liệu dưới dạng JSON
+
 if ($user) {
     echo json_encode($user);
 } else {

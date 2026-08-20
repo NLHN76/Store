@@ -1,11 +1,11 @@
-// ================= TRANG CHỦ =================
+// TRANG CHỦ 
 function renderHome(data) {
     renderBanner(data.banner);
     renderPromotions(data.promotions);
     renderFeaturedProducts(data.featured_products);
 }
 
-/* ================= BANNER ================= */
+//BANNER 
 function renderBanner(banner) {
     const bannerBox = document.getElementById('home-banner');
     bannerBox.innerHTML = '';
@@ -33,7 +33,7 @@ function renderBanner(banner) {
     bannerBox.appendChild(div);
 }
 
-/* ================= PROMOTIONS ================= */
+//PROMOTIONS 
 function renderPromotions(promotions) {
     const promoBox = document.getElementById('home-promotions');
     const template = document.getElementById('promotion-template');
@@ -59,7 +59,7 @@ function renderPromotions(promotions) {
     });
 }
 
-/* ================= FEATURED PRODUCTS ================= */
+//FEATURED PRODUCTS
 function renderFeaturedProducts(products) {
     const grid = document.getElementById('home-featured');
     const title = document.getElementById('featured-title');
