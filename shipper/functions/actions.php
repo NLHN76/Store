@@ -44,42 +44,64 @@ if(isset($_POST['action'])){
     }
 
     // Cập nhật thông tin shipper
-    if($action=="update_shipper_info"){
-        $id = intval($_POST['shipper_id']);
+if($action=="update_shipper_info"){ 
+    $id = intval($_POST['shipper_id']); 
+ 
+    $fields = ['name', 'email', 'phone', 'dob', 'cmt']; 
+    $types = 'sssss'; 
+    $params = []; 
+ 
+    foreach($fields as $f){ 
+        $params[] = $_POST[$f] ?? ''; 
+    } 
+ 
+    // Cập nhật avatar
+    if(isset($_FILES['avatar']) && $_FILES['avatar']['error']==0){ 
 
-        $fields = ['name', 'email', 'phone', 'dob', 'cmt'];
-        $types = 'sssss';
-        $params = [];
+        $ext = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION)); 
+ 
+        if(in_array($ext, ['jpg','jpeg','png','gif'])){ 
 
-        foreach($fields as $f){
-            $params[] = $_POST[$f] ?? '';
-        }
+            // Xóa avatar cũ của shipper
+            $old_avatar = $conn->prepare("SELECT avatar FROM shipper WHERE id=?");
+            $old_avatar->bind_param("i", $id);
+            $old_avatar->execute();
 
-        // Cập nhật avatar
-        if(isset($_FILES['avatar']) && $_FILES['avatar']['error']==0){
-            $ext = strtolower(pathinfo($_FILES['avatar']['name'], PATHINFO_EXTENSION));
+            $result = $old_avatar->get_result();
+            $old_data = $result->fetch_assoc();
 
-            if(in_array($ext, ['jpg','jpeg','png','gif'])){
-                $avatar_path = "uploads/shipper_".$id.".".$ext;
-                move_uploaded_file($_FILES['avatar']['tmp_name'], $avatar_path);
-
-                $fields[] = 'avatar';
-                $types .= 's';
-                $params[] = $avatar_path;
+            if(!empty($old_data['avatar']) && file_exists($old_data['avatar'])){
+                unlink($old_data['avatar']);
             }
-        }
 
-        $fields_str = implode(', ', array_map(fn($f)=>"$f=?", $fields));
+            // Giữ nguyên tên file gốc
+            $file_name = $_FILES['avatar']['name'];
 
-        $stmt = $conn->prepare("UPDATE shipper SET $fields_str WHERE id=?");
+            $avatar_path = "uploads/".$file_name;
 
-        $types .= 'i';
-        $params[] = $id;
-
-        $stmt->bind_param($types, ...$params);
-
-        echo $stmt->execute() ? "success" : $conn->error;
-        exit;
-    }
+            // Lưu ảnh mới
+            move_uploaded_file(
+                $_FILES['avatar']['tmp_name'],
+                $avatar_path
+            );
+ 
+            $fields[] = 'avatar'; 
+            $types .= 's'; 
+            $params[] = $avatar_path; 
+        } 
+    } 
+ 
+    $fields_str = implode(', ', array_map(fn($f)=>"$f=?", $fields)); 
+ 
+    $stmt = $conn->prepare("UPDATE shipper SET $fields_str WHERE id=?"); 
+ 
+    $types .= 'i'; 
+    $params[] = $id; 
+ 
+    $stmt->bind_param($types, ...$params); 
+ 
+    echo $stmt->execute() ? "success" : $conn->error; 
+    exit; 
+  }
 }
 ?>

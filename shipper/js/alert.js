@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-/* ================= ÂM THANH CẢNH BÁO ================= */
+//ÂM THANH CẢNH BÁO 
 
 function startAlert() {
     if (ShipperState.alertInterval) return;
