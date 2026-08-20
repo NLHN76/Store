@@ -7,13 +7,10 @@ $add_error = "";
 $edit_error = "";
 
 
-// =====================================================
 // XỬ LÝ MÀU
-// =====================================================
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
-    // Thêm màu
+   
     if ($_POST['action'] === 'add_color') {
 
         $new_color = trim($_POST['new_color'] ?? '');
@@ -24,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
     }
 
-    // Xóa màu
+  
     if ($_POST['action'] === 'delete_color') {
 
         $delete_color = $_POST['delete_color'] ?? '';
@@ -39,10 +36,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 }
 
 
-// =====================================================
-// THÊM SẢN PHẨM
-// =====================================================
 
+// THÊM SẢN PHẨM
 if (isset($_POST['action']) && $_POST['action'] === 'add') {
 
     $name = trim($_POST['product_name'] ?? '');
@@ -66,7 +61,6 @@ if (isset($_POST['action']) && $_POST['action'] === 'add') {
         $add_error = "Dữ liệu thêm không hợp lệ.";
     } else {
 
-        // Upload ảnh
         $image_name = null;
 
         if (!empty($_FILES['product_image']['name'])) {
@@ -75,7 +69,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'add') {
                 pathinfo($_FILES['product_image']['name'], PATHINFO_EXTENSION)
             );
 
-            $image_name = uniqid('prod_') . '.' . $extension;
+            $image_name = basename($_FILES['product_image']['name']);
 
             move_uploaded_file(
                 $_FILES['product_image']['tmp_name'],
@@ -83,13 +77,10 @@ if (isset($_POST['action']) && $_POST['action'] === 'add') {
             );
         }
 
-        // Lấy màu
         $colors = implode(',', $_POST['product_colors'] ?? []);
 
-        // Sinh mã sản phẩm
         $product_code = generate_product_code($category, $conn);
 
-        // Thêm vào database
         $stmt = $conn->prepare("
             INSERT INTO products
                 (name, brand, price, color, category, image, product_code)
@@ -114,10 +105,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'add') {
 }
 
 
-// =====================================================
 // SỬA SẢN PHẨM
-// =====================================================
-
 if (isset($_POST['action']) && $_POST['action'] === 'edit') {
 
     $id = intval($_POST['product_id'] ?? 0);
@@ -143,7 +131,6 @@ if (isset($_POST['action']) && $_POST['action'] === 'edit') {
         $edit_error = "Dữ liệu sửa không hợp lệ.";
     } else {
 
-        // Lấy ảnh cũ
         $stmt = $conn->prepare(
             "SELECT image FROM products WHERE id = ?"
         );
@@ -163,7 +150,6 @@ if (isset($_POST['action']) && $_POST['action'] === 'edit') {
 
             $image_name = $old['image'];
 
-            // Upload ảnh mới
             if (!empty($_FILES['product_image']['name'])) {
 
                 if (
@@ -177,7 +163,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'edit') {
                     pathinfo($_FILES['product_image']['name'], PATHINFO_EXTENSION)
                 );
 
-                $image_name = uniqid('prod_') . '.' . $extension;
+                $image_name = basename($_FILES['product_image']['name']);
 
                 move_uploaded_file(
                     $_FILES['product_image']['tmp_name'],
@@ -185,7 +171,6 @@ if (isset($_POST['action']) && $_POST['action'] === 'edit') {
                 );
             }
 
-            // Cập nhật database
             $stmt = $conn->prepare("
                 UPDATE products
                 SET name=?, brand=?, price=?, color=?, category=?, image=?
@@ -209,11 +194,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'edit') {
     }
 }
 
-
-// =====================================================
 // XÓA SẢN PHẨM
-// =====================================================
-
 if (isset($_POST['action']) && $_POST['action'] === 'delete') {
 
     $product_id = intval($_POST['product_id'] ?? 0);
@@ -268,10 +249,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'delete') {
 }
 
 
-// =====================================================
-// BẬT / TẮT SẢN PHẨM
-// =====================================================
 
+// BẬT / TẮT SẢN PHẨM
 if (isset($_POST['action']) && $_POST['action'] === 'toggle_status') {
 
     $id = intval($_POST['product_id'] ?? 0);
@@ -285,6 +264,28 @@ if (isset($_POST['action']) && $_POST['action'] === 'toggle_status') {
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $stmt->close();
+}
+
+
+// Tìm kiếm sản phẩm
+$search = trim($_GET['search'] ?? '');
+$sql = "SELECT * FROM products";
+
+if ($search !== '') {
+
+    $sql .= " WHERE name LIKE ? OR product_code LIKE ? OR category LIKE ?";
+    $search_param = "%$search%";
+
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("sss", $search_param, $search_param, $search_param);
+    $stmt->execute();
+
+    $products = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    $stmt->close();
+
+} else {
+
+    $products = $conn->query($sql)->fetch_all(MYSQLI_ASSOC);
 }
 
 ?>

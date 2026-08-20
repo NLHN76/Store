@@ -75,7 +75,7 @@
     </table>
 
 
-    <!-- TEMPLATE 1 ĐƠN HÀNG -->
+   
     <template id="orderTemplate">
 
         <tr>
@@ -107,8 +107,8 @@
     </template>
 
   
-    <script src="js/orders.js"></script>
-    
 
+
+    <script src="js/orders.js"></script>
 </body>
 </html>

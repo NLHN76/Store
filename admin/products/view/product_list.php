@@ -11,6 +11,7 @@
         $product_colors = explode(',', $product['color'] ?? '');
         $img = '../uploads/' . ($product['image'] ?? '');
     ?>
+    
         <div class="product-box <?= !$is_active ? 'inactive' : '' ?>">
             <?php if (!$is_active): ?><div class="inactive-overlay">ĐÃ TẮT</div><?php endif; ?>
             <h4><?= htmlspecialchars($product['name']) ?></h4>

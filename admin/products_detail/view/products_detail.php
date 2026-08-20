@@ -12,7 +12,7 @@
   <!-- Header -->
   <div class="page-header mb-3">
     <h5>Quản lý chi tiết sản phẩm</h5>
-    <a href="../admin_interface.php" class="btn btn-light btn-sm">
+    <a href="../products/admin_products.php" class="btn btn-light btn-sm">
       <img src="../uploads/exit.jpg" alt="Quay lại" style="width:20px; height:20px; border-radius:4px;">
       <span class="ms-1">Quay lại</span>
     </a>

@@ -72,7 +72,7 @@
 
             <input type="text" name="product_name" placeholder="Tên sản phẩm" required>
 
-            <!-- Thêm trường thương hiệu -->
+            
             <input type="text" name="product_brand" placeholder="Thương hiệu" required>
 
             <input type="text" name="product_price" placeholder="Chỉ nhập số" required>

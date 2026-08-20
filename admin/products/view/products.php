@@ -4,7 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>QUẢN LÝ SẢN PHẨM</title>
-    <link rel="stylesheet" href="css/products.css">
+    <link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/button.css">
+<link rel="stylesheet" href="css/search.css">
+<link rel="stylesheet" href="css/product.css">
+<link rel="stylesheet" href="css/form.css">
+<link rel="stylesheet" href="css/modal.css">
 </head>
 <body>
 <div class="container">
@@ -13,17 +18,17 @@
     </a>
     <h2>QUẢN LÝ SẢN PHẨM</h2>
 
-    <!-- Thông báo trạng thái -->
+  
     <?php if (!empty($status_message)): ?>
         <div id="status-message" class="status-message <?= $status_type ?>">
             <?= htmlspecialchars($status_message) ?>
         </div>
     <?php endif; ?>
 
-    <!-- Panel quản lý: tìm kiếm, màu sắc, thêm sản phẩm, báo giá -->
+  
     <?php include "product_panel.php"; ?>
 
-    <!-- Danh sách sản phẩm -->
+
     <?php include "product_list.php"; ?>
 </div>
 

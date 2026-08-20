@@ -1,0 +1,82 @@
+.center-button {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.center-button li {
+    display: inline-block;
+}
+
+.btn-add {
+    display: inline-block;
+    background-color: #28a745;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.2s ease;
+}
+
+.btn-add:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+button {
+    background-color: #28a745;
+    color: white;
+    cursor: pointer;
+    border: none;
+    padding: 12px 18px;
+    transition: background-color 0.3s, opacity 0.3s;
+    margin-right: 5px;
+    font-weight: 500;
+    width: auto;
+    display: inline-block;
+    border-radius: 6px;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+button[name="action"][value="edit"] {
+    background-color: #007bff;
+}
+
+button[name="action"][value="delete"] {
+    background-color: #dc3545;
+}
+
+.toggle-form {
+    margin-bottom: 10px;
+}
+
+.toggle-button {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 0.9em;
+}
+
+.toggle-button.enable {
+    background-color: #28a745;
+}
+
+.toggle-button.disable {
+    background-color: #ffc107;
+    color: #343a40;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.form-actions button {
+    flex-grow: 1;
+}
