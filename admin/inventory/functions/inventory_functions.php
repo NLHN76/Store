@@ -1,6 +1,8 @@
 <?php
 
-/* ----------------- Hoàn lại tồn kho khi hủy đơn ----------------- */
+require_once "inventory_data.php" ;
+
+//Hoàn lại tồn kho khi hủy đơn
 function restoreStockFromCancelledPayment($conn){
     $res = $conn->query("
         SELECT *
@@ -21,7 +23,7 @@ function restoreStockFromCancelledPayment($conn){
             $color        = trim($colors[$i] ?? '');
             $qty          = 0;
 
-            // Lấy số lượng từ chuỗi dạng: Tên sản phẩm (x2)
+          
             if(isset($product_names[$i])){
                 preg_match('/\(x(\d+)\)/', $product_names[$i], $matches);
                 $qty = isset($matches[1]) ? (int)$matches[1] : 1;
@@ -29,7 +31,6 @@ function restoreStockFromCancelledPayment($conn){
 
             if($qty > 0 && $product_code != '' && $color != ''){
 
-                // Lấy ID sản phẩm
                 $stmt = $conn->prepare("
                     SELECT id
                     FROM products
@@ -47,7 +48,6 @@ function restoreStockFromCancelledPayment($conn){
 
                 $product_id = $product['id'];
 
-                // Lấy giá nhập và giá bán hiện tại
                 $stmt = $conn->prepare("
                     SELECT import_price, sale_price
                     FROM product_inventory
@@ -121,7 +121,7 @@ function restoreStockFromCancelledPayment($conn){
 
 
 
-/* ----------------- Đồng bộ giá bán product_inventory với products ----------------- */
+// Đồng bộ giá bán product_inventory với products 
 function syncSalePrice($conn) {
     $sql = "
         UPDATE product_inventory pi
@@ -132,11 +132,10 @@ function syncSalePrice($conn) {
     $conn->query($sql);
 }
 
-// Gọi ngay sau khi kết nối DB và trước khi lấy dữ liệu tồn kho
 syncSalePrice($conn);
 
 
-/* ----------------- Tính tổng số đã bán ----------------- */
+//Tính tổng số đã bán 
 function calculateSoldQuantity($conn){
     $soldData = [];
     $res = $conn->query("SELECT product_name, color, product_code FROM payment WHERE status='Đã giao hàng'");
@@ -162,7 +161,7 @@ function calculateSoldQuantity($conn){
     return $soldData;
 }
 
-/* ----------------- Đồng bộ tồn kho ----------------- */
+//Đồng bộ tồn kho
 restoreStockFromCancelledPayment($conn);
 $soldQuantities = calculateSoldQuantity($conn);
 ?>
