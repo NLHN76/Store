@@ -38,7 +38,7 @@
 
     <div class="window">
         <h3>Danh Sách Khuyến Mãi</h3>
-        <button id="togglePromoForm">Thêm Khuyến Mãi</button>
+     <button id="togglePromoForm" class="btn-promo">Thêm Khuyến Mãi</button>
 
 
         <div id="promoFormModal" class="modal">
@@ -59,8 +59,12 @@
         <table>
             <thead>
                 <tr>
-                    <th>ID</th><th>Tiêu đề</th><th>Mô tả</th>
-                    <th>Hình ảnh</th><th>Link</th><th>Thao tác</th>
+                    <th>ID</th>
+                    <th>Tiêu đề</th>
+                    <th>Mô tả</th>
+                    <th>Hình ảnh</th>
+                    <th>Link</th>
+                    <th>Thao tác</th>
                 </tr>
             </thead>
             <tbody>
@@ -102,7 +106,7 @@
         <form method="POST" class="featured-form">
             <input type="hidden" name="featured_action" value="add">
 
-            <select name="product_id" required>
+           <select name="product_id" class="product-select">
                 <option value="">-- Chọn sản phẩm --</option>
                 <?php foreach($products as $p): ?>
                     <option value="<?= $p['id'] ?>">

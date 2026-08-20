@@ -17,8 +17,9 @@ body{
 }
 
 .ntnt:hover{
-    background:#1d4ed8;
+    background:#0056b3;
 }
+
 .container{
     max-width:800px;
     margin:30px auto;
@@ -147,4 +148,35 @@ img{
 
 .close:hover{
     color:#000;
+}
+
+
+.btn-promo {
+    background: #4a90e2;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-promo:hover {
+    background: #0056b3;
+}
+
+.product-select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    background: #fff;
+    cursor: pointer;
+}
+
+.product-select:focus {
+    border-color: #007bff;
 }

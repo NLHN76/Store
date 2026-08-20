@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: admin_interface.php');
         exit();
     } else {
-        // Hiển thị thông báo lỗi
+   
         echo "<script>alert('Tên đăng nhập hoặc mật khẩu không đúng!'); window.history.back();</script>";
         exit();
     }
