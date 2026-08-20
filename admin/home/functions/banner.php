@@ -1,6 +1,6 @@
 <?php
 
-/* ===================== BANNER ========================= */
+//BANNER
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['banner_action'])) {
 
@@ -94,7 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['banner_action'])) {
 }
 
 
-/* Lấy banner */
+//Lấy banner 
 
 $banner = $conn
     ->query("SELECT * FROM home WHERE id=1")

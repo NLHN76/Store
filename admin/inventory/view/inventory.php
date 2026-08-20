@@ -91,7 +91,7 @@
                     </select>
                 </div>
 
-                <!-- Chọn màu -->
+         
                 <div class="mb-2">
                     <label class="form-label">Màu sắc</label>
                     <select name="color" id="color" class="form-select" required>
@@ -99,13 +99,13 @@
                     </select>
                 </div>
 
-                <!-- Số lượng -->
+           
                 <div class="mb-2">
                     <label class="form-label">Số lượng nhập</label>
                     <input type="number" name="quantity" class="form-control" min="1" required>
                 </div>
 
-                <!-- Giá nhập  -->
+             
                 <div class="mb-2">
                     <label class="form-label">Giá nhập</label>
                     <input type="number" name="import_price" class="form-control" min="0" required>

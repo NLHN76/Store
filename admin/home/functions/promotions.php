@@ -1,7 +1,7 @@
 <?php
 
 
-/* =================== KHUYẾN MÃI ======================= */
+// KHUYẾN MÃI
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST'
     && isset($_POST['promo_action'])) {
@@ -12,9 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
     $title = $_POST['promo_title'];
     $description = $_POST['promo_description'];
     $link = $_POST['promo_link'] ?? null;
-
-
-    /* ================= ADD ================= */
 
     if ($action === 'add') {
 
@@ -58,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
     }
 
 
-    /* ================= EDIT ================= */
+
 
     elseif ($action === 'edit' && $id) {
 
@@ -115,7 +112,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
     }
 
 
-    /* ================= DELETE ================= */
 
     elseif ($action === 'delete' && $id) {
 
@@ -140,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
 }
 
 
-/* Lấy khuyến mãi */
+// Lấy khuyến mãi 
 
 $promotions = $conn
     ->query(

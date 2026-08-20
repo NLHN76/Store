@@ -1,6 +1,6 @@
 <?php
 
-/* =============== SẢN PHẨM NỔI BẬT ===================== */
+//SẢN PHẨM NỔI BẬT 
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST'
     && isset($_POST['featured_action'])) {
@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
     $product_id = $_POST['product_id'] ?? null;
 
 
-    /* ================= ADD ================= */
+    // ADD 
 
     if ($action === 'add' && $product_id) {
 
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
         $check->store_result();
 
 
-        // Nếu chưa có thì thêm
+
         if ($check->num_rows == 0) {
 
             $stmt = $conn->prepare(
@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
     }
 
 
-    /* ================= DELETE ================= */
+
 
     elseif ($action === 'delete' && $product_id) {
 
@@ -71,10 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
     }
 
 
-    /*
-     * Lưu vị trí scroll trước khi reload
-     */
-
+   
     echo "
         <script>
             const y = window.scrollY;
@@ -92,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST'
 }
 
 
-/* ================= DANH SÁCH SẢN PHẨM ================= */
+//DANH SÁCH SẢN PHẨM 
 
 $products = $conn
     ->query(
@@ -102,9 +99,6 @@ $products = $conn
          ORDER BY id DESC"
     )
     ->fetch_all(MYSQLI_ASSOC);
-
-
-/* ================= SẢN PHẨM NỔI BẬT ================= */
 
 $featured_products = $conn
     ->query(

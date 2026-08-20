@@ -12,7 +12,7 @@
 <div class="container">
     
      <a href="../admin_interface.php" class="ntnt">Quay về</a>
-    <!-- ================= BANNER ================= -->
+
     <div class="window">
         <h3>Banner Trang Chủ</h3>
         <form method="POST" enctype="multipart/form-data">
@@ -35,12 +35,12 @@
     </div>
 
 
-    <!-- ================= KHUYẾN MÃI ================= -->
+
     <div class="window">
         <h3>Danh Sách Khuyến Mãi</h3>
         <button id="togglePromoForm">Thêm Khuyến Mãi</button>
 
-        <!-- Popup Form -->
+
         <div id="promoFormModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
@@ -94,11 +94,11 @@
     </div>
 
 
-    <!-- ================= SẢN PHẨM NỔI BẬT ================= -->
+
      <div class="window" id="featured-section">
         <h3>Sản Phẩm Nổi Bật</h3>
 
-        <!-- Thêm sản phẩm nổi bật -->
+
         <form method="POST" class="featured-form">
             <input type="hidden" name="featured_action" value="add">
 
@@ -115,7 +115,7 @@
             <button type="submit">➕ Thêm</button>
         </form>
 
-        <!-- Danh sách sản phẩm nổi bật -->
+
         <table>
             <thead>
                 <tr>
@@ -147,9 +147,6 @@
     </div>
 
 </div>
-
-
-
 
 
 <script src="js/home.js"></script>
