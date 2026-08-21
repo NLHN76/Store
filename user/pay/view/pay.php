@@ -66,11 +66,38 @@
 
 
 <?php if ($isPaymentConfirmed): ?>
+
 <div id="qr-code">
+
     <h3>Quét Mã QR Để Thanh Toán</h3>
-    <img src="file/qr.png" alt="Mã QR Thanh Toán" style="width: 100%; max-width: 300px;">
-    <p>Cảm ơn bạn đã đặt hàng! Vui lòng kiểm tra email xác nhận. Khi thanh toán bằng chuyển khoản, ghi rõ Mã Khách Hàng (<?php echo htmlspecialchars($user_code); ?>) trong nội dung chuyển khoản.</p>
+
+    <img
+        src="<?= htmlspecialchars($qr_url) ?>"
+        alt="Mã QR Thanh Toán"
+        style="width:100%; max-width:300px;"
+    >
+
+    <p>
+        <strong>Mã đơn hàng:</strong>
+        <?= htmlspecialchars($order_code) ?>
+    </p>
+
+    <p>
+        <strong>Mã khách hàng:</strong>
+        <?= htmlspecialchars($user_code) ?>
+    </p>
+
+    <p>
+        <strong>Số tiền:</strong>
+        <?= number_format($totalPrice, 0, ',', '.') ?> VNĐ
+    </p>
+
+    <p>
+        Quét mã QR bằng ứng dụng ngân hàng để thanh toán.
+    </p>
+
 </div>
+
 <?php endif; ?>
 
 

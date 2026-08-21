@@ -2,6 +2,7 @@
 
 require_once "checkout_init.php";
 require_once "checkout_mail.php";
+require_once "bank_config.php";
 
 $isPaymentConfirmed = false;
 
@@ -239,8 +240,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (!$stmt->execute()) {
             throw new Exception("Lỗi lưu đơn hàng: " . $stmt->error);
         }
-
+        
         $stmt->close();
+        
+        $qr_url = "https://img.vietqr.io/image/"
+    . $bank_id . "-"
+    . $account_no
+    . "-compact2.png?"
+    . "amount=" . (int)$totalPrice
+    . "&addInfo=" . urlencode($order_code)
+    . "&accountName=" . urlencode($account_name);
 
         sendConfirmationEmail(
             $name_post,
