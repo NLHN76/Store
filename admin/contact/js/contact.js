@@ -1,22 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
 
     const contactList = document.getElementById('contactList');
-    const searchForm = document.getElementById('searchForm');
 
-    function getContacts(search = '') {
-
-        fetch('functions/get_contacts.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: 'search_query=' + encodeURIComponent(search)
-        })
-        .then(response => response.text())
-        .then(data => {
-            contactList.innerHTML = data;
-            addEvents();
-        });
+    function getContacts() {
+        fetch('functions/get_contacts.php')
+            .then(response => response.text())
+            .then(data => {
+                contactList.innerHTML = data;
+                addEvents();
+            });
     }
 
     function addEvents() {
@@ -41,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(response => response.text())
                 .then(data => {
 
-                    if (data === 'ok') {
+                    if (data.trim() === 'ok') {
                         this.closest('tr').remove();
                     }
 
@@ -50,7 +42,6 @@ document.addEventListener('DOMContentLoaded', function () {
             });
 
         });
-
 
         document.querySelectorAll('tr.new-contact').forEach(function (row) {
 
@@ -72,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .then(response => response.text())
                 .then(data => {
 
-                    if (data === 'ok') {
+                    if (data.trim() === 'ok') {
                         this.classList.remove('new-contact');
                         this.classList.add('old-contact');
                     }
@@ -83,17 +74,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
         });
     }
-
-
-    searchForm.addEventListener('submit', function (e) {
-
-        e.preventDefault();
-
-        const search = document.getElementById('searchInput').value.trim();
-
-        getContacts(search);
-    });
-
 
     getContacts();
 

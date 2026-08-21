@@ -24,24 +24,9 @@
         Danh Sách Người Dùng Liên Hệ
     </h1>
 
-    <form class="search-form" id="searchForm">
-        <input
-            type="text"
-            name="search_query"
-            id="searchInput"
-            placeholder="Nhập id, tên hoặc số điện thoại"
-        >
-
-        <button type="submit">
-            <i class="fas fa-search"></i>
-            Tìm kiếm
-        </button>
-    </form>
-
     <table>
         <thead>
             <tr>
-                <th>ID</th>
                 <th>Tên</th>
                 <th>Email</th>
                 <th>Điện thoại</th>
