@@ -9,7 +9,7 @@ $isPaymentConfirmed = false;
 function generateOrderCode($conn)
 {
     do {
-        $order_code = 'DH' . date('YmdHis') . strtoupper(substr(bin2hex(random_bytes(3)), 0, 6));
+        $order_code = 'DH' . date('YmdHis') . strtoupper(substr(bin2hex(random_bytes(2)), 0, 4));
 
         $stmt = $conn->prepare("
             SELECT id FROM payment
