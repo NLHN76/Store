@@ -32,7 +32,7 @@
 
 
 <div class="cart-summary">
-<h2>Xem Lại Giỏ Hàng</h2>
+<h2>Giỏ Hàng</h2>
 <p><strong>Tổng số sản phẩm:</strong> <?php echo $itemCount; ?></p>
 <p><strong>Tổng giá trị:</strong> <?php echo number_format($totalPrice, 0, ',', '.'); ?> VNĐ</p>
 <h3>Chi Tiết Sản Phẩm:</h3>
@@ -53,7 +53,7 @@
         $itemTotal = $item['price'] * $item['quantity'];
         echo "<strong>Mã:</strong> " . htmlspecialchars($item['product_code']) . "<br>";
         echo "<strong>Tên:</strong> " . htmlspecialchars($item['name']) . " (x" . htmlspecialchars($item['quantity']) . ")<br>";
-        echo "<strong>Màu:</strong> " . htmlspecialchars($item['color']) . "<br>";
+        echo "<strong>Màu sắc:</strong> " . htmlspecialchars($item['color']) . "<br>";
         echo "<strong>Giá:</strong> " . number_format($itemTotal, 0, ',', '.') . " VNĐ";
         ?>
     </div>
