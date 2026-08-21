@@ -18,9 +18,8 @@ $sql = "
 ";
 
 if ($keyword !== '') {
-    $sql .= ctype_digit($keyword)
-        ? " WHERE p.id = " . (int)$keyword
-        : " WHERE 0";
+    $keyword = $conn->real_escape_string($keyword);
+    $sql .= " WHERE p.order_code LIKE '%$keyword%'";
 }
 
 $sql .= " ORDER BY p.order_date DESC";

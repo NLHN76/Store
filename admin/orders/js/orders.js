@@ -118,7 +118,7 @@ function renderOrders(orders) {
 
         // DỮ LIỆU
         tr.querySelector(".order-id").textContent =
-            order.id;
+            order.order_code;
 
         tr.querySelector(".order-date").textContent =
             new Date(order.order_date)
@@ -228,11 +228,11 @@ function renderOrders(orders) {
 // TÌM KIẾM
 document.querySelector("#searchForm").addEventListener("submit", function(e) {
 
-        e.preventDefault();
+    e.preventDefault();
 
-        loadOrders();
-    });
+    loadOrders();
 
+});
 
 
 document.addEventListener("DOMContentLoaded", function() {

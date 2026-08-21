@@ -6,7 +6,7 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 
-// =========================XÓA ĐƠN HÀNG=========================
+//XÓA ĐƠN HÀNG
 
 if (isset($_POST['delete_id'])) {
 
@@ -29,7 +29,7 @@ if (isset($_POST['delete_id'])) {
 }
 
 
-// =========================CẬP NHẬT TRẠNG THÁI=========================
+// CẬP NHẬT TRẠNG THÁI
 
 if (
     isset($_POST['action']) &&
