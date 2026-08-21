@@ -1,91 +1,74 @@
-<?php
-require_once "../../db.php";
+<?php 
+require_once "../../db.php"; 
 
 // Kiểm tra token
-if (isset($_GET['token'])) {
+if (isset($_GET['token'])) { 
 
-    $token = $_GET['token'];
+    $token = $_GET['token']; 
 
     // Kiểm tra token
-    $stmt = $conn->prepare("
-        SELECT email 
-        FROM password_resets 
-        WHERE token=?
-    ");
+    $sql = "SELECT * FROM password_resets WHERE token='$token'"; 
+    $result = $conn->query($sql); 
 
-    $stmt->bind_param("s", $token);
-    $stmt->execute();
+    if ($result->num_rows > 0) { 
 
-    $result = $stmt->get_result();
+  
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') { 
 
-    if ($result->num_rows > 0) {
+            $new_name = $_POST['new_name'];
+            $new_password = $_POST['new_password'];
 
-        // Lấy email từ token
-        $row = $result->fetch_assoc();
-        $email = $row['email'];
+            $row = $result->fetch_assoc();
+            $email = $row['email'];
 
-        // Xử lý cập nhật
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+     
+            $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
 
-            $new_password = $_POST['new_password'] ?? '';
+            $sql = "UPDATE users 
+                    SET name='$new_name', password='$hashed_password' 
+                    WHERE email='$email'";
 
-            // Kiểm tra dữ liệu
-            if ($new_password == '') {
+            if ($conn->query($sql) === TRUE) {
 
-                echo "Vui lòng nhập mật khẩu mới!";
-                exit;
-            }
+         
+                $sql_profile = "UPDATE user_profile 
+                                SET name='$new_name' 
+                                WHERE email='$email'";
 
-            // Mã hóa mật khẩu
-            $hashed_password = password_hash(
-                $new_password,
-                PASSWORD_DEFAULT
-            );
+                if ($conn->query($sql_profile) === TRUE) {
 
-            // Chỉ cập nhật mật khẩu
-            $stmt_update = $conn->prepare("
-                UPDATE users
-                SET password=?
-                WHERE email=?
-            ");
+                    $conn->query(
+                        "DELETE FROM password_resets WHERE token='$token'"
+                    );
 
-            $stmt_update->bind_param(
-                "ss",
-                $hashed_password,
-                $email
-            );
+                    echo "Tên và mật khẩu đã được cập nhật thành công!";
 
-            if ($stmt_update->execute()) {
+                } else {
 
-                // Xóa token sau khi cập nhật thành công
-                $stmt_delete = $conn->prepare("
-                    DELETE FROM password_resets
-                    WHERE token=?
-                ");
+                    echo "Đổi tài khoản thành công nhưng cập nhật user-profile thất bại!";
 
-                $stmt_delete->bind_param("s", $token);
-                $stmt_delete->execute();
-
-                echo "Mật khẩu đã được cập nhật thành công!";
+                }
 
             } else {
 
-                echo "Đã xảy ra lỗi khi cập nhật mật khẩu!";
-                echo "<br>Lỗi: " . $stmt_update->error;
+                echo "Đã xảy ra lỗi khi cập nhật thông tin!";
+
             }
         }
 
     } else {
 
         echo "Token không hợp lệ hoặc đã hết hạn!";
+
     }
 
 } else {
 
     echo "Không có token nào được cung cấp!";
+
 }
 
-$conn->close();
+$conn->close(); 
 ?>
 
 <!DOCTYPE html>
@@ -94,37 +77,23 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Đặt lại mật khẩu</title>
+    <title>Đặt lại tên và mật khẩu</title>
 </head>
 
 <body>
-
-    <h2>Đặt lại mật khẩu</h2>
-
-    <form method="POST"
-          action="reset_password.php?token=<?php echo htmlspecialchars($token); ?>">
-
+    <h2>Đặt lại tên và mật khẩu</h2>
+    <form method="POST" action="reset_password.php?token=<?php echo htmlspecialchars($token); ?>">
+        <div class="form-group">
+            <label for="new_name">Nhập tên mới:</label>
+            <input type="text" id="new_name" name="new_name" required>
+        </div>
         <div class="form-group">
             <label for="new_password">Nhập mật khẩu mới:</label>
-
-            <input type="password"
-                   id="new_password"
-                   name="new_password"
-                   required>
+            <input type="password" id="new_password" name="new_password" required>
         </div>
-
-        <button type="submit">
-            Cập nhật mật khẩu
-        </button>
-
-        <button type="button"
-                onclick="window.location.href='http://localhost:8080/store/user/user.html';">
-            Quay lại Trang Chủ
-        </button>
-
+        <button type="submit">Cập nhật thông tin</button>
+        <button onclick="window.location.href='http://localhost:8080/store/user/user.html';">Quay lại Trang Chủ</button>
     </form>
-
 </body>
 
 </html>

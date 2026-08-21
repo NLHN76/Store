@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-/* ----------------- Kết nối database ----------------- */
 $servername = "localhost";
 $username = "root";
 $password = "";
