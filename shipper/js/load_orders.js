@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     order.status.replace(/\s/g, "").toLowerCase();
 
                 row.innerHTML = `
-                    <td>#${order.id}</td>
+                    <td>${order.order_code}</td>
 
                     <td>
                         <b>${order.customer_name}</b>

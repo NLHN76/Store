@@ -26,7 +26,7 @@
         <table class="table table-bordered align-middle">
             <thead class="table-dark">
                 <tr>
-                    <th>Đơn hàng</th>
+                    <th>Mã Đơn hàng</th>
                     <th>Khách hàng</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
