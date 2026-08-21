@@ -1,6 +1,6 @@
-let allOrders = []; // Lưu tất cả đơn hàng
+let allOrders = []; 
 
-// Map trạng thái → icon + class CSS thuần
+
 const statusMap = {
     "Chờ xử lý":        { icon: "🕒", class: "status-pending" },
     "Chờ thanh toán":   { icon: "🕓", class: "status-wait-payment" },
@@ -11,33 +11,34 @@ const statusMap = {
     "Đã hủy":           { icon: "❌", class: "status-cancelled" }
 };
 
-// Fetch danh sách đơn hàng
-async function fetchOrders() {
+function fetchOrders() {
     const orderList = document.getElementById('order-list');
 
-    try {
-        const response = await fetch('order.php');
-        const data = await response.json();
+    fetch('order.php')
+        .then(response => response.json())
+        .then(data => {
 
-        if (data.status === 'error') {
+            if (data.status === 'error') {
+                orderList.innerHTML = `
+                    <p class="message message-error">
+                        ${data.message}
+                    </p>
+                `;
+                return;
+            }
+
+            allOrders = data;
+
+            renderStatusFilters();
+            renderOrders(allOrders);
+        })
+        .catch(error => {
+            console.error(error);
+
             orderList.innerHTML = `
                 <p class="message message-error">
-                    ${data.message}
+                    Không thể tải thông tin đơn hàng.
                 </p>
             `;
-            return;
-        }
-
-        allOrders = data;
-        renderStatusFilters();
-        renderOrders(allOrders);
-
-    } catch (error) {
-        console.error(error);
-        orderList.innerHTML = `
-            <p class="message message-error">
-                Không thể tải thông tin đơn hàng.
-            </p>
-        `;
-    }
+        });
 }

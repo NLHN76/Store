@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-/* ===== CHỈ XỬ LÝ KHI BẤM XÁC NHẬN (POST) ===== */
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $isPaymentConfirmed = true;

@@ -71,7 +71,7 @@ switch ($action) {
             $stmt->bind_param("iis", $cart_id, $product_id, $color);
             $stmt->execute();
         } else {
-            // Nếu giảm xuống 0 hoặc 1 thì xóa luôn
+           
             $stmt = $conn->prepare("DELETE FROM cart_items WHERE cart_id=? AND product_id=? AND color=?");
             $stmt->bind_param("iis", $cart_id, $product_id, $color);
             $stmt->execute();

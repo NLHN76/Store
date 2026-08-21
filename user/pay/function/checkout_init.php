@@ -1,7 +1,5 @@
 <?php
 
-require_once "../../db.php";
-
 // Kiểm tra đăng nhập
 if (!isset($_SESSION['user_code'])) {
     die("Vui lòng đăng nhập để tiếp tục.");

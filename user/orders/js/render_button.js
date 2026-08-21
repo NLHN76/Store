@@ -1,4 +1,4 @@
-/* ================== ACTION BUTTONS ================== */
+//ACTION BUTTONS 
 function renderActions(order) {
 
     if (order.status === "Chờ xử lý") {

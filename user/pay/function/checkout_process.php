@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Bắt đầu transaction
     $conn->begin_transaction();
     try {
-        // **Step 1: Kiểm tra tồn kho và khóa dòng**
+        // Kiểm tra tồn kho và khóa dòng
         foreach ($itemsGrouped as $item) {
             $stmtStock = $conn->prepare("
                 SELECT quantity 
@@ -40,10 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-      // **Step 2: Trừ kho + Ghi lịch sử tồn kho**
+      //  Trừ kho + Ghi lịch sử tồn kho
 foreach ($itemsGrouped as $item) {
 
-    // Trừ kho
+ 
     $stmtUpdate = $conn->prepare("
         UPDATE product_inventory
         SET quantity = quantity - ?
@@ -120,7 +120,7 @@ foreach ($itemsGrouped as $item) {
 }
 
 
-        // **Step 3: Lưu đơn hàng**
+        //Lưu đơn hàng
 
 $productCodesString = implode(', ', array_map(
     fn($i) => $i['product_code'],
@@ -180,7 +180,7 @@ if (!$stmt->execute()) {
 
 $stmt->close();
 
-        // **Step 4: Gửi email xác nhận**
+        //Gửi email xác nhận
         sendConfirmationEmail($name_post, $email_post, $totalPrice, $itemsGrouped, $address_post, $user_code);
 
         $conn->commit();

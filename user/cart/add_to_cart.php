@@ -21,7 +21,7 @@ if (!$product_code || $quantity <= 0) {
     exit;
 }
 
-/* ===== LẤY PRODUCT ===== */
+//LẤY PRODUCT 
 $stmt = $conn->prepare(
     "SELECT id, name, image FROM products WHERE product_code = ?"
 );
@@ -38,7 +38,7 @@ $product_id = $product['id'];
 $name  = $product['name'];
 $image = $product['image'];
 
-/* ===== LẤY / TẠO CART ===== */
+// TẠO CART 
 $stmt = $conn->prepare("SELECT id FROM carts WHERE user_id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -53,7 +53,7 @@ if ($res->num_rows > 0) {
     $cart_id = $stmt->insert_id;
 }
 
-/* ===== KIỂM TRA ĐÃ CÓ TRONG GIỎ ===== */
+// KIỂM TRA ĐÃ CÓ TRONG GIỎ 
 $stmt = $conn->prepare(
     "SELECT id FROM cart_items 
      WHERE cart_id = ? AND product_id = ? AND color <=> ?"
@@ -63,14 +63,14 @@ $stmt->execute();
 $item = $stmt->get_result()->fetch_assoc();
 
 if ($item) {
-    // tăng số lượng
+  
     $stmt = $conn->prepare(
         "UPDATE cart_items SET quantity = quantity + 1 WHERE id = ?"
     );
     $stmt->bind_param("i", $item['id']);
     $stmt->execute();
 } else {
-    // thêm mới
+  
     $stmt = $conn->prepare(
         "INSERT INTO cart_items
         (cart_id, product_id, name, image, color, quantity, price)

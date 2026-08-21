@@ -1,4 +1,4 @@
-// ================== CANCEL ORDER ==================
+// CANCEL ORDER 
 function cancelOrder(orderId) {
     if (!confirm("Bạn có chắc muốn hủy đơn hàng này?")) return;
 

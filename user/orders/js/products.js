@@ -1,4 +1,4 @@
-/* ================== HELPER ================== */
+
 function splitField(value) {
     if (!value) return [];
     return value.split(',').map(v => v.trim());
@@ -15,7 +15,7 @@ function createOrderCard(order) {
 
     const price = Number(order.total_price).toLocaleString('vi-VN');
 
-    /* ===== ORDER INFO ===== */
+    //ORDER INFO 
     card.querySelector('.order-id').textContent = `Đơn Hàng: ${order.id}`;
     card.querySelector('.product-price').textContent = price;
     card.querySelector('.order-date').textContent = order.order_date;
@@ -24,7 +24,7 @@ function createOrderCard(order) {
     statusEl.className = `order-status ${status.class}`;
     statusEl.textContent = `${status.icon} ${order.status}`;
 
-    /* ===== SPLIT PRODUCTS ===== */
+    //PRODUCTS 
     const names  = splitField(order.product_name);
     const colors = splitField(order.color);
     const images = splitField(order.image);
@@ -41,7 +41,7 @@ function createOrderCard(order) {
 
     card.querySelector('.total-quantity').textContent = totalQuantity;
 
-    /* ===== RENDER PRODUCTS ===== */
+   
     const productBox = card.querySelector('.order-products');
     productBox.innerHTML = '';
 
@@ -64,7 +64,7 @@ function createOrderCard(order) {
         productBox.appendChild(productEl);
     });
 
-    /* ===== ACTIONS ===== */
+    // ACTIONS 
     card.querySelector('.order-actions').innerHTML = renderActions(order);
 
     return card;

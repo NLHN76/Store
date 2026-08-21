@@ -2,19 +2,19 @@
 require_once "../../db.php";
 
 
-/* ===== LOGIN ===== */
+// LOGIN 
 if (!isset($_SESSION['user_code'])) {
     exit("Vui lòng đăng nhập");
 }
 $user_code = $_SESSION['user_code'];
 
-/* ===== PAYMENT ID ===== */
+//PAYMENT ID 
 $payment_id = (int)($_GET['payment_id'] ?? 0);
 if ($payment_id <= 0) {
     exit("Đơn hàng không hợp lệ");
 }
 
-/* ===== GET PAYMENT ===== */
+
 $stmt = $conn->prepare("
     SELECT product_name, product_code, category, image, color,
            product_quantity, total_price
@@ -30,7 +30,7 @@ if (!$payment) {
     exit("Không có quyền truy cập đơn hàng");
 }
 
-/* ===== SPLIT DATA ===== */
+
 $names      = array_map('trim', explode(',', $payment['product_name']));
 $codes      = array_map('trim', explode(',', $payment['product_code']));
 $categories = array_map('trim', explode(',', $payment['category']));
@@ -49,13 +49,12 @@ if (count($names) === 1) {
     }
 }
 
-/* ===== CLEAR CART  ===== */
+
 $_SESSION['cart'] = [];
 
-/* ===== ADD TO CART ===== */
+
 foreach ($codes as $i => $code) {
 
-    /* lấy giá hiện tại */
     $stmtP = $conn->prepare("
         SELECT price, is_active
         FROM products
@@ -67,7 +66,7 @@ foreach ($codes as $i => $code) {
     $stmtP->close();
 
     if ($product && (int)$product['is_active'] === 0) {
-        continue; // bỏ SP đã ngừng bán
+        continue; 
     }
 
     $qty = $quantities[$i] ?? 1;
@@ -87,7 +86,7 @@ foreach ($codes as $i => $code) {
     ];
 }
 
-/* ===== REDIRECT ===== */
+
 header("Location: ../pay/no_cart.php");
 exit;
 

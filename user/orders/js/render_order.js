@@ -1,4 +1,4 @@
-/* ================== RENDER ORDERS ================== */
+//RENDER ORDERS 
 function renderOrders(orders) {
     const orderList = document.getElementById('order-list');
     orderList.innerHTML = '';

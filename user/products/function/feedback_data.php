@@ -25,9 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// ====== Lấy danh sách đánh giá ======
-// ====== Phân trang đánh giá ======
-$limit = 6; // Số đánh giá mỗi trang
+//Lấy danh sách đánh giá
+$limit = 6; 
 $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
 $offset = ($page - 1) * $limit;
 

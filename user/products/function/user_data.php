@@ -1,5 +1,5 @@
 <?php
-// ====== Xử lý người dùng ======
+// Xử lý người dùng 
 $is_logged_in = isset($_SESSION['user_id']);
 $user_name = 'Khách';
 $user_id = $is_logged_in ? $_SESSION['user_id'] : null;

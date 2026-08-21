@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-/* ===== LẤY CART ===== */
+
 $stmt = $conn->prepare("SELECT id FROM carts WHERE user_id = ?");
 $stmt->bind_param("i", $user_id);
 $stmt->execute();
@@ -23,7 +23,7 @@ if ($res->num_rows === 0) {
 
 $cart_id = $res->fetch_assoc()['id'];
 
-/* ===== LẤY CART ITEMS ===== */
+
 $stmt = $conn->prepare(
     "SELECT
         product_id,

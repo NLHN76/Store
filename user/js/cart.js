@@ -1,5 +1,5 @@
 
-// ================= THÊM VÀO GIỎ =================
+//THÊM VÀO GIỎ 
 function addToCart(btn) {
     const p = btn.parentElement;
 
@@ -38,7 +38,7 @@ function addToCart(btn) {
     });
 }
 
-// ================= LOAD GIỎ HÀNG TỪ DB =================
+//  LOAD GIỎ HÀNG TỪ DB 
 function loadCart() {
     fetch('cart/get_cart.php')
         .then(res => res.json())
@@ -50,7 +50,7 @@ function loadCart() {
 
 document.addEventListener('DOMContentLoaded', loadCart);
 
-// ================= HIỂN THỊ THÔNG BÁO =================
+//HIỂN THỊ THÔNG BÁO 
 function showNotification(text) {
     notification.textContent = text;
     notification.style.display = 'block';
@@ -61,7 +61,7 @@ function showNotification(text) {
 }
 
 
-// ================= HIỂN THỊ GIỎ HÀNG =================
+// HIỂN THỊ GIỎ HÀNG 
 function updateCartDisplay() {
     const cartDiv = document.getElementById('cart-items');
     cartDiv.innerHTML = '';
