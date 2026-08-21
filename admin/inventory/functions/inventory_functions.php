@@ -1,90 +1,143 @@
 <?php
-//Hoàn lại tồn kho khi hủy đơn
-function restoreStockFromCancelledPayment($conn)
-{
+function deductStockFromDeliveredPayment($conn) {
+
     $res = $conn->query("
         SELECT id, order_code, product_name, color, product_code
         FROM payment
-        WHERE status='Đã hủy' AND is_restored IS NULL
+        WHERE status = 'Đã giao hàng'
+        AND is_deducted = 0
     ");
 
     while ($row = $res->fetch_assoc()) {
-        $product_names = explode(',', $row['product_name'] ?? '');
-        $colors = explode(',', $row['color'] ?? '');
-        $product_codes = explode(',', $row['product_code'] ?? '');
 
-        foreach ($product_codes as $i => $product_code) {
-            $product_code = trim($product_code);
-            $color = trim($colors[$i] ?? '');
-            $qty = 1;
+        $conn->begin_transaction();
 
-            if (isset($product_names[$i])) {
-                preg_match('/\(x(\d+)\)/i', $product_names[$i], $matches);
-                $qty = isset($matches[1]) ? (int)$matches[1] : 1;
+        try {
+            $product_names = explode(',', $row['product_name'] ?? '');
+            $colors = explode(',', $row['color'] ?? '');
+            $product_codes = explode(',', $row['product_code'] ?? '');
+
+            foreach ($product_codes as $i => $product_code) {
+
+                $product_code = trim($product_code);
+                $color = trim($colors[$i] ?? '');
+                $qty = 1;
+
+                if (isset($product_names[$i])) {
+                    preg_match('/\(\s*x\s*(\d+)\s*\)/i', $product_names[$i], $matches);
+                    $qty = isset($matches[1]) ? (int)$matches[1] : 1;
+                }
+
+                if ($product_code === '' || $color === '' || $qty <= 0) {
+                    continue;
+                }
+
+                // Lấy đúng tồn kho của mã sản phẩm và màu sản phẩm
+                $stmt = $conn->prepare("
+                    SELECT id, product_id, quantity, import_price, sale_price
+                    FROM product_inventory
+                    WHERE product_code = ? AND color = ?
+                    LIMIT 1
+                    FOR UPDATE
+                ");
+
+                $stmt->bind_param("ss", $product_code, $color);
+                $stmt->execute();
+
+                $inventory = $stmt->get_result()->fetch_assoc();
+                $stmt->close();
+
+                if (!$inventory) {
+                    throw new Exception(
+                        "Không tìm thấy sản phẩm {$product_code} màu {$color}"
+                    );
+                }
+
+                if ($inventory['quantity'] < $qty) {
+                    throw new Exception(
+                        "Sản phẩm {$product_code} màu {$color} không đủ tồn kho"
+                    );
+                }
+
+                $product_id = (int)$inventory['product_id'];
+                $import_price = (float)$inventory['import_price'];
+                $sale_price = (float)$inventory['sale_price'];
+
+                // Trừ đúng quantity của sản phẩm và màu tương ứng
+                $stmt = $conn->prepare("
+                    UPDATE product_inventory
+                    SET quantity = quantity - ?
+                    WHERE product_code = ? AND color = ?
+                ");
+
+                $stmt->bind_param(
+                    "iss",
+                    $qty,
+                    $product_code,
+                    $color
+                );
+
+                if (!$stmt->execute()) {
+                    throw new Exception("Không thể trừ tồn kho");
+                }
+
+                $stmt->close();
+
+                // Ghi lịch sử
+                $note = "Trừ tồn kho khi đơn {$row['order_code']} đã giao hàng";
+
+                $stmt = $conn->prepare("
+                    INSERT INTO inventory_history
+                    (
+                        product_id,
+                        product_code,
+                        color,
+                        quantity_change,
+                        import_price,
+                        sale_price,
+                        type,
+                        note
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, 'Bán hàng', ?)
+                ");
+
+                $stmt->bind_param(
+                    "issidds",
+                    $product_id,
+                    $product_code,
+                    $color,
+                    $qty,
+                    $import_price,
+                    $sale_price,
+                    $note
+                );
+
+                $stmt->execute();
+                $stmt->close();
             }
 
-            if ($qty <= 0 || $product_code === '' || $color === '') continue;
-
-            $stmt = $conn->prepare("SELECT id FROM products WHERE product_code=? LIMIT 1");
-            $stmt->bind_param("s", $product_code);
-            $stmt->execute();
-            $product = $stmt->get_result()->fetch_assoc();
-            $stmt->close();
-
-            if (!$product) continue;
-
-            $product_id = (int)$product['id'];
-
+            // Đánh dấu đơn đã trừ kho
             $stmt = $conn->prepare("
-                SELECT import_price, sale_price
-                FROM product_inventory
-                WHERE product_id=? AND color=?
-                LIMIT 1
+                UPDATE payment
+                SET is_deducted = 1
+                WHERE id = ?
             ");
-            $stmt->bind_param("is", $product_id, $color);
-            $stmt->execute();
-            $inventory = $stmt->get_result()->fetch_assoc();
-            $stmt->close();
 
-            if (!$inventory) continue;
-
-            $import_price = (float)$inventory['import_price'];
-            $sale_price = (float)$inventory['sale_price'];
-
-            $stmt = $conn->prepare("
-                UPDATE product_inventory
-                SET quantity=quantity+?
-                WHERE product_id=? AND color=?
-            ");
-            $stmt->bind_param("iis", $qty, $product_id, $color);
+            $stmt->bind_param("i", $row['id']);
             $stmt->execute();
             $stmt->close();
 
-            $note = "Hoàn lại tồn kho từ đơn hàng {$row['order_code']}";
+            $conn->commit();
 
-            $stmt = $conn->prepare("
-                INSERT INTO inventory_history
-                (product_id, product_code, color, quantity_change, import_price, sale_price, type, note)
-                VALUES (?, ?, ?, ?, ?, ?, 'Hoàn trả', ?)
-            ");
-            $stmt->bind_param(
-                "issidds",
-                $product_id,
-                $product_code,
-                $color,
-                $qty,
-                $import_price,
-                $sale_price,
-                $note
+        } catch (Exception $e) {
+
+            $conn->rollback();
+
+            error_log(
+                "Lỗi trừ tồn kho đơn {$row['order_code']}: "
+                . $e->getMessage()
             );
-            $stmt->execute();
-            $stmt->close();
         }
-
-        $stmt = $conn->prepare("UPDATE payment SET is_restored=1 WHERE id=?");
-        $stmt->bind_param("i", $row['id']);
-        $stmt->execute();
-        $stmt->close();
     }
 }
 
@@ -130,6 +183,6 @@ function calculateSoldQuantity($conn){
 }
 
 //Đồng bộ tồn kho
-restoreStockFromCancelledPayment($conn);
 $soldQuantities = calculateSoldQuantity($conn);
+deductStockFromDeliveredPayment($conn);
 ?>

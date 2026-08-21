@@ -6,22 +6,15 @@ require_once "bank_config.php";
 
 $isPaymentConfirmed = false;
 
-function generateOrderCode($conn)
-{
+function generateOrderCode($conn) {
     do {
         $order_code = 'DH' . date('YmdHis') . strtoupper(substr(bin2hex(random_bytes(2)), 0, 4));
 
-        $stmt = $conn->prepare("
-            SELECT id FROM payment
-            WHERE order_code = ?
-            LIMIT 1
-        ");
+        $stmt = $conn->prepare("SELECT id FROM payment WHERE order_code = ? LIMIT 1");
         $stmt->bind_param("s", $order_code);
         $stmt->execute();
 
-        $result = $stmt->get_result();
-        $exists = $result->num_rows > 0;
-
+        $exists = $stmt->get_result()->num_rows > 0;
         $stmt->close();
     } while ($exists);
 
@@ -40,32 +33,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if (empty($itemsGrouped)) {
+        echo "Giỏ hàng đang trống.";
+        exit;
+    }
+
     $order_code = generateOrderCode($conn);
 
     $conn->begin_transaction();
 
     try {
 
+        // Kiểm tra tồn kho, chưa trừ kho
         foreach ($itemsGrouped as $item) {
             $stmtStock = $conn->prepare("
-                SELECT quantity
-                FROM product_inventory
+                SELECT quantity FROM product_inventory
                 WHERE product_code = ? AND color = ?
-                FOR UPDATE
+                LIMIT 1
             ");
 
-            $stmtStock->bind_param(
-                "ss",
-                $item['product_code'],
-                $item['color']
-            );
-
+            $stmtStock->bind_param("ss", $item['product_code'], $item['color']);
             $stmtStock->execute();
-            $stmtStock->bind_result($stock);
 
-            if (!$stmtStock->fetch()) {
-                $stmtStock->close();
+            $inventory = $stmtStock->get_result()->fetch_assoc();
+            $stmtStock->close();
 
+            if (!$inventory) {
                 throw new Exception(
                     "Sản phẩm " . htmlspecialchars($item['name']) .
                     " màu " . htmlspecialchars($item['color']) .
@@ -73,105 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 );
             }
 
-            $stmtStock->close();
-
-            if ($stock < $item['quantity']) {
+            if ($inventory['quantity'] < $item['quantity']) {
                 throw new Exception(
                     "Sản phẩm " . htmlspecialchars($item['name']) .
                     " màu " . htmlspecialchars($item['color']) .
-                    " chỉ còn " . $stock . " sản phẩm khả dụng."
+                    " chỉ còn " . $inventory['quantity'] . " sản phẩm."
                 );
-            }
-        }
-
-        foreach ($itemsGrouped as $item) {
-
-            $stmtUpdate = $conn->prepare("
-                UPDATE product_inventory
-                SET quantity = quantity - ?
-                WHERE product_code = ? AND color = ?
-            ");
-
-            $stmtUpdate->bind_param(
-                "iss",
-                $item['quantity'],
-                $item['product_code'],
-                $item['color']
-            );
-
-            $stmtUpdate->execute();
-            $stmtUpdate->close();
-
-            $stmtProd = $conn->prepare("
-                SELECT id
-                FROM products
-                WHERE product_code = ?
-                LIMIT 1
-            ");
-
-            $stmtProd->bind_param(
-                "s",
-                $item['product_code']
-            );
-
-            $stmtProd->execute();
-            $product = $stmtProd->get_result()->fetch_assoc();
-            $stmtProd->close();
-
-            if ($product) {
-
-                $product_id = $product['id'];
-
-                $stmtPrice = $conn->prepare("
-                    SELECT import_price, sale_price
-                    FROM product_inventory
-                    WHERE product_code = ? AND color = ?
-                    LIMIT 1
-                ");
-
-                $stmtPrice->bind_param(
-                    "ss",
-                    $item['product_code'],
-                    $item['color']
-                );
-
-                $stmtPrice->execute();
-                $price = $stmtPrice->get_result()->fetch_assoc();
-                $stmtPrice->close();
-
-                $import_price = $price['import_price'] ?? 0;
-                $sale_price = $price['sale_price'] ?? 0;
-
-                $note = "Trừ tồn kho khi đặt hàng (User: {$user_code}, Mã đơn: {$order_code})";
-
-                $stmtHist = $conn->prepare("
-                    INSERT INTO inventory_history
-                    (
-                        product_id,
-                        product_code,
-                        color,
-                        quantity_change,
-                        import_price,
-                        sale_price,
-                        type,
-                        note
-                    )
-                    VALUES (?, ?, ?, ?, ?, ?, 'Bán hàng', ?)
-                ");
-
-                $stmtHist->bind_param(
-                    "issidds",
-                    $product_id,
-                    $item['product_code'],
-                    $item['color'],
-                    $item['quantity'],
-                    $import_price,
-                    $sale_price,
-                    $note
-                );
-
-                $stmtHist->execute();
-                $stmtHist->close();
             }
         }
 
@@ -200,28 +100,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $itemsGrouped
         ));
 
+        $status = "Chờ xử lý";
+
         $stmt = $conn->prepare("
-            INSERT INTO payment
-            (
-                order_code,
-                customer_name,
-                customer_email,
-                customer_phone,
-                customer_address,
-                user_code,
-                product_code,
-                product_name,
-                image,
-                product_quantity,
-                total_price,
-                category,
-                color
+            INSERT INTO payment (
+                order_code, customer_name, customer_email,
+                customer_phone, customer_address, user_code,
+                product_code, product_name, image,
+                product_quantity, total_price,
+                category, color, status
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ");
 
         $stmt->bind_param(
-            "sssssssssiiss",
+            "sssssssssiisss",
             $order_code,
             $name_post,
             $email_post,
@@ -234,22 +127,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $itemCount,
             $totalPrice,
             $productCategoriesString,
-            $colorsString
+            $colorsString,
+            $status
         );
 
         if (!$stmt->execute()) {
             throw new Exception("Lỗi lưu đơn hàng: " . $stmt->error);
         }
-        
+
         $stmt->close();
-        
-        $qr_url = "https://img.vietqr.io/image/"
-    . $bank_id . "-"
-    . $account_no
-    . "-compact2.png?"
-    . "amount=" . (int)$totalPrice
-    . "&addInfo=" . urlencode($order_code)
-    . "&accountName=" . urlencode($account_name);
+
+        $conn->commit();
+
+        $qr_url = "https://img.vietqr.io/image/" 
+            . $bank_id . "-" . $account_no 
+            . "-compact2.png?"
+            . "amount=" . (int)$totalPrice 
+            . "&addInfo=" . urlencode($order_code) 
+            . "&accountName=" . urlencode($account_name);
 
         sendConfirmationEmail(
             $name_post,
@@ -261,15 +156,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $order_code
         );
 
-        $conn->commit();
-
         $isPaymentConfirmed = true;
         unset($_SESSION['cart']);
 
     } catch (Exception $e) {
-
         $conn->rollback();
-
         echo "Đặt hàng thất bại: " . $e->getMessage();
         exit;
     }
