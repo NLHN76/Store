@@ -1,4 +1,4 @@
-/* ================= CART ================= */
+
 .cart-section {
   background-color: #fefefe;
   padding: 35px 30px;
@@ -9,7 +9,7 @@
   transition: all 0.3s ease;
 }
 
-/* TIÊU ĐỀ */
+
 .cart-title {
   text-align: center;
   color: #2c3e50;
@@ -19,7 +19,7 @@
 
 /* DANH SÁCH SẢN PHẨM */
 .cart-items {
-  border-top: 1px solid #ddd;     /* đường viền */
+  border-top: 1px solid #ddd;     
   border-bottom: 1px solid #ddd;
   padding: 15px 0;
   margin-bottom: 20px;
@@ -28,7 +28,7 @@
   color: #333;
 }
 
-/* TỔNG SỐ LƯỢNG & TỔNG TIỀN */
+
 .cart-total-qty,
 .cart-total-price {
   font-size: 17px;
@@ -38,7 +38,7 @@
   padding: 0 5px;
 }
 
-/* NÚT ĐẶT HÀNG */
+
 .cart-checkout-btn {
   display: block;
   width: 100%;
@@ -71,7 +71,7 @@
     font-size: 15px;
 }
 
-/* NÚT + - XÓA */
+
 .cart-item button {
     width: 36px;
     height: 32px;

@@ -1,4 +1,4 @@
-/* ===== MENU TÀI KHOẢN ===== */
+
 .account-menu {
     position: relative;
     display: inline-block;
@@ -34,7 +34,7 @@
     background: #f4b400;
 }
 
-/* Hover hoặc JS */
+
 .account-menu:hover .account-dropdown,
 .account-menu.show-dropdown .account-dropdown {
     display: block;

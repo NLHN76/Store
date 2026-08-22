@@ -1,24 +1,10 @@
 
-
 body {
     font-family: Arial, sans-serif;
     background-color: #f8f9fa;
     margin: 20px;
 }
 
-/* Nút xuất PDF */
-button {
-    background-color: #0d6efd;
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    margin-bottom: 15px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-button:hover {
-    background-color: #0b5ed7;
-}
 
 /* Header và tiêu đề */
 h1, h2 {

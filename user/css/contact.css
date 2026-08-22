@@ -23,7 +23,7 @@
     margin-bottom: 20px;
 }
 
-/* Input & textarea */
+
 .contact-input,
 .contact-textarea {
     width: 100%;
@@ -34,7 +34,7 @@
     box-sizing: border-box; 
 }
 
-/* Button */
+
 .contact-btn {
     width: 100%;
     padding: 12px;

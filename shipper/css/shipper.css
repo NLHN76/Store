@@ -1,4 +1,4 @@
-/* ========== AVATAR ========== */
+/* AVATAR */
 .avatar-login,
 .avatar-order {
     border-radius: 50%;
@@ -16,7 +16,7 @@
     height: 30px;
 }
 
-/* ========== TRẠNG THÁI ĐƠN HÀNG ========== */
+/* TRẠNG THÁI ĐƠN HÀNG  */
 .status-dangxuly {
     background-color: #fff3cd;
 }
@@ -29,7 +29,7 @@
     background-color: #d6d8d9;
 }
 
-/* ========== ROW MỞ RỘNG ========== */
+/* ROW MỞ RỘNG */
 .collapse-row {
     background-color: #f8f9fa;
 }

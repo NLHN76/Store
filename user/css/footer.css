@@ -1,4 +1,4 @@
-/* ================== FOOTER ================== */
+
 footer {
     background-color: #343a40;
     color: #fff;
@@ -6,7 +6,7 @@ footer {
     font-family: Arial, sans-serif;
 }
 
-/* ===== CONTAINER ===== */
+
 .footer-container {
     display: flex;
     justify-content: space-between;
@@ -14,13 +14,13 @@ footer {
     gap: 20px;
 }
 
-/* ===== CỘT TRÁI (Mobile Gear) ===== */
+
 .footer-column:first-child {
     flex: 1;
     padding-top: 20px;
 }
 
-/* ===== CỘT GIỮA (Bản đồ) ===== */
+
 .footer-column:nth-child(2) {
     flex: 1;
     display: flex;
@@ -28,7 +28,7 @@ footer {
     align-items: center;
 }
 
-/* ===== CỘT PHẢI (Liên kết + Social) ===== */
+
 .footer-column:last-child {
     flex: 1;
     display: flex;
@@ -38,7 +38,7 @@ footer {
     margin-left: auto;
 }
 
-/* ===== TEXT ===== */
+
 .footer-column h3,
 .footer-column h4 {
     margin-bottom: 15px;
@@ -55,7 +55,7 @@ footer {
     padding: 0;
 }
 
-/* ===== LINKS ===== */
+
 .footer-column ul li a {
     color: #fff;
     text-decoration: none;
@@ -66,7 +66,6 @@ footer {
     color: #f4b400;
 }
 
-/* ===== SOCIAL ===== */
 .social-icons a {
     display: inline-block;
     margin-left: 10px;
@@ -79,7 +78,7 @@ footer {
     color: #f4b400;
 }
 
-/* ===== BOTTOM ===== */
+
 .footer-bottom {
     text-align: center;
     margin-top: 20px;

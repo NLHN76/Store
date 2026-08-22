@@ -1,6 +1,6 @@
 /* ===== NỀN TỐI PHÍA SAU MODAL ===== */
 .profile-section {
-    display: none;              /* Ẩn mặc định */
+    display: none;             
     position: fixed;
     top: 0;
     left: 0;
@@ -18,7 +18,7 @@
 .profile-modal {
     background: #fff;
     width: 400px;
-    margin: 100px auto;          /* Căn giữa ngang */
+    margin: 100px auto;         
     padding: 20px;
     border-radius: 8px;
 }
@@ -49,7 +49,7 @@
     border-radius: 5px;
 }
 
-/* Input không sửa được */
+
 .disabled-input {
     background-color: #eee;
 }
@@ -68,12 +68,12 @@
     cursor: pointer;
 }
 
-/* Nút lưu */
+
 .save-btn {
     background-color: #4CAF50;
 }
 
-/* Nút đóng */
+
 .close-btn {
     background-color: #999;
 }

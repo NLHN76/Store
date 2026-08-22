@@ -27,7 +27,7 @@
 }
 
 .category-item:hover{
-    transform:translateY(-4px);
+    transform:translateY(-4px); /*hiệu ứng động*/
     box-shadow:0 6px 18px rgba(0,0,0,.12);
 }
 

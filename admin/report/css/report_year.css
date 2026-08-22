@@ -1,4 +1,4 @@
-/* ===== Body & Container ===== */
+
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f7f6;
@@ -15,7 +15,7 @@ body {
     border-radius: 8px;
 }
 
-/* ===== Headings ===== */
+
 h1 {
     text-align: center;
     color: #333;
@@ -29,7 +29,7 @@ h2 {
     margin-bottom: 15px;
 }
 
-/* ===== Table Styles ===== */
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -60,7 +60,7 @@ tr:hover td {
     background-color: #f1f1f1;
 }
 
-/* ===== Chart Container ===== */
+
 .chart-container {
     width: 90%;
     height: 600px;       
@@ -73,7 +73,7 @@ canvas {
 }
 
 
-/* ===== Back Button ===== */
+
 .back-button {
     position: absolute;
     top: 15px;
@@ -93,7 +93,7 @@ canvas {
     transform: scale(1.1);
 }
 
-/* ===== No Data Message ===== */
+
 .no-data {
     text-align: center;
     padding: 30px;

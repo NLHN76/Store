@@ -1,6 +1,6 @@
 
 
-/* ================== PRODUCTS GRID ================== */
+/*PRODUCTS GRID */
 
 .products-container{
     width:calc(100% - 10cm);
@@ -12,7 +12,7 @@
 
 
 
-/* ================== PRODUCT CARD ================== */
+/* PRODUCT CARD */
 .product {
     background: #fff;
     border-radius: 12px;
@@ -27,7 +27,7 @@
     box-shadow: 0 8px 18px rgba(0,0,0,0.15);
 }
 
-/* ================== PRODUCT IMAGE ================== */
+/* PRODUCT IMAGE */
 .product-image {
     width: 150px;
     height: 150px;
@@ -35,7 +35,7 @@
     margin-bottom: 10px;
 }
 
-/* ================== PRODUCT TEXT ================== */
+/* PRODUCT TEXT */
 .product h3 {
     font-size: 16px;
     margin: 6px 0;
@@ -48,7 +48,7 @@
     margin: 4px 0;
 }
 
-/* ================== COLOR SELECT ================== */
+/* COLOR SELECT  */
 
 .product-price{
     color:#fe0b0b;
@@ -73,17 +73,14 @@
     border: 1px solid #ccc;
 }
 
-/* ================== STOCK ================== */
-.stock {
-    font-weight: bold;
-}
+
 
 .stock-warning {
     font-size: 13px;
     color: #dc3545;
 }
 
-/* ================== BUTTON ================== */
+/*  BUTTON  */
 .add-cart-btn {
     margin-top: 10px;
     padding: 8px;
