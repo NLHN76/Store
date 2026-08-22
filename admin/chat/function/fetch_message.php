@@ -44,7 +44,7 @@ $last_id = 0;
 <?php
 $stmt->close();
 
-// ===== UPDATE LAST SEEN =====
+// UPDATE LAST SEEN 
 if ($last_id > 0) {
     $stmt2 = $conn->prepare("
         INSERT INTO user_last_seen_message (user_id, last_seen_id)
